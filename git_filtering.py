@@ -2,6 +2,12 @@ import sys
 import json
 import os
 import subprocess
+from enum import Enum
+
+class CommandType(Enum):
+    ACTION = 1
+    INLINE = 2
+    RETURN = 3
 
 class ResultItem:
     def __init__(self, title, arg, subtitle='', autocomplete=None, valid=False):
@@ -26,9 +32,10 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action):
+    def __init__(self, title, action, command_type=CommandType.ACTION):
         self.title = title
-        self.action = action  # action is a callable function
+        self.action = action  # Action is a callable function
+        self.command_type = command_type
 
 def change_directory():
     # Change to the working directory from the environment variable
@@ -43,20 +50,36 @@ def git_command(args):
     except subprocess.CalledProcessError as e:
         return f"Error executing {' '.join(args)}: {e.stderr}"
 
+# Updated action handlers
+def list_command():
+    return "List command executed"
+
+def search_command():
+    return "Search command executed"
+
+def git_status():
+    return git_command(["git", "status"])
+
+def git_pull():
+    return git_command(["git", "pull"])
+
+def checkout_branch(branch):
+    return git_command(["git", "checkout", branch])
+
 def main():
     # Prepare locations and commands
     locations = [
-        Location("office", "/Users/josh/Developer/ios/next.timer"),
-        Location("home", "/Users/josh/Developer/ios/next.timer"),
-        Location("store", "/Users/josh/Developer/ios/next.timer")
+        Location("timer", "/Users/josh/Developer/ios/next.timer"),
+        Location("calc", "/Users/josh/Developer/ios/next.calc"),
+        Location("website", "/Users/josh/Developer/jangelsb.github.io")
     ]
 
     commands = [
-        Command("list", lambda: "list command executed"),
-        Command("search", lambda: "search command executed"),
-        Command("status", lambda: git_command(["git", "status"])),
-        Command("pull", lambda: git_command(["git", "pull"])),
-        Command("checkout", lambda branch: git_command(["git", "checkout", branch]))
+        Command("list", list_command, command_type=CommandType.ACTION),
+        Command("search", search_command, command_type=CommandType.INLINE),
+        Command("status", git_status, command_type=CommandType.RETURN),
+        Command("pull", git_pull, command_type=CommandType.RETURN),
+        Command("checkout", checkout_branch, command_type=CommandType.INLINE)
     ]
 
     # Ensure we are in the correct working directory
@@ -93,12 +116,19 @@ def main():
 
         if location:
             if ends_with_space:
-                # If there's a space after the command, prompt for parameters
+                # Handle commands with parameters
                 command = next((cmd for cmd in commands if cmd.title.lower() == command_query), None)
                 if command:
-                    output['items'] = [ResultItem(f"Enter parameters for '{command.title}'", f"{location.title} {command.title}", autocomplete=f"{location.title} {command.title} ").to_dict()]
+                    if command.command_type == CommandType.INLINE:
+                        output['items'] = [ResultItem(f"Enter parameters for '{command.title}'", f"{location.title} {command.title}", autocomplete=f"{location.title} {command.title} ").to_dict()]
+                    elif command.command_type == CommandType.RETURN:
+                        result = command.action()
+                        output['items'] = [ResultItem(f"{result}", arg=result, subtitle=result, valid=True).to_dict()]
+                    else:
+                        result = command.action()
+                        output['items'] = [ResultItem(f"{command.title} executed", arg=result, subtitle=command, valid=True).to_dict()]
             else:
-                # Show commands that match the input so far
+                # Show matching commands
                 filtered_commands = [cmd for cmd in commands if command_query in cmd.title.lower()]
                 output['items'] = [ResultItem(cmd.title, f"{location.title} {cmd.title}", autocomplete=f"{location.title} {cmd.title}").to_dict() for cmd in filtered_commands]
 
@@ -110,8 +140,15 @@ def main():
         command = next((cmd for cmd in commands if command_query == cmd.title.lower()), None)
 
         if location and command:
-            result = command.action(*params) if callable(command.action) else command.action
-            output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
+            if command.command_type == CommandType.INLINE:
+                result = command.action(*params)
+                output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
+            elif command.command_type == CommandType.RETURN:
+                result = command.action()
+                output['items'] = [ResultItem(f"{command.title} executed", result, valid=True).to_dict()]
+            else:
+                result = command.action(*params) if callable(command.action) else command.action
+                output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
 
     print(json.dumps(output))
 
