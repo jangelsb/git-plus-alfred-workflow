@@ -92,7 +92,7 @@ class TokenizationResult:
     def __repr__(self):
         location_title = self.location.title if self.location else "None"
         commands_titles = [cmd.title for cmd in self.commands]
-        return f"Location: {location_title}, Commands: {commands_titles}, Unfinished Query: '{self.unfinished_query}'"
+        return f"loc: {location_title}, cmds: {commands_titles}, query: '{self.unfinished_query}'"
 
 def tokenize(input_string, locations, commands):
     location_dict = {loc.title.lower(): loc for loc in locations}
@@ -139,11 +139,12 @@ def search_command():
 def git_status():
     return git_command(["git", "status"])
 
-def git_pull():
-    return git_command(["git", "pull"])
+def git_pull(location):
+    # return git_command(["git", "pull"])
+    return f"cd {location.directory}; git pull;"
 
-def checkout_branch(branch):
-    return git_command(["git", "checkout", branch])
+# def checkout_branch(branch):
+#     return git_command(["git", "checkout", branch])
 
 def subtitle_for_command(command):
     if command.command_type == CommandType.NO_ACTION:
@@ -198,6 +199,28 @@ def list_git_branches(location):
         # return [ResultItem(title="Invalid directory path", arg='')]
         return []
 
+def create_result_item_for_location(loc):
+    return ResultItem(
+        title=loc.title,
+        arg=loc.directory,
+        subtitle=loc.directory,
+        autocomplete=loc.title
+    )
+
+def create_result_item_for_command(cmd, location):
+
+    title = cmd.title
+    subtitle = subtitle_for_command(cmd)
+
+    if cmd.command_type == CommandType.RETURN:
+        return ResultItem(title, arg=cmd.action(location), subtitle=subtitle, valid=True, location=location)
+
+    return ResultItem(
+        title,
+        arg=f"{cmd.title}",
+        subtitle=subtitle,
+        location=location
+    )
 
 
 def main():
@@ -228,7 +251,7 @@ def main():
 
     if not input.location:
         filtered_locations = [loc for loc in locations if input.unfinished_query in loc.title.lower()]
-        output['items'] += [ResultItem(loc.title, arg=loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in filtered_locations]
+        output['items'] += [create_result_item_for_location(loc).to_dict() for loc in filtered_locations]
     
     else:
         change_directory(input.location)
@@ -236,8 +259,8 @@ def main():
 
         if num_cmds == 0:
             filtered_commands = [cmd for cmd in commands if input.unfinished_query in cmd.title.lower()]
-            output['items'] += [ResultItem(cmd.title, arg=f"{cmd.title}", subtitle=subtitle_for_command(cmd), location=input.location).to_dict() for cmd in filtered_commands]
-        
+            output['items'].extend(create_result_item_for_command(cmd=cmd, location=input.location).to_dict() for cmd in filtered_commands)
+
         elif num_cmds == 1:
             main_command = input.commands[0]
 
@@ -248,9 +271,9 @@ def main():
                 output['items'] += [item.to_dict() for item in filtered_items]
             
             elif main_command.command_type == CommandType.NO_ACTION:
-                output['items'] += [ResultItem(main_command.title, arg=f"{main_command.title}", subtitle=subtitle_for_command(main_command), location=input.location).to_dict()]
+                output['items'] += [create_result_item_for_command(cmd=main_command, location=input.location).to_dict()]
 
-    output['items'] += [ResultItem(f"Debug; ends in space: {ends_with_space}", arg=' ', subtitle=f"{input}", autocomplete=' ').to_dict()]
+    output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
     print(json.dumps(output))
 
