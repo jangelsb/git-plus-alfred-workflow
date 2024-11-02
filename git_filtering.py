@@ -2,12 +2,15 @@ import sys
 import json
 import os
 import subprocess
+import re
 from enum import Enum
 
 class CommandType(Enum):
-    ACTION = 1
-    INLINE = 2
-    RETURN = 3
+    SINGLE_ACTION = 1   # Press enter, command runs and closes
+    NO_ACTION = 2       # Shows information inline without further action
+    INLINE = 3          # Shows a list after running, then requires another selection
+    RETURN = 4          # Runs the command, shows running item, and returns to command list
+    SINGLE_ACTION_WITH_PARAM = 5  # Requires a parameter, then runs the command
 
 class ResultItem:
     def __init__(self, title, arg, subtitle='', autocomplete=None, valid=False):
@@ -32,14 +35,31 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action, command_type=CommandType.ACTION):
+    def __init__(self, title, action, command_type=CommandType.SINGLE_ACTION):
         self.title = title
         self.action = action  # Action is a callable function
         self.command_type = command_type
 
-def change_directory():
+
+def tokenize(input_string, locations, commands):
+    # Create lookup dictionaries for easy retrieval
+    location_dict = {loc.title.lower(): loc for loc in locations}
+    command_dict = {cmd.title.lower(): cmd for cmd in commands}
+
+    # Tokenize and retrieve objects
+    tokens = []
+    for part in re.split(r'\s+', input_string):
+        lower_part = part.lower()
+        if lower_part in location_dict:
+            tokens.append(location_dict[lower_part])
+        elif lower_part in command_dict:
+            tokens.append(command_dict[lower_part])
+
+    return tokens
+
+
+def change_directory(wd):
     # Change to the working directory from the environment variable
-    wd = os.getenv('input_working_directory')
     if wd:
         os.chdir(wd)
 
@@ -66,6 +86,30 @@ def git_pull():
 def checkout_branch(branch):
     return git_command(["git", "checkout", branch])
 
+def process_command(command):
+    if command.command_type == CommandType.NO_ACTION:
+        return command.action()
+    return ""
+
+def tokenize(input_string, locations, commands):
+    # Create lookup dictionaries for easy retrieval
+    location_dict = {loc.title.lower(): loc for loc in locations}
+    command_dict = {cmd.title.lower(): cmd for cmd in commands}
+
+    # Tokenize and retrieve objects
+    tokens = []
+    for part in re.split(r'\s+', input_string):
+        lower_part = part.lower()
+        if lower_part in location_dict:
+            tokens.append(location_dict[lower_part])
+        elif lower_part in command_dict:
+            tokens.append(command_dict[lower_part])
+
+    return tokens
+
+def stringify_tokens(tokens):
+    return ', '.join(token.title for token in tokens)
+
 def main():
     # Prepare locations and commands
     locations = [
@@ -75,80 +119,104 @@ def main():
     ]
 
     commands = [
-        Command("list", list_command, command_type=CommandType.ACTION),
+        # Command("list", list_command, command_type=CommandType.NO_ACTION),
         Command("search", search_command, command_type=CommandType.INLINE),
-        Command("status", git_status, command_type=CommandType.RETURN),
+        Command("status", git_status, command_type=CommandType.NO_ACTION),
         Command("pull", git_pull, command_type=CommandType.RETURN),
-        Command("checkout", checkout_branch, command_type=CommandType.INLINE)
+        Command("checkout", checkout_branch, command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
     ]
 
-    # Ensure we are in the correct working directory
-    change_directory()
 
     # Get the query input
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
-    args = query_input.strip().split()
     ends_with_space = query_input.endswith(" ")
-    num_args = len(args)
+
+    tokens = tokenize(query_input, locations, commands)
+
+    num_args = len(tokens)
 
     output = {"items": []}
 
+    output['items'] = [ResultItem(f"num: {num_args} ends in space: {ends_with_space}", arg=' ', subtitle=stringify_tokens(tokens), autocomplete=' ').to_dict()]
+
     if num_args == 0:
-        # Show all locations if no arguments are provided
-        output['items'] = [ResultItem(loc.title, loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in locations]
+        output['items'] += [ResultItem(loc.title, loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in locations]
+    
+    if num_args == 1:
+        location = tokens[0]
+        change_directory(location)
 
-    elif num_args == 1:
-        location_query = args[0].lower()
-        if ends_with_space:
-            # Show commands if location is fully typed and trailing space is present
-            location = next((loc for loc in locations if loc.title.lower() == location_query), None)
-            if location:
-                output['items'] = [ResultItem(cmd.title, arg=f"{location.title} {cmd.title}", autocomplete=f"{location.title} {cmd.title}").to_dict() for cmd in commands]
-        else:
-            # Filter and show matching locations
-            filtered_locations = [loc for loc in locations if location_query in loc.title.lower()]
-            output['items'] = [ResultItem(loc.title, arg=loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in filtered_locations]
+        # output['items'] += [ResultItem(loc.title, loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in locations]
 
-    elif num_args == 2:
-        location_query = args[0].lower()
-        command_query = args[1].lower()
-        location = next((loc for loc in locations if loc.title.lower() == location_query), None)
 
-        if location:
-            if ends_with_space:
-                # Handle commands with parameters
-                command = next((cmd for cmd in commands if cmd.title.lower() == command_query), None)
-                if command:
-                    if command.command_type == CommandType.INLINE:
-                        output['items'] = [ResultItem(f"Enter parameters for '{command.title}'", f"{location.title} {command.title}", autocomplete=f"{location.title} {command.title} ").to_dict()]
-                    elif command.command_type == CommandType.RETURN:
-                        result = command.action()
-                        output['items'] = [ResultItem(f"{result}", arg=result, subtitle=result, valid=True).to_dict()]
-                    else:
-                        result = command.action()
-                        output['items'] = [ResultItem(f"{command.title} executed", arg=result, subtitle=command, valid=True).to_dict()]
-            else:
-                # Show matching commands
-                filtered_commands = [cmd for cmd in commands if command_query in cmd.title.lower()]
-                output['items'] = [ResultItem(cmd.title, f"{location.title} {cmd.title}", autocomplete=f"{location.title} {cmd.title}").to_dict() for cmd in filtered_commands]
+    # if num_args == 0:
+    #     # Show all locations if no arguments are provided
+    #     output['items'] = [ResultItem(loc.title, loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in locations]
 
-    elif num_args > 2:
-        location_query = args[0].lower()
-        command_query = args[1].lower()
-        params = args[2:] if not ends_with_space else args[2:] + ['']
-        location = next((loc for loc in locations if loc.title.lower() == location_query), None)
-        command = next((cmd for cmd in commands if command_query == cmd.title.lower()), None)
+    # elif num_args == 1:
+    #     location_query = args[0].lower()
+    #     if ends_with_space:
+    #         # Show commands if location is fully typed and trailing space is present
+    #         location = next((loc for loc in locations if loc.title.lower() == location_query), None)
+    #         if location:
+    #             change_directory(location.directory)
+    #             output['items'] = [ResultItem(cmd.title, arg=f"{location.title} {cmd.title}", subtitle=process_command(cmd), autocomplete=f"{location.title} {cmd.title}").to_dict() for cmd in commands]
+    #     else:
+    #         # Filter and show matching locations
+    #         filtered_locations = [loc for loc in locations if location_query in loc.title.lower()]
+    #         output['items'] = [ResultItem(loc.title, arg=loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in filtered_locations]
 
-        if location and command:
-            if command.command_type == CommandType.INLINE:
-                result = command.action(*params)
-                output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
-            elif command.command_type == CommandType.RETURN:
-                result = command.action()
-                output['items'] = [ResultItem(f"{command.title} executed", result, valid=True).to_dict()]
-            else:
-                result = command.action(*params) if callable(command.action) else command.action
-                output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
+    # elif num_args == 2:
+    #     location_query = args[0].lower()
+    #     command_query = args[1].lower()
+    #     location = next((loc for loc in locations if loc.title.lower() == location_query), None)
+
+    #     if location:
+    #         change_directory(location.directory)
+
+    #         filtered_commands = [cmd for cmd in commands if command_query in cmd.title.lower()]
+    #         for cmd in filtered_commands:
+    #             if cmd.command_type == CommandType.SINGLE_ACTION and ends_with_space:
+    #                 # Execute the command if there's a space after the command
+    #                 result = cmd.action()
+    #                 output['items'].append(ResultItem(f"{cmd.title} executed", result, valid=True).to_dict())
+    #             elif cmd.command_type == CommandType.NO_ACTION:
+    #                 # Always show the info as a subtitle
+    #                 result = cmd.action()
+    #                 output['items'].append(ResultItem(f"{cmd.title}", result, subtitle=result, valid=False).to_dict())
+    #             elif cmd.command_type in [CommandType.INLINE, CommandType.SINGLE_ACTION_WITH_PARAM]:
+    #                 # Request parameters
+    #                 output['items'].append(ResultItem(
+    #                     f"Enter parameters for '{cmd.title}'", 
+    #                     arg=f"{location.title} {cmd.title}", 
+    #                     autocomplete=f"{location.title} {cmd.title} ",
+    #                     valid=False
+    #                 ).to_dict())
+    #             elif cmd.command_type == CommandType.RETURN:
+    #                 # Execute and then return to the command list
+    #                 if ends_with_space:
+    #                     result = cmd.action()
+    #                     output['items'].append(ResultItem(f"{cmd.title} executed", result, valid=True).to_dict())
+    #                 else:
+    #                     output['items'].append(ResultItem(f"Running {cmd.title}...", "", valid=False).to_dict())
+
+    # elif num_args > 2:
+    #     location_query = args[0].lower()
+    #     command_query = args[1].lower()
+    #     params = args[2:] if not ends_with_space else args[2:] + ['']
+    #     location = next((loc for loc in locations if loc.title.lower() == location_query), None)
+    #     command = next((cmd for cmd in commands if command_query == cmd.title.lower()), None)
+
+    #     if location and command:
+    #         if command.command_type == CommandType.INLINE:
+    #             result = command.action(*params)
+    #             output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
+    #         elif command.command_type == CommandType.RETURN:
+    #             result = command.action()
+    #             output['items'] = [ResultItem(f"{command.title} executed", result, valid=True).to_dict()]
+    #         elif command.command_type == CommandType.SINGLE_ACTION_WITH_PARAM:
+    #             result = command.action(*params)
+    #             output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
 
     print(json.dumps(output))
 
