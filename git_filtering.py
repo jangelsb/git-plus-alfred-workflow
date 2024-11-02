@@ -13,11 +13,12 @@ class CommandType(Enum):
     SINGLE_ACTION_WITH_PARAM = 5  # Requires a parameter, then runs the command
 
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, valid=False):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False):
         self.title = title
         self.arg = arg
         self.subtitle = subtitle
-        self.autocomplete = autocomplete if autocomplete else title
+        self.autocomplete = autocomplete if autocomplete else f"{location.title} {title}" if location else title
+        self.location = location 
         self.valid = valid
 
     def to_dict(self):
@@ -41,22 +42,39 @@ class Command:
         self.command_type = command_type
 
 
+class TokenizationResult:
+    def __init__(self, location=None, commands=None, unfinished_query=None):
+        self.location = location
+        self.commands = commands if commands is not None else []
+        self.unfinished_query = unfinished_query
+
+    def __repr__(self):
+        location_title = self.location.title if self.location else "None"
+        commands_titles = [cmd.title for cmd in self.commands]
+        return f"Location: {location_title}, Commands: {commands_titles}, Unfinished Query: '{self.unfinished_query}'"
+
 def tokenize(input_string, locations, commands):
-    # Create lookup dictionaries for easy retrieval
     location_dict = {loc.title.lower(): loc for loc in locations}
     command_dict = {cmd.title.lower(): cmd for cmd in commands}
 
-    # Tokenize and retrieve objects
-    tokens = []
-    for part in re.split(r'\s+', input_string):
+    location = None
+    commands = []
+    recognized_parts = set() 
+
+    tokens = re.split(r'\s+', input_string)
+    for part in tokens:
         lower_part = part.lower()
-        if lower_part in location_dict:
-            tokens.append(location_dict[lower_part])
+        if location is None and lower_part in location_dict:
+            location = location_dict[lower_part]
+            recognized_parts.add(part)
         elif lower_part in command_dict:
-            tokens.append(command_dict[lower_part])
+            commands.append(command_dict[lower_part])
+            recognized_parts.add(part)
 
-    return tokens
+    unfinished_parts = [part for part in tokens if part.lower() not in recognized_parts]
+    unfinished = ' '.join(unfinished_parts).strip()
 
+    return TokenizationResult(location, commands, unfinished)
 
 def change_directory(location):
     # Change to the working directory from the environment variable
@@ -91,41 +109,6 @@ def process_command(command):
         return command.action()
     return ""
 
-class TokenizationResult:
-    def __init__(self, location=None, commands=None, unfinished_query=None):
-        self.location = location
-        self.commands = commands if commands is not None else []
-        self.unfinished_query = unfinished_query
-
-    def __repr__(self):
-        location_title = self.location.title if self.location else "None"
-        commands_titles = [cmd.title for cmd in self.commands]
-        return f"Location: {location_title}, Commands: {commands_titles}, Unfinished Query: '{self.unfinished_query}'"
-
-def tokenize(input_string, locations, commands):
-    # Create lookup dictionaries for easy retrieval
-
-    location_dict = {loc.title.lower(): loc for loc in locations}
-    command_dict = {cmd.title.lower(): cmd for cmd in commands}
-
-    location = None
-    commands = []
-    recognized_parts = set() 
-
-    tokens = re.split(r'\s+', input_string)
-    for part in tokens:
-        lower_part = part.lower()
-        if location is None and lower_part in location_dict:
-            location = location_dict[lower_part]
-            recognized_parts.add(part)
-        elif lower_part in command_dict:
-            commands.append(command_dict[lower_part])
-            recognized_parts.add(part)
-
-    unfinished_parts = [part for part in tokens if part.lower() not in recognized_parts]
-    unfinished = ' '.join(unfinished_parts).strip()
-
-    return TokenizationResult(location, commands, unfinished)
 
 def main():
     # Prepare locations and commands
@@ -143,7 +126,6 @@ def main():
         Command("checkout", checkout_branch, command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
     ]
 
-
     # Get the query input
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
     ends_with_space = query_input.endswith(" ")
@@ -160,14 +142,15 @@ def main():
         filtered_locations = [loc for loc in locations if input.unfinished_query in loc.title.lower()]
         output['items'] += [ResultItem(loc.title, arg=loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in filtered_locations]
     
-    elif num_cmds == 0:
+    else:
         change_directory(input.location)
+        # query branches 
+        
+        if num_cmds == 0:
+            filtered_commands = [cmd for cmd in commands if input.unfinished_query in cmd.title.lower()]
+            output['items'] += [ResultItem(cmd.title, arg=f"{cmd.title}", subtitle=process_command(cmd), location=input.location).to_dict() for cmd in filtered_commands]
 
-        filtered_commands = [cmd for cmd in commands if input.unfinished_query in cmd.title.lower()]
 
-        output['items'] += [ResultItem(cmd.title, arg=f"{cmd.title}", subtitle=input.location.directory, autocomplete=f"{input.location.title} {cmd.title}").to_dict() for cmd in filtered_commands]
-
-        # output['items'] += [ResultItem(loc.title, loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in locations]
 
 
     # if num_args == 0:
