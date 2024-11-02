@@ -79,6 +79,9 @@ class Command:
         self.action = action  # Action is a callable function
         self.command_type = command_type
 
+    
+    def is_valid(self):
+        self.command_type != CommandType.NO_ACTIO
 
 class TokenizationResult:
     def __init__(self, location=None, commands=None, unfinished_query=None):
@@ -148,10 +151,10 @@ def subtitle_for_command(command):
     return ""
 
 
-def list_git_branches():
+def list_git_branches(location):
     try:
 
-        checkout_command = 'git checkout [input]'
+        checkout_command = f"cd {location.directory}; git checkout [input]"
 
         # Run 'git branch --list' to get all local branches
         local_result = subprocess.run(['git', 'branch', '--list'], capture_output=True, text=True, check=True)
@@ -175,16 +178,14 @@ def list_git_branches():
                 title = f"{value} -- current"
 
             arg = checkout_command.replace('[input]', value)
-            items.append(ResultItem(title=title, arg=arg, subtitle=f"checkout out`{value}`; ⌘c to copy", text=Text(copy=value)))
+            items.append(ResultItem(title=title, arg=arg, subtitle=f"checkout out`{value}`; ⌘c to copy", text=Text(copy=value), valid=True))
 
         for branch in remote_branches:
             title = branch
             value = branch.replace('origin/', '')
-            # items.append(AlfredItem(title=title, value=value, command="git checkout", subtitle='Remote'))
             
             arg = checkout_command.replace('[input]', value)
-            items.append(ResultItem(title=f"{title}", arg=arg, subtitle=f"REMOTE; checkout out `{value}`; ⌘c to copy", text=Text(copy=value)))
-
+            items.append(ResultItem(title=f"{title}", arg=arg, subtitle=f"REMOTE; checkout out `{value}`; ⌘c to copy", text=Text(copy=value), valid=True))
 
         # items.append(AlfredItem(title="fetch --prune", value="git fetch --prune", command="git"))
 
@@ -209,7 +210,7 @@ def main():
 
     commands = [
         # Command("list", list_command, command_type=CommandType.NO_ACTION),
-        Command("search", search_command, command_type=CommandType.INLINE),
+        # Command("search", search_command, command_type=CommandType.INLINE),
         Command("status", git_status, command_type=CommandType.NO_ACTION),
         Command("pull", git_pull, command_type=CommandType.RETURN),
         Command("checkout", list_git_branches, command_type=CommandType.INLINE)
@@ -241,81 +242,13 @@ def main():
             main_command = input.commands[0]
 
             if main_command.command_type == CommandType.INLINE:
-                items = main_command.action()
+                items = main_command.action(input.location)
                 filtered_items = [item for item in items if input.unfinished_query in item.title.lower()]
 
                 output['items'] += [item.to_dict() for item in filtered_items]
-
-
-
-    # if num_args == 0:
-    #     # Show all locations if no arguments are provided
-    #     output['items'] = [ResultItem(loc.title, loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in locations]
-
-    # elif num_args == 1:
-    #     location_query = args[0].lower()
-    #     if ends_with_space:
-    #         # Show commands if location is fully typed and trailing space is present
-    #         location = next((loc for loc in locations if loc.title.lower() == location_query), None)
-    #         if location:
-    #             change_directory(location.directory)
-    #             output['items'] = [ResultItem(cmd.title, arg=f"{location.title} {cmd.title}", subtitle=subtitle_for_command(cmd), autocomplete=f"{location.title} {cmd.title}").to_dict() for cmd in commands]
-    #     else:
-    #         # Filter and show matching locations
-    #         filtered_locations = [loc for loc in locations if location_query in loc.title.lower()]
-    #         output['items'] = [ResultItem(loc.title, arg=loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in filtered_locations]
-
-    # elif num_args == 2:
-    #     location_query = args[0].lower()
-    #     command_query = args[1].lower()
-    #     location = next((loc for loc in locations if loc.title.lower() == location_query), None)
-
-    #     if location:
-    #         change_directory(location.directory)
-
-    #         filtered_commands = [cmd for cmd in commands if command_query in cmd.title.lower()]
-    #         for cmd in filtered_commands:
-    #             if cmd.command_type == CommandType.SINGLE_ACTION and ends_with_space:
-    #                 # Execute the command if there's a space after the command
-    #                 result = cmd.action()
-    #                 output['items'].append(ResultItem(f"{cmd.title} executed", result, valid=True).to_dict())
-    #             elif cmd.command_type == CommandType.NO_ACTION:
-    #                 # Always show the info as a subtitle
-    #                 result = cmd.action()
-    #                 output['items'].append(ResultItem(f"{cmd.title}", result, subtitle=result, valid=False).to_dict())
-    #             elif cmd.command_type in [CommandType.INLINE, CommandType.SINGLE_ACTION_WITH_PARAM]:
-    #                 # Request parameters
-    #                 output['items'].append(ResultItem(
-    #                     f"Enter parameters for '{cmd.title}'", 
-    #                     arg=f"{location.title} {cmd.title}", 
-    #                     autocomplete=f"{location.title} {cmd.title} ",
-    #                     valid=False
-    #                 ).to_dict())
-    #             elif cmd.command_type == CommandType.RETURN:
-    #                 # Execute and then return to the command list
-    #                 if ends_with_space:
-    #                     result = cmd.action()
-    #                     output['items'].append(ResultItem(f"{cmd.title} executed", result, valid=True).to_dict())
-    #                 else:
-    #                     output['items'].append(ResultItem(f"Running {cmd.title}...", "", valid=False).to_dict())
-
-    # elif num_args > 2:
-    #     location_query = args[0].lower()
-    #     command_query = args[1].lower()
-    #     params = args[2:] if not ends_with_space else args[2:] + ['']
-    #     location = next((loc for loc in locations if loc.title.lower() == location_query), None)
-    #     command = next((cmd for cmd in commands if command_query == cmd.title.lower()), None)
-
-    #     if location and command:
-    #         if command.command_type == CommandType.INLINE:
-    #             result = command.action(*params)
-    #             output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
-    #         elif command.command_type == CommandType.RETURN:
-    #             result = command.action()
-    #             output['items'] = [ResultItem(f"{command.title} executed", result, valid=True).to_dict()]
-    #         elif command.command_type == CommandType.SINGLE_ACTION_WITH_PARAM:
-    #             result = command.action(*params)
-    #             output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
+            
+            elif main_command.command_type == CommandType.NO_ACTION:
+                output['items'] += [ResultItem(main_command.title, arg=f"{main_command.title}", subtitle=subtitle_for_command(main_command), location=input.location).to_dict()]
 
     output['items'] += [ResultItem(f"Debug; ends in space: {ends_with_space}", arg=' ', subtitle=f"{input}", autocomplete=' ').to_dict()]
 
