@@ -104,10 +104,57 @@ def git_pull():
 def checkout_branch(branch):
     return git_command(["git", "checkout", branch])
 
-def process_command(command):
+def subtitle_for_command(command):
     if command.command_type == CommandType.NO_ACTION:
         return command.action()
     return ""
+
+
+def list_git_branches():
+    try:
+
+        # Run 'git branch --list' to get all local branches
+        local_result = subprocess.run(['git', 'branch', '--list'], capture_output=True, text=True, check=True)
+        local_branches = local_result.stdout.splitlines()
+        
+        # Run 'git branch -r' to get all remote branches
+        remote_result = subprocess.run(['git', 'branch', '-r'], capture_output=True, text=True, check=True)
+        remote_branches = remote_result.stdout.splitlines()
+
+        # Clean up the branch names
+        local_branches = [branch.strip() for branch in local_branches]
+        remote_branches = [branch.strip() for branch in remote_branches]
+        current_branch = next((branch for branch in local_branches if branch.startswith('*')), None)
+
+        items = []
+        for branch in local_branches:
+            title = branch 
+            value = branch
+            if branch.startswith('*'):
+                value = branch.strip('* ')
+                title = f"{value} -- current"
+
+            # items.append(AlfredItem(title=title, value=value, command="git checkout"))
+            items.append(ResultItem(title=title, arg=value))
+
+        for branch in remote_branches:
+            title = branch
+            value = branch.replace('origin/', '')
+            # items.append(AlfredItem(title=title, value=value, command="git checkout", subtitle='Remote'))
+            items.append(ResultItem(title=title, arg=value, subtitle="Remote"))
+
+
+        # items.append(AlfredItem(title="fetch --prune", value="git fetch --prune", command="git"))
+
+        return items
+
+    except subprocess.CalledProcessError:
+        # return [ResultItem(title="Not a Git repository", arg='')]
+        return []
+    except FileNotFoundError:
+        # return [ResultItem(title="Invalid directory path", arg='')]
+        return []
+
 
 
 def main():
@@ -123,7 +170,7 @@ def main():
         Command("search", search_command, command_type=CommandType.INLINE),
         Command("status", git_status, command_type=CommandType.NO_ACTION),
         Command("pull", git_pull, command_type=CommandType.RETURN),
-        Command("checkout", checkout_branch, command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
+        Command("checkout", checkout_branch, command_type=CommandType.INLINE)
     ]
 
     # Get the query input
@@ -136,8 +183,6 @@ def main():
 
     output = {"items": []}
 
-    output['items'] = [ResultItem(f"Debug; ends in space: {ends_with_space}", arg=' ', subtitle=f"{input}", autocomplete=' ').to_dict()]
-
     if not input.location:
         filtered_locations = [loc for loc in locations if input.unfinished_query in loc.title.lower()]
         output['items'] += [ResultItem(loc.title, arg=loc.directory, subtitle=loc.directory, autocomplete=loc.title).to_dict() for loc in filtered_locations]
@@ -145,11 +190,19 @@ def main():
     else:
         change_directory(input.location)
         # query branches 
-        
+
         if num_cmds == 0:
             filtered_commands = [cmd for cmd in commands if input.unfinished_query in cmd.title.lower()]
-            output['items'] += [ResultItem(cmd.title, arg=f"{cmd.title}", subtitle=process_command(cmd), location=input.location).to_dict() for cmd in filtered_commands]
+            output['items'] += [ResultItem(cmd.title, arg=f"{cmd.title}", subtitle=subtitle_for_command(cmd), location=input.location).to_dict() for cmd in filtered_commands]
+        
+        elif num_cmds == 1:
+            main_command = input.commands[0]
 
+            if main_command.command_type == CommandType.INLINE:
+                items = list_git_branches()
+                filtered_items = [item for item in items if input.unfinished_query in item.title.lower()]
+
+                output['items'] += [item.to_dict() for item in filtered_items]
 
 
 
@@ -164,7 +217,7 @@ def main():
     #         location = next((loc for loc in locations if loc.title.lower() == location_query), None)
     #         if location:
     #             change_directory(location.directory)
-    #             output['items'] = [ResultItem(cmd.title, arg=f"{location.title} {cmd.title}", subtitle=process_command(cmd), autocomplete=f"{location.title} {cmd.title}").to_dict() for cmd in commands]
+    #             output['items'] = [ResultItem(cmd.title, arg=f"{location.title} {cmd.title}", subtitle=subtitle_for_command(cmd), autocomplete=f"{location.title} {cmd.title}").to_dict() for cmd in commands]
     #     else:
     #         # Filter and show matching locations
     #         filtered_locations = [loc for loc in locations if location_query in loc.title.lower()]
@@ -221,6 +274,8 @@ def main():
     #         elif command.command_type == CommandType.SINGLE_ACTION_WITH_PARAM:
     #             result = command.action(*params)
     #             output['items'] = [ResultItem(f"{command.title} in {location.title}", result, valid=True).to_dict()]
+
+    output['items'] += [ResultItem(f"Debug; ends in space: {ends_with_space}", arg=' ', subtitle=f"{input}", autocomplete=' ').to_dict()]
 
     print(json.dumps(output))
 
