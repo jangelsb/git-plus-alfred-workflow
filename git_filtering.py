@@ -18,7 +18,7 @@ class ModifierKey(Enum):
     CTRL = "ctrl"
     FN = "fn"
     SHIFT = "shift"
-    CMD_ALT = "cmd+alt"  # For combination keys
+    CMD_ALT = "cmd+alt"
 
 class Modifier:
     def __init__(self, arg, subtitle='', valid=False):
@@ -33,25 +33,39 @@ class Modifier:
             "valid": self.valid
         }
 
+class Text:
+    def __init__(self, copy='', largetype=''):
+        self.copy = copy
+        self.largetype = largetype
+
+    def to_dict(self):
+        return {
+            "copy": self.copy,
+            "largetype": self.largetype
+        }
+
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None):
         self.title = title
         self.arg = arg
         self.subtitle = subtitle
         self.autocomplete = autocomplete if autocomplete else f"{location.title} {title}" if location else title
         self.valid = valid
         self.mods = mods if mods else {}
+        self.text = text
 
     def to_dict(self):
         item_dict = {
             "title": self.title,
             "arg": self.arg,
             "subtitle": self.subtitle,
-            "autocomplete": self.autocomplete,
+            "autocomplete": f" {self.autocomplete}",
             "valid": self.valid
         }
         if self.mods:
             item_dict["mods"] = {key.value: mod.to_dict() for key, mod in self.mods.items()}
+        if self.text:
+            item_dict["text"] = self.text.to_dict()
         return item_dict
 
 class Location:
@@ -137,6 +151,8 @@ def subtitle_for_command(command):
 def list_git_branches():
     try:
 
+        checkout_command = 'git checkout [input]'
+
         # Run 'git branch --list' to get all local branches
         local_result = subprocess.run(['git', 'branch', '--list'], capture_output=True, text=True, check=True)
         local_branches = local_result.stdout.splitlines()
@@ -158,14 +174,16 @@ def list_git_branches():
                 value = branch.strip('* ')
                 title = f"{value} -- current"
 
-            # items.append(AlfredItem(title=title, value=value, command="git checkout"))
-            items.append(ResultItem(title=title, arg=value))
+            arg = checkout_command.replace('[input]', value)
+            items.append(ResultItem(title=title, arg=arg, subtitle=f"checkout out`{value}`; ⌘c to copy", text=Text(copy=value)))
 
         for branch in remote_branches:
             title = branch
             value = branch.replace('origin/', '')
             # items.append(AlfredItem(title=title, value=value, command="git checkout", subtitle='Remote'))
-            items.append(ResultItem(title=title, arg=value, subtitle="Remote"))
+            
+            arg = checkout_command.replace('[input]', value)
+            items.append(ResultItem(title=f"{title}", arg=arg, subtitle=f"REMOTE; checkout out `{value}`; ⌘c to copy", text=Text(copy=value)))
 
 
         # items.append(AlfredItem(title="fetch --prune", value="git fetch --prune", command="git"))
