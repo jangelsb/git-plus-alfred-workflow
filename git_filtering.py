@@ -12,23 +12,47 @@ class CommandType(Enum):
     RETURN = 4          # Runs the command, shows running item, and returns to command list
     SINGLE_ACTION_WITH_PARAM = 5  # Requires a parameter, then runs the command
 
-class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False):
-        self.title = title
+class ModifierKey(Enum):
+    CMD = "cmd"
+    ALT = "alt"
+    CTRL = "ctrl"
+    FN = "fn"
+    SHIFT = "shift"
+    CMD_ALT = "cmd+alt"  # For combination keys
+
+class Modifier:
+    def __init__(self, arg, subtitle='', valid=False):
         self.arg = arg
         self.subtitle = subtitle
-        self.autocomplete = autocomplete if autocomplete else f"{location.title} {title}" if location else title
-        self.location = location 
         self.valid = valid
 
     def to_dict(self):
         return {
+            "arg": self.arg,
+            "subtitle": self.subtitle,
+            "valid": self.valid
+        }
+
+class ResultItem:
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None):
+        self.title = title
+        self.arg = arg
+        self.subtitle = subtitle
+        self.autocomplete = autocomplete if autocomplete else f"{location.title} {title}" if location else title
+        self.valid = valid
+        self.mods = mods if mods else {}
+
+    def to_dict(self):
+        item_dict = {
             "title": self.title,
             "arg": self.arg,
             "subtitle": self.subtitle,
-            "autocomplete": f" {self.autocomplete}",
+            "autocomplete": self.autocomplete,
             "valid": self.valid
         }
+        if self.mods:
+            item_dict["mods"] = {key.value: mod.to_dict() for key, mod in self.mods.items()}
+        return item_dict
 
 class Location:
     def __init__(self, title, directory):
@@ -170,7 +194,7 @@ def main():
         Command("search", search_command, command_type=CommandType.INLINE),
         Command("status", git_status, command_type=CommandType.NO_ACTION),
         Command("pull", git_pull, command_type=CommandType.RETURN),
-        Command("checkout", checkout_branch, command_type=CommandType.INLINE)
+        Command("checkout", list_git_branches, command_type=CommandType.INLINE)
     ]
 
     # Get the query input
@@ -199,7 +223,7 @@ def main():
             main_command = input.commands[0]
 
             if main_command.command_type == CommandType.INLINE:
-                items = list_git_branches()
+                items = main_command.action()
                 filtered_items = [item for item in items if input.unfinished_query in item.title.lower()]
 
                 output['items'] += [item.to_dict() for item in filtered_items]
