@@ -208,7 +208,7 @@ def create_result_item_for_location(loc):
         title=loc.title,
         arg=loc.directory,
         subtitle=loc.directory,
-        autocomplete=loc.title
+        autocomplete=f"{loc.title} "
     )
 
 def create_result_item_for_command(cmd, location):
