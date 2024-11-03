@@ -14,8 +14,12 @@ A customizable git interface for Alfred
 ![](images/commands.jpg)
 
 ### Check out branches
-* can even do ⌘c to copy to the branch name!
+* you can ⌘c to copy to the branch name!
+* you can also make checkout modifiers so that when you hold command ⌘ or alt ⌥ a different command is run 
 ![](images/checkout_branch.jpg)
 
 ### Create branches
 ![](images/create_branch.jpg)
+
+### Create your own commands
+![](images/custom_commands.jpg)
