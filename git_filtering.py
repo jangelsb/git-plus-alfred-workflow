@@ -138,9 +138,8 @@ def change_directory(location):
         os.chdir(location.directory)
 
 def run_command(command):
-    args = command.split()
     try:
-        result = subprocess.run(args, capture_output=True, text=True, check=True)
+        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
         return f"Error executing {command}: {e.stderr}"
