@@ -49,7 +49,8 @@ class Text:
         }
 
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None):
+        self.uid = uid if uid else title
         self.title = title
         self.arg = arg
         self.subtitle = subtitle
@@ -60,6 +61,7 @@ class ResultItem:
 
     def to_dict(self):
         item_dict = {
+            "uid": self.uid,
             "title": self.title,
             "arg": self.arg,
             "subtitle": self.subtitle,
@@ -164,7 +166,8 @@ def list_git_branches(location):
         value = branch.replace('origin/', '')
 
         if branch.startswith('*'):
-            value = branch.strip('*').strip()
+            branch = branch.strip('*').strip()
+            value = branch
             title = f"{value} [current]"
 
         command = checkout_command.replace('[input]', value)
@@ -175,7 +178,8 @@ def list_git_branches(location):
             arg=full_command,
             subtitle=f"runs `{command}`",  # ⌘c to copy
             text=Text(copy=value),
-            valid=True
+            valid=True,
+            uid=branch # no * but keeps name of branch `main`` and `origin/main`
         )
 
     try:
