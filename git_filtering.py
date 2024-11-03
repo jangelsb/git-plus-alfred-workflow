@@ -257,6 +257,11 @@ def generate_locations_from_yaml(yaml):
         lines = item.strip().splitlines()
         title = lines[0].split(": ")[1].strip('"')
         path = lines[1].split(": ")[1].strip()
+
+        if path.startswith('$'):
+            env_var_name = path[1:]
+            path = os.environ.get(env_var_name, path)
+
         locations.append(Location(title, path))
     
     return locations
