@@ -49,7 +49,7 @@ class ResultItem:
         self.title = title
         self.arg = arg
         self.subtitle = subtitle
-        self.autocomplete = autocomplete if autocomplete else f"{location.title} {title}" if location else title
+        self.autocomplete = autocomplete if autocomplete else f"{location.title} {title} " if location else title
         self.valid = valid
         self.mods = mods if mods else {}
         self.text = text
@@ -100,24 +100,25 @@ def tokenize(input_string, locations, commands):
     location_dict = {loc.title.lower(): loc for loc in locations}
     command_dict = {cmd.title.lower(): cmd for cmd in commands}
 
-    location = None
-    commands = []
-    recognized_parts = set() 
-
+    location, commands_list = None, []
+    matched_parts = set()
     tokens = re.split(r'\s+', input_string)
-    for part in tokens:
-        lower_part = part.lower()
-        if location is None and lower_part in location_dict:
-            location = location_dict[lower_part]
-            recognized_parts.add(part)
-        elif lower_part in command_dict:
-            commands.append(command_dict[lower_part])
-            recognized_parts.add(part)
 
-    unfinished_parts = [part for part in tokens if part.lower() not in recognized_parts]
+    # Try to match with combinations of tokens to check for spaced commands or locations
+    for start_index in range(len(tokens)):
+        for end_index in range(start_index + 1, len(tokens) + 1):
+            part = ' '.join(tokens[start_index:end_index]).lower()
+            if location is None and part in location_dict:
+                location = location_dict[part]
+                matched_parts.update(tokens[start_index:end_index])
+            elif part in command_dict:
+                commands_list.append(command_dict[part])
+                matched_parts.update(tokens[start_index:end_index])
+
+    unfinished_parts = [part for part in tokens if part not in matched_parts]
     unfinished = ' '.join(unfinished_parts).strip()
 
-    return TokenizationResult(location, commands, unfinished)
+    return TokenizationResult(location, commands_list, unfinished)
 
 def change_directory(location):
     # Change to the working directory from the environment variable
@@ -241,7 +242,7 @@ def create_result_item_for_command_with_param(cmd, location, param):
         arg=full_command,
         subtitle=subtitle,
         location=location,
-        valid=True
+        valid=param # if param has value
     )
 
 
@@ -258,8 +259,8 @@ def main():
         Command("pull", "git pull", command_type=CommandType.RETURN),
         Command("fetch", "git fetch -p", command_type=CommandType.RETURN),
         Command("push", "git push -u origin [input]", secondaryAction="git branch --show-current", command_type=CommandType.RETURN),
-        Command("checkout-branch", list_git_branches, subtitle="", command_type=CommandType.INLINE),
-        Command("create-branch", "git checkout -b [input]", subtitle="", command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
+        Command("checkout branch", list_git_branches, subtitle="", command_type=CommandType.INLINE),
+        Command("create branch", "git checkout -b [input]", subtitle="", command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
     ]
 
     # Get the query input
