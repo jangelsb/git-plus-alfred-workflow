@@ -295,7 +295,16 @@ def main():
 
     output = {"items": []}
 
-    if not input.location:
+    if len(locations) < 1:
+        yaml_text = """
+- title: Repo 1
+  path: \$env_var
+- title: Repo 2
+  path: /path/to/repo
+        """
+        output['items'] += [ResultItem(f"Invalid repo yaml", arg=f"pbcopy <<EOF{yaml_text}", subtitle=f"Press enter to copy a template", valid=True).to_dict()]
+
+    elif not input.location:
         filtered_locations = [loc for loc in locations if input.unfinished_query in loc.title.lower()]
         output['items'] += [create_result_item_for_location(loc).to_dict() for loc in filtered_locations]
     
@@ -324,7 +333,7 @@ def main():
             elif main_command.command_type == CommandType.NEEDS_PARAM:
                 output['items'] += [create_result_item_for_command_with_param(cmd=main_command, location=input.location, param=input.unfinished_query).to_dict()]
 
-    output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
+    # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
     print(json.dumps(output))
 
