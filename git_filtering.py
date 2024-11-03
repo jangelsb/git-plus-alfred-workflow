@@ -74,9 +74,10 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action, command_type=CommandType.SINGLE_ACTION):
+    def __init__(self, title, action, subtitle=None, command_type=CommandType.SINGLE_ACTION):
         self.title = title
         self.action = action  # Action is a callable function
+        self.subtitle = subtitle if subtitle else ""
         self.command_type = command_type
 
     
@@ -129,19 +130,15 @@ def git_command(args):
     except subprocess.CalledProcessError as e:
         return f"Error executing {' '.join(args)}: {e.stderr}"
 
-# Updated action handlers
-def list_command():
-    return "List command executed"
-
-def search_command():
-    return "Search command executed"
-
 def git_status(location):
     return git_command(["git", "status"])
 
 def git_pull(location):
     return f"git pull"
 
+
+def git_fetch(location):
+    return f"git fetch -p"
 
 
 def subtitle_for_command(command, location):
@@ -151,7 +148,7 @@ def subtitle_for_command(command, location):
     if command.command_type == CommandType.RETURN:
         return f"runs `{command.action(location)}`"
     
-    return ""
+    return command.subtitle
 
 
 def list_git_branches(location):
@@ -245,7 +242,8 @@ def main():
         # Command("search", search_command, command_type=CommandType.INLINE),
         Command("status", git_status, command_type=CommandType.NO_ACTION),
         Command("pull", git_pull, command_type=CommandType.RETURN),
-        Command("checkout", list_git_branches, command_type=CommandType.INLINE)
+        Command("fetch", git_fetch, command_type=CommandType.RETURN),
+        Command("checkout", list_git_branches, subtitle="", command_type=CommandType.INLINE)
     ]
 
     # Get the query input
@@ -264,7 +262,6 @@ def main():
     
     else:
         change_directory(input.location)
-        # query branches 
 
         if num_cmds == 0:
             filtered_commands = [cmd for cmd in commands if input.unfinished_query in cmd.title.lower()]
@@ -280,6 +277,9 @@ def main():
                 output['items'] += [item.to_dict() for item in filtered_items]
             
             elif main_command.command_type == CommandType.NO_ACTION:
+                output['items'] += [create_result_item_for_command(cmd=main_command, location=input.location).to_dict()]
+            
+            elif main_command.command_type == CommandType.RETURN:
                 output['items'] += [create_result_item_for_command(cmd=main_command, location=input.location).to_dict()]
 
     output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
