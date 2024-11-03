@@ -95,7 +95,7 @@ class Command:
 
     
     def is_valid(self):
-        self.command_type != CommandType.NO_ACTIO
+        self.command_type != CommandType.NO_ACTION
 
 class TokenizationResult:
     def __init__(self, location=None, commands=None, unfinished_query=None):
@@ -347,6 +347,44 @@ def add_modifiers(modifier_string, target_list):
     target_list.extend(modifiers)
 
 
+def create_commands_from_string(command_string):
+    def process_entry(entry_lines):
+        title = ''
+        action = ''
+        
+        for line in entry_lines:
+            if line.startswith('-'):
+                line = line[1:].strip()
+            
+            if line.startswith('title:'):
+                title = line.split(':', 1)[1].strip()
+            elif line.startswith('command:'):
+                action = line.split(':', 1)[1].strip()
+
+        return Command(title=title, action=action, command_type=CommandType.SINGLE_ACTION)
+
+    lines = command_string.strip().splitlines()
+    commands = []
+    entry = []
+
+    for line in lines:
+        line = line.strip()
+        if line.startswith('-') and entry:
+            # Process the previous entry
+            commands.append(process_entry(entry))
+            entry = [line]  # Start new entry
+        else:
+            if line:  # Skip empty lines
+                entry.append(line)
+    
+    # Process the last entry
+    if entry:
+        commands.append(process_entry(entry))
+
+    return commands
+
+
+
 def main():
     input_repo_list_yaml = os.getenv('input_repo_list')
     input_status_command = os.getenv('input_status_command')
@@ -355,7 +393,8 @@ def main():
     input_push_command = os.getenv('input_push_command')
     input_create_branch_command = os.getenv('input_create_branch_command')
     input_checkout_command_modifiers = os.getenv('input_checkout_command_modifiers')
-
+    input_additional_actions = os.getenv('input_additional_actions')
+    
     add_modifiers(input_checkout_command_modifiers, checkout_modifiers_list)
 
     locations = generate_locations_from_yaml(input_repo_list_yaml)
@@ -368,6 +407,8 @@ def main():
         Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM),
         Command("status", input_status_command, command_type=CommandType.NO_ACTION),
     ]
+
+    commands.extend(create_commands_from_string(input_additional_actions))
 
     # Get the query input
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
