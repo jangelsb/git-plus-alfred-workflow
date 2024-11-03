@@ -159,6 +159,7 @@ def list_git_branches(location):
     def create_result_item_for_branch(branch, location):
         checkout_command = f"git checkout [input]"
 
+        branch = branch.replace('remotes/', '')
         title = branch
         value = branch.replace('origin/', '')
 
@@ -178,28 +179,24 @@ def list_git_branches(location):
         )
 
     try:
-
-        checkout_command = f"git checkout [input]"
-        full_command_command = f"cd {location.directory}; {checkout_command}"
-
         # Run 'git branch --list' to get all local branches
-        local_result = subprocess.run(['git', 'branch', '--list'], capture_output=True, text=True, check=True)
+        local_result = subprocess.run(['git', 'branch', '-a'], capture_output=True, text=True, check=True)
         local_branches = local_result.stdout.splitlines()
         
         # Run 'git branch -r' to get all remote branches
-        remote_result = subprocess.run(['git', 'branch', '-r'], capture_output=True, text=True, check=True)
-        remote_branches = remote_result.stdout.splitlines()
+        # remote_result = subprocess.run(['git', 'branch', '-r'], capture_output=True, text=True, check=True)
+        # remote_branches = remote_result.stdout.splitlines()
 
         # Clean up the branch names
         local_branches = [branch.strip() for branch in local_branches]
-        remote_branches = [branch.strip() for branch in remote_branches]
+        # remote_branches = [branch.strip() for branch in remote_branches]
 
         items = []
         for branch in local_branches:
             items.append(create_result_item_for_branch(branch, location=location))
 
-        for branch in remote_branches:
-            items.append(create_result_item_for_branch(branch, location=location))
+        # for branch in remote_branches:
+        #     items.append(create_result_item_for_branch(branch, location=location))
 
         return items
 
