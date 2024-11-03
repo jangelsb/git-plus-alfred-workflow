@@ -123,30 +123,22 @@ def change_directory(location):
     if location:
         os.chdir(location.directory)
 
-def git_command(args):
+def run_command(command):
+    args = command.split()
     try:
         result = subprocess.run(args, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
-        return f"Error executing {' '.join(args)}: {e.stderr}"
+        return f"Error executing {command}: {e.stderr}"
 
-def git_status(location):
-    return git_command(["git", "status"])
-
-def git_pull(location):
-    return f"git pull"
-
-
-def git_fetch(location):
-    return f"git fetch -p"
 
 
 def subtitle_for_command(command, location):
     if command.command_type == CommandType.NO_ACTION:
-        return command.action(location)
+        return run_command(command.action)
     
     if command.command_type == CommandType.RETURN:
-        return f"runs `{command.action(location)}`"
+        return f"runs `{command.action}`"
     
     return command.subtitle
 
@@ -218,7 +210,7 @@ def create_result_item_for_command(cmd, location):
     subtitle = subtitle_for_command(cmd, location)
 
     if cmd.command_type == CommandType.RETURN:
-        full_command = f"cd {location.directory}; {cmd.action(location)}"
+        full_command = f"cd {location.directory}; {cmd.action}"
         return ResultItem(title, arg=full_command, subtitle=subtitle, valid=True, location=location)
 
     return ResultItem(
@@ -238,11 +230,10 @@ def main():
     ]
 
     commands = [
-        # Command("list", list_command, command_type=CommandType.NO_ACTION),
-        # Command("search", search_command, command_type=CommandType.INLINE),
-        Command("status", git_status, command_type=CommandType.NO_ACTION),
-        Command("pull", git_pull, command_type=CommandType.RETURN),
-        Command("fetch", git_fetch, command_type=CommandType.RETURN),
+        Command("status", "git status", command_type=CommandType.NO_ACTION),
+        Command("pull", "git pull", command_type=CommandType.RETURN),
+        Command("fetch", "git fetch -p", command_type=CommandType.RETURN),
+        Command("push", "git push -u origin $(git branch --show-current)", command_type=CommandType.RETURN),
         Command("checkout", list_git_branches, subtitle="", command_type=CommandType.INLINE)
     ]
 
