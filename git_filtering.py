@@ -1,3 +1,8 @@
+# /bin/bash
+# python3 /Users/josh/Developer/alfred/gitx/git_filtering.py "$1"
+# 
+# how to easily run from alfred 👆
+
 import sys
 import json
 import os
