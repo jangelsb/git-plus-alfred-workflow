@@ -268,122 +268,68 @@ def create_result_item_for_command_with_param(cmd, location, param):
         valid=param # if param has value
     )
 
-def generate_locations_from_yaml(yaml):
-    data = yaml.strip().split("- ")[1:]
-    locations = []
-
-    for item in data:
-        lines = item.strip().splitlines()
-        title = lines[0].split(": ")[1].strip('"')
-        path = lines[1].split(": ")[1].strip()
-
+def generate_locations_from_yaml(yaml_string):
+    def location_entry_processor(entry):
+        path = entry['path']
         if path.startswith('$'):
             env_var_name = path[1:]
             path = os.environ.get(env_var_name, path)
+        return Location(title=entry['title'], directory=path)
 
-        locations.append(Location(title, path))
-    
-    return locations
+    keys = {'title:': 'title', 'path:': 'path'}
+    return process_entries(yaml_string, keys, location_entry_processor)
 
-def create_modifiers_from_string(modifier_string):
-    def process_entry(entry_lines):
-        title = ''
-        mod_key = None
-        command = ''
-
-        for line in entry_lines:
-            if line.startswith('-'):
-                line = line[1:].strip() 
-            
-            if line.startswith('title:'):
-                title = line.split(':', 1)[1].strip()
-            elif line.startswith('mod:'):
-                mod_str = line.split(':', 1)[1].strip()
-                try:
-                    mod_key = ModifierKey(mod_str)
-                except ValueError:
-                    mod_key = None
-
-            elif line.startswith('command:'):
-                command = line.split(':', 1)[1].strip()
-
-        if mod_key is not None:
-            return Modifier(arg=command, subtitle=title, valid=True, key=mod_key)
-        else:
-            raise ValueError("Mod key is missing or invalid")
-
-    lines = modifier_string.strip().splitlines()
-    modifiers = []
-    entry = []
-
-    for line in lines:
-        line = line.strip()
-        if line.startswith('-') and entry:  # Detect start of a new entry
-            try:
-                # Process the previous entry
-                modifiers.append(process_entry(entry))
-            except Exception as e:
-                # print(f"Error processing entry: {e}")
-                pass
-
-            entry = [line]  # Start new entry
-        else:
-            if line:  # Skip empty lines
-                entry.append(line)
-    
-    # Process the last entry
-    if entry:
-        try:
-            modifiers.append(process_entry(entry))
-        except Exception as e:
-            pass
-            # print(f"Error processing entry: {e}")
-
-    return modifiers
-
-
-def add_modifiers(modifier_string, target_list):
-    modifiers = create_modifiers_from_string(modifier_string)
-    target_list.extend(modifiers)
-
-
-def create_commands_from_string(command_string):
-    def process_entry(entry_lines):
-        title = ''
-        action = ''
-        
+def process_entries(input_string, keys, entry_processor):
+    def parse_entry(entry_lines):
+        entry = {key: '' for key in keys}
         for line in entry_lines:
             if line.startswith('-'):
                 line = line[1:].strip()
-            
-            if line.startswith('title:'):
-                title = line.split(':', 1)[1].strip()
-            elif line.startswith('command:'):
-                action = line.split(':', 1)[1].strip()
+            for key, variable_name in keys.items():
+                if line.startswith(key):
+                    entry[variable_name] = line.split(':', 1)[1].strip()
+                    break
+        return entry_processor(entry)
 
-        return Command(title=title, action=action, command_type=CommandType.SINGLE_ACTION)
-
-    lines = command_string.strip().splitlines()
-    commands = []
+    lines = input_string.strip().splitlines()
+    entries = []
     entry = []
 
     for line in lines:
         line = line.strip()
         if line.startswith('-') and entry:
-            # Process the previous entry
-            commands.append(process_entry(entry))
-            entry = [line]  # Start new entry
+            entries.append(parse_entry(entry))
+            entry = [line]
         else:
-            if line:  # Skip empty lines
+            if line:
                 entry.append(line)
-    
-    # Process the last entry
+
     if entry:
-        commands.append(process_entry(entry))
+        entries.append(parse_entry(entry))
 
-    return commands
+    return entries
 
+def create_modifiers_from_string(modifier_string):
+    def modifier_entry_processor(entry):
+        try:
+            mod_key = ModifierKey(entry['mod_key_str'])
+            return Modifier(arg=entry['command'], subtitle=entry['title'], valid=True, key=mod_key)
+        except ValueError:
+            raise ValueError("Mod key is missing or invalid")
 
+    keys = {'title:': 'title', 'mod:': 'mod_key_str', 'command:': 'command'}
+    return process_entries(modifier_string, keys, modifier_entry_processor)
+
+def create_commands_from_string(command_string):
+    def command_entry_processor(entry):
+        return Command(title=entry['title'], action=entry['action'], command_type=CommandType.SINGLE_ACTION)
+
+    keys = {'title:': 'title', 'command:': 'action'}
+    return process_entries(command_string, keys, command_entry_processor)
+
+def add_modifiers(modifier_string, target_list):
+    modifiers = create_modifiers_from_string(modifier_string)
+    target_list.extend(modifiers)
 
 def main():
     input_repo_list_yaml = os.getenv('input_repo_list')
