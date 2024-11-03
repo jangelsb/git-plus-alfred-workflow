@@ -153,7 +153,7 @@ def subtitle_for_command(command, location):
 def list_git_branches(location):
 
     def create_result_item_for_branch(branch, location):
-        checkout_command = f"git checkout [input]"
+        checkout_command = os.getenv('input_checkout_command') #f"git checkout [input]"
 
         branch = branch.replace('remotes/', '')
         title = branch
@@ -245,22 +245,35 @@ def create_result_item_for_command_with_param(cmd, location, param):
         valid=param # if param has value
     )
 
+def generate_locations_from_yaml(yaml):
+    data = yaml.strip().split("- ")[1:]
+    locations = []
+
+    for item in data:
+        lines = item.strip().splitlines()
+        title = lines[0].split(": ")[1].strip('"')
+        path = lines[1].split(": ")[1].strip()
+        locations.append(Location(title, path))
+    
+    return locations
 
 def main():
-    # Prepare locations and commands
-    locations = [
-        Location("timer", "/Users/josh/Developer/ios/next.timer"),
-        Location("calc", "/Users/josh/Developer/ios/next.calc"),
-        Location("website", "/Users/josh/Developer/jangelsb.github.io")
-    ]
+    input_repo_list_yaml = os.getenv('input_repo_list')
+    input_status_command = os.getenv('input_status_command')
+    input_pull_command = os.getenv('input_pull_command')
+    input_fetch_command = os.getenv('input_fetch_command')
+    input_push_command = os.getenv('input_push_command')
+    input_create_branch_command = os.getenv('input_create_branch_command')
 
+    locations = generate_locations_from_yaml(input_repo_list_yaml)
+    
     commands = [
-        Command("status", "git status", command_type=CommandType.NO_ACTION),
-        Command("pull", "git pull", command_type=CommandType.RETURN),
-        Command("fetch", "git fetch -p", command_type=CommandType.RETURN),
-        Command("push", "git push -u origin [input]", secondaryAction="git branch --show-current", command_type=CommandType.RETURN),
+        Command("status", input_status_command, command_type=CommandType.NO_ACTION),
+        Command("pull", input_pull_command, command_type=CommandType.RETURN),
+        Command("fetch", input_fetch_command, command_type=CommandType.RETURN),
+        Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.RETURN),
         Command("checkout branch", list_git_branches, subtitle="", command_type=CommandType.INLINE),
-        Command("create branch", "git checkout -b [input]", subtitle="", command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
+        Command("create branch", input_create_branch_command, subtitle="", command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
     ]
 
     # Get the query input
