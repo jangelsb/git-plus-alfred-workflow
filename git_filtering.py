@@ -277,12 +277,12 @@ def main():
     locations = generate_locations_from_yaml(input_repo_list_yaml)
     
     commands = [
-        Command("status", input_status_command, command_type=CommandType.NO_ACTION),
+        Command("checkout_branch", list_git_branches, subtitle="", command_type=CommandType.INLINE),
+        Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION),
         Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION),
         Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION),
-        Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION),
-        Command("checkout branch", list_git_branches, subtitle="", command_type=CommandType.INLINE),
-        Command("create branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM)
+        Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM),
+        Command("status", input_status_command, command_type=CommandType.NO_ACTION),
     ]
 
     # Get the query input
