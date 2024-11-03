@@ -55,7 +55,7 @@ class Text:
         }
 
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None):
         self.uid = uid if uid else title
         self.title = title
         self.arg = arg
@@ -64,6 +64,7 @@ class ResultItem:
         self.valid = valid
         self.mods = mods if mods else {}
         self.text = text
+        self.icon_path = icon_path
 
     def to_dict(self):
         item_dict = {
@@ -78,6 +79,13 @@ class ResultItem:
             item_dict["mods"] = {mod.key.value: mod.to_dict()[mod.key.value] for mod in self.mods if mod.key is not None}
         if self.text:
             item_dict["text"] = self.text.to_dict()
+        if self.icon_path:
+            dict = {
+                # "type": "fileicon",
+                "path": self.icon_path
+            }
+            item_dict["icon"] = dict
+
         return item_dict
 
 class Location:
@@ -86,14 +94,14 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None):
         self.title = title
         self.action = action  # Action is a callable function or a string
         self.secondaryAction = secondaryAction
         self.subtitle = subtitle if subtitle else ""
         self.command_type = command_type
+        self.icon_path = icon_path
 
-    
     def is_valid(self):
         self.command_type != CommandType.NO_ACTION
 
@@ -166,6 +174,7 @@ def list_git_branches(location):
     def create_result_item_for_branch(branch, location):
         checkout_command = os.getenv('input_checkout_command') #f"git checkout [input]"
 
+        is_remote = branch.startswith('remotes/')
         branch = branch.replace('remotes/', '')
         title = branch
         value = branch.replace('origin/', '')
@@ -193,7 +202,8 @@ def list_git_branches(location):
             text=Text(copy=value),
             valid=True,
             uid=branch, # no * but keeps name of branch `main`` and `origin/main`
-            mods=modifier_list
+            mods=modifier_list,
+            icon_path= "globe.png" if is_remote else "fork.png"
         )
 
     try:
@@ -230,7 +240,8 @@ def create_result_item_for_location(loc):
         title=loc.title,
         arg=loc.directory,
         subtitle=loc.directory,
-        autocomplete=f"{loc.title} "
+        autocomplete=f"{loc.title} ",
+        icon_path="folder3.png"
     )
 
 def create_result_item_for_command(cmd, location):
@@ -240,13 +251,14 @@ def create_result_item_for_command(cmd, location):
 
     if cmd.command_type == CommandType.SINGLE_ACTION:
         full_command = f"cd {location.directory}; {cmd.action}"
-        return ResultItem(title, arg=full_command, subtitle=subtitle, valid=True, location=location)
+        return ResultItem(title, arg=full_command, subtitle=subtitle, valid=True, location=location, icon_path=cmd.icon_path)
 
     return ResultItem(
         title,
         arg=f"{cmd.title}",
         subtitle=subtitle,
-        location=location
+        location=location,
+        icon_path=cmd.icon_path
     )
 
 
@@ -264,7 +276,8 @@ def create_result_item_for_command_with_param(cmd, location, param):
         arg=full_command,
         subtitle=subtitle,
         location=location,
-        valid=param # if param has value
+        valid=param, # if param has value,
+        icon_path=cmd.icon_path
     )
 
 def generate_locations_from_yaml(yaml_string):
@@ -321,7 +334,7 @@ def create_modifiers_from_string(modifier_string):
 
 def create_commands_from_string(command_string):
     def command_entry_processor(entry):
-        return Command(title=entry['title'], action=entry['action'], command_type=CommandType.SINGLE_ACTION)
+        return Command(title=entry['title'], action=entry['action'], command_type=CommandType.SINGLE_ACTION, icon_path="action.png")
 
     keys = {'title:': 'title', 'command:': 'action'}
     return process_entries(command_string, keys, command_entry_processor)
@@ -345,11 +358,11 @@ def main():
     locations = generate_locations_from_yaml(input_repo_list_yaml)
     
     commands = [
-        Command("checkout_branch", list_git_branches, subtitle="", command_type=CommandType.INLINE),
-        Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION),
-        Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION),
-        Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION),
-        Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM),
+        Command("checkout_branch", list_git_branches, subtitle="", command_type=CommandType.INLINE, icon_path='fork.png'),
+        Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION, icon_path='up.big.png'),
+        Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.big.png'),
+        Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.small.png'),
+        Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM, icon_path='fork.plus.png'),
         Command("status", input_status_command, command_type=CommandType.NO_ACTION),
     ]
 
