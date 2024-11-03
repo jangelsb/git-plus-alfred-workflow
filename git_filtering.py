@@ -74,9 +74,10 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action, subtitle=None, command_type=CommandType.SINGLE_ACTION):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION):
         self.title = title
-        self.action = action  # Action is a callable function
+        self.action = action  # Action is a callable function or a string
+        self.secondaryAction = secondaryAction
         self.subtitle = subtitle if subtitle else ""
         self.command_type = command_type
 
@@ -138,7 +139,12 @@ def subtitle_for_command(command, location):
         return run_command(command.action)
     
     if command.command_type == CommandType.RETURN:
-        return f"runs `{command.action}`"
+        action = command.action
+        if command.secondaryAction:
+            value = run_command(command.secondaryAction)
+            action = action.replace("[input]", value)
+
+        return f"runs `{action}`"
     
     return command.subtitle
 
@@ -221,6 +227,24 @@ def create_result_item_for_command(cmd, location):
     )
 
 
+def create_result_item_for_command_with_param(cmd, location, param):
+
+    title = cmd.title
+
+    action = cmd.action.replace('[input]', param.replace(' ', '_'))
+    subtitle = f"runs `{action}`"
+
+    full_command = f"cd {location.directory}; {action}"
+
+    return ResultItem(
+        title,
+        arg=full_command,
+        subtitle=subtitle,
+        location=location,
+        valid=True
+    )
+
+
 def main():
     # Prepare locations and commands
     locations = [
@@ -233,8 +257,9 @@ def main():
         Command("status", "git status", command_type=CommandType.NO_ACTION),
         Command("pull", "git pull", command_type=CommandType.RETURN),
         Command("fetch", "git fetch -p", command_type=CommandType.RETURN),
-        Command("push", "git push -u origin $(git branch --show-current)", command_type=CommandType.RETURN),
-        Command("checkout", list_git_branches, subtitle="", command_type=CommandType.INLINE)
+        Command("push", "git push -u origin [input]", secondaryAction="git branch --show-current", command_type=CommandType.RETURN),
+        Command("checkout-branch", list_git_branches, subtitle="", command_type=CommandType.INLINE),
+        Command("create-branch", "git checkout -b [input]", subtitle="", command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
     ]
 
     # Get the query input
@@ -272,6 +297,9 @@ def main():
             
             elif main_command.command_type == CommandType.RETURN:
                 output['items'] += [create_result_item_for_command(cmd=main_command, location=input.location).to_dict()]
+
+            elif main_command.command_type == CommandType.SINGLE_ACTION_WITH_PARAM:
+                output['items'] += [create_result_item_for_command_with_param(cmd=main_command, location=input.location, param=input.unfinished_query).to_dict()]
 
     output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
