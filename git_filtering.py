@@ -11,11 +11,10 @@ import re
 from enum import Enum
 
 class CommandType(Enum):
-    SINGLE_ACTION = 1   # Press enter, command runs and closes
     NO_ACTION = 2       # Shows information inline without further action
     INLINE = 3          # Shows a list after running, then requires another selection
-    RETURN = 4          # Runs the command, shows running item, and returns to command list
-    SINGLE_ACTION_WITH_PARAM = 5  # Requires a parameter, then runs the command
+    SINGLE_ACTION = 4   # Press enter, command runs and closes
+    NEEDS_PARAM = 5  # Requires a parameter, then runs the command
 
 class ModifierKey(Enum):
     CMD = "cmd"
@@ -144,7 +143,7 @@ def subtitle_for_command(command, location):
     if command.command_type == CommandType.NO_ACTION:
         return run_command(command.action)
     
-    if command.command_type == CommandType.RETURN:
+    if command.command_type == CommandType.SINGLE_ACTION:
         action = command.action
         if command.secondaryAction:
             value = run_command(command.secondaryAction)
@@ -221,7 +220,7 @@ def create_result_item_for_command(cmd, location):
     title = cmd.title
     subtitle = subtitle_for_command(cmd, location)
 
-    if cmd.command_type == CommandType.RETURN:
+    if cmd.command_type == CommandType.SINGLE_ACTION:
         full_command = f"cd {location.directory}; {cmd.action}"
         return ResultItem(title, arg=full_command, subtitle=subtitle, valid=True, location=location)
 
@@ -274,11 +273,11 @@ def main():
     
     commands = [
         Command("status", input_status_command, command_type=CommandType.NO_ACTION),
-        Command("pull", input_pull_command, command_type=CommandType.RETURN),
-        Command("fetch", input_fetch_command, command_type=CommandType.RETURN),
-        Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.RETURN),
+        Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION),
+        Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION),
+        Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION),
         Command("checkout branch", list_git_branches, subtitle="", command_type=CommandType.INLINE),
-        Command("create branch", input_create_branch_command, subtitle="", command_type=CommandType.SINGLE_ACTION_WITH_PARAM)
+        Command("create branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM)
     ]
 
     # Get the query input
@@ -314,10 +313,10 @@ def main():
             elif main_command.command_type == CommandType.NO_ACTION:
                 output['items'] += [create_result_item_for_command(cmd=main_command, location=input.location).to_dict()]
             
-            elif main_command.command_type == CommandType.RETURN:
+            elif main_command.command_type == CommandType.SINGLE_ACTION:
                 output['items'] += [create_result_item_for_command(cmd=main_command, location=input.location).to_dict()]
 
-            elif main_command.command_type == CommandType.SINGLE_ACTION_WITH_PARAM:
+            elif main_command.command_type == CommandType.NEEDS_PARAM:
                 output['items'] += [create_result_item_for_command_with_param(cmd=main_command, location=input.location, param=input.unfinished_query).to_dict()]
 
     output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
