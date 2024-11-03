@@ -4,6 +4,9 @@ A customizable git interface for Alfred
 
 ## Usage
 
+### Fully configurable
+![](images/config.jpg)
+
 ### Search your repos
 ![](images/filter_projects.jpg)
 
