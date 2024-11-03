@@ -136,26 +136,51 @@ def list_command():
 def search_command():
     return "Search command executed"
 
-def git_status():
+def git_status(location):
     return git_command(["git", "status"])
 
 def git_pull(location):
-    # return git_command(["git", "pull"])
-    return f"cd {location.directory}; git pull;"
+    return f"git pull"
 
-# def checkout_branch(branch):
-#     return git_command(["git", "checkout", branch])
 
-def subtitle_for_command(command):
+
+def subtitle_for_command(command, location):
     if command.command_type == CommandType.NO_ACTION:
-        return command.action()
+        return command.action(location)
+    
+    if command.command_type == CommandType.RETURN:
+        return f"runs `{command.action(location)}`"
+    
     return ""
 
 
 def list_git_branches(location):
+
+    def create_result_item_for_branch(branch, location):
+        checkout_command = f"git checkout [input]"
+
+        title = branch
+        value = branch.replace('origin/', '')
+
+        if branch.startswith('*'):
+            value = branch.strip('*').strip()
+            title = f"{value} [current]"
+
+        command = checkout_command.replace('[input]', value)
+        full_command= f"cd {location.directory}; {command}"
+
+        return ResultItem(
+            title=title,
+            arg=full_command,
+            subtitle=f"runs `{command}`",  # ⌘c to copy
+            text=Text(copy=value),
+            valid=True
+        )
+
     try:
 
-        checkout_command = f"cd {location.directory}; git checkout [input]"
+        checkout_command = f"git checkout [input]"
+        full_command_command = f"cd {location.directory}; {checkout_command}"
 
         # Run 'git branch --list' to get all local branches
         local_result = subprocess.run(['git', 'branch', '--list'], capture_output=True, text=True, check=True)
@@ -168,27 +193,13 @@ def list_git_branches(location):
         # Clean up the branch names
         local_branches = [branch.strip() for branch in local_branches]
         remote_branches = [branch.strip() for branch in remote_branches]
-        current_branch = next((branch for branch in local_branches if branch.startswith('*')), None)
 
         items = []
         for branch in local_branches:
-            title = branch 
-            value = branch
-            if branch.startswith('*'):
-                value = branch.strip('* ')
-                title = f"{value} -- current"
-
-            arg = checkout_command.replace('[input]', value)
-            items.append(ResultItem(title=title, arg=arg, subtitle=f"checkout out`{value}`; ⌘c to copy", text=Text(copy=value), valid=True))
+            items.append(create_result_item_for_branch(branch, location=location))
 
         for branch in remote_branches:
-            title = branch
-            value = branch.replace('origin/', '')
-            
-            arg = checkout_command.replace('[input]', value)
-            items.append(ResultItem(title=f"{title}", arg=arg, subtitle=f"REMOTE; checkout out `{value}`; ⌘c to copy", text=Text(copy=value), valid=True))
-
-        # items.append(AlfredItem(title="fetch --prune", value="git fetch --prune", command="git"))
+            items.append(create_result_item_for_branch(branch, location=location))
 
         return items
 
@@ -210,10 +221,11 @@ def create_result_item_for_location(loc):
 def create_result_item_for_command(cmd, location):
 
     title = cmd.title
-    subtitle = subtitle_for_command(cmd)
+    subtitle = subtitle_for_command(cmd, location)
 
     if cmd.command_type == CommandType.RETURN:
-        return ResultItem(title, arg=cmd.action(location), subtitle=subtitle, valid=True, location=location)
+        full_command = f"cd {location.directory}; {cmd.action(location)}"
+        return ResultItem(title, arg=full_command, subtitle=subtitle, valid=True, location=location)
 
     return ResultItem(
         title,
