@@ -10,6 +10,8 @@ import subprocess
 import re
 from enum import Enum
 
+checkout_modifiers_list = []
+
 class CommandType(Enum):
     NO_ACTION = 2       # Shows information inline without further action
     INLINE = 3          # Shows a list after running, then requires another selection
@@ -25,16 +27,20 @@ class ModifierKey(Enum):
     CMD_ALT = "cmd+alt"
 
 class Modifier:
-    def __init__(self, arg, subtitle='', valid=False):
+    def __init__(self, arg, subtitle='', valid=False, key=None):
         self.arg = arg
         self.subtitle = subtitle
         self.valid = valid
+        self.key = key  # New attribute to hold a ModifierKey
 
     def to_dict(self):
+        key_name = self.key.value if self.key else 'unknown'
         return {
-            "arg": self.arg,
-            "subtitle": self.subtitle,
-            "valid": self.valid
+            key_name: {
+                "valid": self.valid,
+                "arg": self.arg,
+                "subtitle": self.subtitle
+            }
         }
 
 class Text:
@@ -69,7 +75,7 @@ class ResultItem:
             "valid": self.valid
         }
         if self.mods:
-            item_dict["mods"] = {key.value: mod.to_dict() for key, mod in self.mods.items()}
+            item_dict["mods"] = {mod.key.value: mod.to_dict()[mod.key.value] for mod in self.mods if mod.key is not None}
         if self.text:
             item_dict["text"] = self.text.to_dict()
         return item_dict
@@ -173,13 +179,22 @@ def list_git_branches(location):
         command = checkout_command.replace('[input]', value)
         full_command= f"cd {location.directory}; {command}"
 
+        modifier_list = [
+            Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', value)}",
+                    subtitle=modifier.subtitle,
+                    valid=modifier.valid,
+                    key=modifier.key)
+            for modifier in checkout_modifiers_list
+        ]
+
         return ResultItem(
             title=title,
             arg=full_command,
             subtitle=f"runs `{command}`",  # ⌘c to copy
             text=Text(copy=value),
             valid=True,
-            uid=branch # no * but keeps name of branch `main`` and `origin/main`
+            uid=branch, # no * but keeps name of branch `main`` and `origin/main`
+            mods=modifier_list
         )
 
     try:
@@ -270,6 +285,68 @@ def generate_locations_from_yaml(yaml):
     
     return locations
 
+def create_modifiers_from_string(modifier_string):
+    def process_entry(entry_lines):
+        title = ''
+        mod_key = None
+        command = ''
+
+        for line in entry_lines:
+            if line.startswith('-'):
+                line = line[1:].strip() 
+            
+            if line.startswith('title:'):
+                title = line.split(':', 1)[1].strip()
+            elif line.startswith('mod:'):
+                mod_str = line.split(':', 1)[1].strip()
+                try:
+                    mod_key = ModifierKey(mod_str)
+                except ValueError:
+                    mod_key = None
+
+            elif line.startswith('command:'):
+                command = line.split(':', 1)[1].strip()
+
+        if mod_key is not None:
+            return Modifier(arg=command, subtitle=title, valid=True, key=mod_key)
+        else:
+            raise ValueError("Mod key is missing or invalid")
+
+    lines = modifier_string.strip().splitlines()
+    modifiers = []
+    entry = []
+
+    for line in lines:
+        line = line.strip()
+        if line.startswith('-') and entry:  # Detect start of a new entry
+            try:
+                # Process the previous entry
+                modifiers.append(process_entry(entry))
+            except Exception as e:
+                # print(f"Error processing entry: {e}")
+                pass
+
+            entry = [line]  # Start new entry
+        else:
+            if line:  # Skip empty lines
+                entry.append(line)
+    
+    # Process the last entry
+    if entry:
+        try:
+            modifiers.append(process_entry(entry))
+        except Exception as e:
+            pass
+            # print(f"Error processing entry: {e}")
+
+    return modifiers
+
+
+def add_modifiers(modifier_string, target_list):
+    modifiers = create_modifiers_from_string(modifier_string)
+    target_list.extend(modifiers)
+
+
 def main():
     input_repo_list_yaml = os.getenv('input_repo_list')
     input_status_command = os.getenv('input_status_command')
@@ -277,6 +354,9 @@ def main():
     input_fetch_command = os.getenv('input_fetch_command')
     input_push_command = os.getenv('input_push_command')
     input_create_branch_command = os.getenv('input_create_branch_command')
+    input_checkout_command_modifiers = os.getenv('input_checkout_command_modifiers')
+
+    add_modifiers(input_checkout_command_modifiers, checkout_modifiers_list)
 
     locations = generate_locations_from_yaml(input_repo_list_yaml)
     
