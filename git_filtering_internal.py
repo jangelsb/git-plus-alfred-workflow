@@ -288,7 +288,7 @@ def create_result_item_for_command_with_param(cmd, location, param):
     title = cmd.title
 
     action = cmd.action.replace('[input]', param.replace(' ', '_'))
-    subtitle = f"runs `{action}`"
+    subtitle = f"{param == True} runs `{action}`"
 
     full_command = f"cd {location.directory}; {action}"
 
@@ -297,7 +297,7 @@ def create_result_item_for_command_with_param(cmd, location, param):
         arg=full_command,
         subtitle=subtitle,
         location=location,
-        valid=param, # if param has value,
+        valid=bool(param), # if param has value,
         mods=cmd.mods,
         icon_path=cmd.icon_path
     )
