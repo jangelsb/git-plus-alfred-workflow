@@ -125,11 +125,9 @@ python3 git_filtering_internal.py "$1"</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>source "$input_var_profile_path"
+				<string>full_command="source $input_var_profile_path; $1"
 
-# python3 run_command.py "$1"
-
-eval eval $1</string>
+eval "$full_command"</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
