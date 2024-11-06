@@ -296,53 +296,28 @@ def generate_locations_from_yaml(yaml_string):
     yaml_data = yaml.safe_load(yaml_string)
     return [location_entry_processor(entry) for entry in yaml_data]
 
-def process_entries(input_string, keys, entry_processor):
-    def parse_entry(entry_lines):
-        entry = {key: '' for key in keys}
-        for line in entry_lines:
-            if line.startswith('-'):
-                line = line[1:].strip()
-            for key, variable_name in keys.items():
-                if line.startswith(key):
-                    entry[variable_name] = line.split(':', 1)[1].strip()
-                    break
-        return entry_processor(entry)
-
-    lines = input_string.strip().splitlines()
-    entries = []
-    entry = []
-
-    for line in lines:
-        line = line.strip()
-        if line.startswith('-') and entry:
-            entries.append(parse_entry(entry))
-            entry = [line]
-        else:
-            if line:
-                entry.append(line)
-
-    if entry:
-        entries.append(parse_entry(entry))
-
-    return entries
-
 def create_modifiers_from_string(modifier_string):
     def modifier_entry_processor(entry):
         try:
-            mod_key = ModifierKey(entry['mod_key_str'])
+            mod_key = ModifierKey(entry['mod'])
             return Modifier(arg=entry['command'], subtitle=entry['title'], valid=True, key=mod_key)
         except ValueError:
             raise ValueError("Mod key is missing or invalid")
 
-    keys = {'title:': 'title', 'mod:': 'mod_key_str', 'command:': 'command'}
-    return process_entries(modifier_string, keys, modifier_entry_processor)
+    yaml_data = yaml.safe_load(modifier_string)  # Parse the YAML content
+    return [modifier_entry_processor(entry) for entry in yaml_data]
 
 def create_commands_from_string(command_string):
     def command_entry_processor(entry):
-        return Command(title=entry['title'], action=entry['action'], command_type=CommandType.SINGLE_ACTION, icon_path="action.png")
+        return Command(
+            title=entry['title'],
+            action=entry['command'],
+            command_type=CommandType.SINGLE_ACTION,
+            icon_path="action.png"
+        )
 
-    keys = {'title:': 'title', 'command:': 'action'}
-    return process_entries(command_string, keys, command_entry_processor)
+    yaml_data = yaml.safe_load(command_string)  # Parse the YAML content
+    return [command_entry_processor(entry) for entry in yaml_data]
 
 def add_modifiers(modifier_string, target_list):
     modifiers = create_modifiers_from_string(modifier_string)
