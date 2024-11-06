@@ -95,14 +95,17 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None):
         self.title = title
         self.action = action  # Action is a callable function or a string
         self.secondaryAction = secondaryAction
         self.subtitle = subtitle if subtitle else ""
         self.command_type = command_type
         self.icon_path = icon_path
-
+        self.mods = mods if mods else []  # A list to store Modifier objects
+        self.values = values if values else []  # Optional list to store values
+        self.values_command = values_command  # Optional command related to values
+    
     def is_valid(self):
         self.command_type != CommandType.NO_ACTION
 
@@ -252,13 +255,22 @@ def create_result_item_for_command(cmd, location):
 
     if cmd.command_type == CommandType.SINGLE_ACTION:
         full_command = f"cd {location.directory}; {cmd.action}"
-        return ResultItem(title, arg=full_command, subtitle=subtitle, valid=True, location=location, icon_path=cmd.icon_path)
+        return ResultItem(
+            title,
+            arg=full_command,
+            subtitle=subtitle,
+            valid=True,
+            location=location,
+            mods=cmd.mods,
+            icon_path=cmd.icon_path
+            )
 
     return ResultItem(
         title,
         arg=f"{cmd.title}",
         subtitle=subtitle,
         location=location,
+        mods=cmd.mods,
         icon_path=cmd.icon_path
     )
 
@@ -278,6 +290,7 @@ def create_result_item_for_command_with_param(cmd, location, param):
         subtitle=subtitle,
         location=location,
         valid=param, # if param has value,
+        mods=cmd.mods,
         icon_path=cmd.icon_path
     )
 
@@ -308,15 +321,42 @@ def create_modifiers_from_string(modifier_string):
     return [modifier_entry_processor(entry) for entry in yaml_data]
 
 def create_commands_from_string(command_string):
+    def process_modifiers(mods):
+        if not mods:
+            return []
+        return [
+            Modifier(
+                arg=mod['command'],
+                subtitle=mod['subtitle'],
+                valid=True,
+                key=ModifierKey(mod['mod'])
+            ) for mod in mods
+        ]
+
     def command_entry_processor(entry):
+        mods = process_modifiers(entry.get('mods', []))
+        values = entry.get('values', [])
+        values_command = entry.get('values_command', None)
+
+        command_type = CommandType.SINGLE_ACTION
+
+        if entry.get('inline_command'):
+            command_type = CommandType.NO_ACTION
+        elif values_command:
+            command_type = CommandType.NEEDS_PARAM
+
         return Command(
             title=entry['title'],
-            action=entry['command'],
-            command_type=CommandType.SINGLE_ACTION,
-            icon_path="action.png"
+            action=entry.get('command', ''),
+            command_type=command_type,
+            icon_path=entry.get('icon', None),
+            mods=mods,
+            values=values,
+            values_command=values_command
         )
 
-    yaml_data = yaml.safe_load(command_string)  # Parse the YAML content
+    yaml_data = yaml.safe_load(command_string)
+
     return [command_entry_processor(entry) for entry in yaml_data]
 
 def add_modifiers(modifier_string, target_list):
