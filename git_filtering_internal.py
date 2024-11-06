@@ -296,6 +296,7 @@ def create_result_item_for_command_with_selection(cmd, location, param):
         arg=full_command,
         subtitle=subtitle,
         location=location,
+        autocomplete=f"{location.title} {cmd.title} {title} ",
         valid=bool(param), # if param has value,
         mods=cmd.mods,
         icon_path=cmd.icon_path
