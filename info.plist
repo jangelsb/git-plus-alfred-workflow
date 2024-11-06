@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.jangelsb.gitx</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>0BA9ED6F-B709-49B6-A448-5F5634D7019F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>Josh Angelsberg</string>
+	<key>description</key>
+	<string>A customizable git interface for Alfred</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>gitx</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>3</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:input_keyword}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>Fetching...</string>
+				<key>script</key>
+				<string>source "$input_var_profile_path"
+
+python3 git_filtering_internal.py "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string></string>
+				<key>title</key>
+				<string>gitx</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>6096A812-AA1D-4D56-BCBD-F0CFB5965568</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string></string>
+				<key>title</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>source "$input_var_profile_path"
+
+# python3 run_command.py "$1"
+
+eval eval $1</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string># gitx
+
+A customizable git interface for Alfred
+
+## Usage
+
+### Search your repos
+![](images/filter_projects.jpg)
+
+### Run commands on your repos
+![](images/commands.jpg)
+
+### Check out branches
+* you can ⌘c to copy to the branch name!
+* you can also make checkout modifiers so that when you hold command ⌘ or alt ⌥ a different command is run 
+![](images/checkout_branch.jpg)
+
+### Create branches
+![](images/create_branch.jpg)
+
+### Create your own commands
+![](images/custom_commands.jpg)
+
+## Version History
+
+#### v2024.4
+* Add icons for the different commands
+* Update workflow icon
+* Update screenshots
+
+#### v2024.3
+* Add support for yaml based modifiers (you can now add custom modifiers when checking out a branch!)
+* source the profile before running a command as well
+* Add support for user custom actions based on a yaml file and give some examples
+* Update default values, made the git status do a complex bash command to be more helpful</string>
+	<key>uidata</key>
+	<dict>
+		<key>0BA9ED6F-B709-49B6-A448-5F5634D7019F</key>
+		<dict>
+			<key>xpos</key>
+			<real>345</real>
+			<key>ypos</key>
+			<real>170</real>
+		</dict>
+		<key>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</key>
+		<dict>
+			<key>xpos</key>
+			<real>560</real>
+			<key>ypos</key>
+			<real>170</real>
+		</dict>
+		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
+		<dict>
+			<key>xpos</key>
+			<real>125</real>
+			<key>ypos</key>
+			<real>170</real>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>gitx</string>
+				<key>placeholder</key>
+				<string>gitx</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>type this keyword to launch the flow</string>
+			<key>label</key>
+			<string>keyword</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>input_keyword</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+				<key>verticalsize</key>
+				<integer>9</integer>
+			</dict>
+			<key>description</key>
+			<string>list out all your repos as a yaml array. 
+
+example (note the two spaces indentation):
+
+- title: Repo 1
+  path: $repo_path1
+- title: Repo 2
+  path: "/path/to/repo2"
+
+NOTE: if you set a “bash profile”, you can use enviroment variables for your paths, e.g, $env_var</string>
+			<key>label</key>
+			<string>repo list</string>
+			<key>type</key>
+			<string>textarea</string>
+			<key>variable</key>
+			<string>input_repo_list</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>filtermode</key>
+				<integer>2</integer>
+				<key>placeholder</key>
+				<string>~/.zshenv</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>If this value, exists the script will source it to be able to read environment variables defined in the repo config</string>
+			<key>label</key>
+			<string>bash profile</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>input_var_profile_path</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>git checkout [input]</string>
+				<key>placeholder</key>
+				<string>git checkout [input]</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>The command to run when checking out a branch. Use [input] for the branch name</string>
+			<key>label</key>
+			<string>checkout command</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>input_checkout_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+				<key>verticalsize</key>
+				<integer>9</integer>
+			</dict>
+			<key>description</key>
+			<string>a simple yaml file for command to run when checking out a branch while holding modifiers. Use [input] for the branch name
+
+example:
+- title: Launch Xcode after
+  mod: cmd
+  command: git checkout [input]; git pull; xed .
+
+- title: Launch Sublime after
+  mod: alt
+  command: git checkout [input]; git pull; st .
+
+mods: `cmd`, `alt`, `cmd+alt`, `shift`, `ctrl`</string>
+			<key>label</key>
+			<string>checkout mods</string>
+			<key>type</key>
+			<string>textarea</string>
+			<key>variable</key>
+			<string>input_checkout_command_modifiers</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>git pull</string>
+				<key>placeholder</key>
+				<string>git pull</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>The command to run when pulling</string>
+			<key>label</key>
+			<string>pull command</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>input_pull_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>fetch -p</string>
+				<key>placeholder</key>
+				<string>fetch -p</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>The command to run when fetching</string>
+			<key>label</key>
+			<string>fetch command</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>input_fetch_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>branch=$(git branch --show-current); modified=$(git diff --name-only | wc -l | xargs); if [ "$modified" -eq 0 ]; then echo "branch: ${branch}; clean"; else echo "branch: ${branch}; modified files: $modified"; fi</string>
+				<key>placeholder</key>
+				<string>git status</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>this command is run inline and what it returns is displayed as a subtitle</string>
+			<key>label</key>
+			<string>status command</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>input_status_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>git push -u origin [input]</string>
+				<key>placeholder</key>
+				<string>git push -u origin [input]</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>The command to run when pushing a branch. Use [input] for the branch name</string>
+			<key>label</key>
+			<string>push command</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>input_push_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>git checkout -b [input]</string>
+				<key>placeholder</key>
+				<string>git checkout -b [input]</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>The command to run when creating a branch. Use [input] for the NEW branch name</string>
+			<key>label</key>
+			<string>create branch command</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>input_create_branch_command</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>- title: launch in Xcode
+  command: xed .
+
+- title: open in Terminal
+  command: open -a Terminal .
+
+- title: stash
+  command: git stash
+
+- title: pop
+  command: git pop</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+				<key>verticalsize</key>
+				<integer>9</integer>
+			</dict>
+			<key>description</key>
+			<string>a simple yaml file to create additional commands to run
+
+example:
+- title: Launch in Xcode
+  command: xed .
+
+- title: Launch in Sublime
+  command: st .</string>
+			<key>label</key>
+			<string>additional actions</string>
+			<key>type</key>
+			<string>textarea</string>
+			<key>variable</key>
+			<string>input_additional_actions</string>
+		</dict>
+	</array>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>2024.4</string>
+	<key>webaddress</key>
+	<string>https://jangelsb.github.io</string>
+</dict>
+</plist>
