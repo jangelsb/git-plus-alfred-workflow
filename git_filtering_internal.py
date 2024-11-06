@@ -18,6 +18,7 @@ class CommandType(Enum):
     INLINE = 3          # Shows a list after running, then requires another selection
     SINGLE_ACTION = 4   # Press enter, command runs and closes
     NEEDS_PARAM = 5  # Requires a parameter, then runs the command
+    NEEDS_SELECTION = 6  # Requires a parameter from a list, then runs the command
 
 class ModifierKey(Enum):
     CMD = "cmd"
@@ -337,17 +338,21 @@ def create_commands_from_string(command_string):
         mods = process_modifiers(entry.get('mods', []))
         values = entry.get('values', [])
         values_command = entry.get('values_command', None)
+        action = entry.get('command', '')
 
         command_type = CommandType.SINGLE_ACTION
 
-        if entry.get('inline_command'):
-            command_type = CommandType.NO_ACTION
-        elif values_command:
+        # if entry.get('inline_command'):
+        #     command_type = CommandType.NO_ACTION
+        # el
+        if values or values_command: 
+            command_type = CommandType.NEEDS_SELECTION
+        elif '[input]' in action:
             command_type = CommandType.NEEDS_PARAM
 
         return Command(
             title=entry['title'],
-            action=entry.get('command', ''),
+            action=action,
             command_type=command_type,
             icon_path=entry.get('icon', None),
             mods=mods,
@@ -435,6 +440,23 @@ def main():
 
             elif main_command.command_type == CommandType.NEEDS_PARAM:
                 output['items'] += [create_result_item_for_command_with_param(cmd=main_command, location=input.location, param=input.unfinished_query).to_dict()]
+            
+            elif main_command.command_type == CommandType.NEEDS_SELECTION:
+                items = main_command.values
+                filtered_items = [item for item in items if input.unfinished_query in item.lower()]
+
+                # output['items'] += [ResultItem(item, arg=main_command rplacing [input], subtitle = runs `command`) for item in filtered_items]
+
+                # TODO: either use Command or clean up and ad `cd` logic - also want to add mods for these...
+                for item in filtered_items:
+                    replaced_command = main_command.action.replace("[input]", item)
+                    output['items'].append(
+                        ResultItem(
+                            item,
+                            arg=f"{replaced_command}",
+                            subtitle=f'runs `{replaced_command}`'
+                        ).to_dict()
+                    )
 
     # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
