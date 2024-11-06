@@ -169,6 +169,13 @@ A customizable git interface for Alfred
 
 ## Version History
 
+#### v2024.5
+* Fixed issues where you couldn't create a branch or fetch
+* Fixed an issue where you couldn't access bash functions that were in your profile, even though it is sourced
+* Added true yaml parsing
+* Laying the ground work for more robust and complicated config based actions
+* Updated the default values to have better onboarding
+
 #### v2024.4
 * Add icons for the different commands
 * Update workflow icon
@@ -209,7 +216,7 @@ A customizable git interface for Alfred
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>gitx</string>
+				<string>git</string>
 				<key>placeholder</key>
 				<string>gitx</string>
 				<key>required</key>
@@ -302,7 +309,9 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string></string>
+				<string>- title: ⌘ Open in Xcode after (example)
+  mod: cmd
+  command: git checkout [input]; git pull; xed .</string>
 				<key>required</key>
 				<false/>
 				<key>trim</key>
@@ -317,10 +326,6 @@ example:
 - title: Launch Xcode after
   mod: cmd
   command: git checkout [input]; git pull; xed .
-
-- title: Launch Sublime after
-  mod: alt
-  command: git checkout [input]; git pull; st .
 
 mods: `cmd`, `alt`, `cmd+alt`, `shift`, `ctrl`</string>
 			<key>label</key>
@@ -474,8 +479,10 @@ example:
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>2024.4</string>
+	<string>2024.5</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
