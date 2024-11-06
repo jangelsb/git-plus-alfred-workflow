@@ -282,13 +282,32 @@ def create_result_item_for_command(cmd, location):
         icon_path=cmd.icon_path
     )
 
+def create_result_item_for_command_with_selection(cmd, location, param):
+
+    title = param
+
+    action = cmd.action.replace('[input]', param.replace(' ', '_'))
+    subtitle = f"runs `{action}`"
+
+    full_command = f"cd {location.directory}; {action}"
+
+    return ResultItem(
+        title,
+        arg=full_command,
+        subtitle=subtitle,
+        location=location,
+        valid=bool(param), # if param has value,
+        mods=cmd.mods,
+        icon_path=cmd.icon_path
+    )
+
 
 def create_result_item_for_command_with_param(cmd, location, param):
 
     title = cmd.title
 
     action = cmd.action.replace('[input]', param.replace(' ', '_'))
-    subtitle = f"{param == True} runs `{action}`"
+    subtitle = f"runs `{action}`"
 
     full_command = f"cd {location.directory}; {action}"
 
@@ -451,19 +470,14 @@ def main():
             elif main_command.command_type == CommandType.NEEDS_SELECTION:
 
                 if main_command.values:
-                    items = main_command.values
-                    filtered_items = [item for item in items if input.unfinished_query in item.lower()]
+                    filtered_items = [item for item in main_command.values if input.unfinished_query in item.lower()]
 
-                    # output['items'] += [ResultItem(item, arg=main_command rplacing [input], subtitle = runs `command`) for item in filtered_items]
-
-                    # TODO: either use Command or clean up and ad `cd` logic - also want to add mods for these...
                     for item in filtered_items:
-                        replaced_command = main_command.action.replace("[input]", item)
                         output['items'].append(
-                            ResultItem(
-                                item,
-                                arg=f"{replaced_command}",
-                                subtitle=f'runs `{replaced_command}`'
+                            create_result_item_for_command_with_selection(
+                                cmd=main_command,
+                                location=input.location,
+                                param=item
                             ).to_dict()
                         )
                 elif main_command.values_command:
