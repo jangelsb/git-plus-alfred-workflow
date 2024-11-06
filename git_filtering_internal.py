@@ -255,7 +255,14 @@ def create_result_item_for_command(cmd, location):
     subtitle = subtitle_for_command(cmd, location)
 
     if cmd.command_type == CommandType.SINGLE_ACTION:
-        full_command = f"cd {location.directory}; {cmd.action}"
+        action = cmd.action
+
+        # TODO: clean this duplication with the `subtitle_for_command`
+        if cmd.secondaryAction:
+            value = run_command(cmd.secondaryAction)
+            action = action.replace("[input]", value)
+
+        full_command = f"cd {location.directory}; {action}"
         return ResultItem(
             title,
             arg=full_command,
@@ -442,21 +449,26 @@ def main():
                 output['items'] += [create_result_item_for_command_with_param(cmd=main_command, location=input.location, param=input.unfinished_query).to_dict()]
             
             elif main_command.command_type == CommandType.NEEDS_SELECTION:
-                items = main_command.values
-                filtered_items = [item for item in items if input.unfinished_query in item.lower()]
 
-                # output['items'] += [ResultItem(item, arg=main_command rplacing [input], subtitle = runs `command`) for item in filtered_items]
+                if main_command.values:
+                    items = main_command.values
+                    filtered_items = [item for item in items if input.unfinished_query in item.lower()]
 
-                # TODO: either use Command or clean up and ad `cd` logic - also want to add mods for these...
-                for item in filtered_items:
-                    replaced_command = main_command.action.replace("[input]", item)
-                    output['items'].append(
-                        ResultItem(
-                            item,
-                            arg=f"{replaced_command}",
-                            subtitle=f'runs `{replaced_command}`'
-                        ).to_dict()
-                    )
+                    # output['items'] += [ResultItem(item, arg=main_command rplacing [input], subtitle = runs `command`) for item in filtered_items]
+
+                    # TODO: either use Command or clean up and ad `cd` logic - also want to add mods for these...
+                    for item in filtered_items:
+                        replaced_command = main_command.action.replace("[input]", item)
+                        output['items'].append(
+                            ResultItem(
+                                item,
+                                arg=f"{replaced_command}",
+                                subtitle=f'runs `{replaced_command}`'
+                            ).to_dict()
+                        )
+                elif main_command.values_command:
+                    # need to run the command to get the list of values / could support [input] for dyanmic list like find 
+                    pass
 
     # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
