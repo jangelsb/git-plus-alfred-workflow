@@ -355,9 +355,9 @@ mods: `cmd`, `alt`, `cmd+alt`, `shift`, `ctrl`</string>
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>fetch -p</string>
+				<string>git fetch -p</string>
 				<key>placeholder</key>
-				<string>fetch -p</string>
+				<string>git fetch -p</string>
 				<key>required</key>
 				<true/>
 				<key>trim</key>
@@ -474,8 +474,6 @@ example:
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>2024.4</string>
 	<key>webaddress</key>
