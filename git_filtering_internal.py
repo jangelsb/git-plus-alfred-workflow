@@ -8,6 +8,7 @@ import json
 import os
 import subprocess
 import re
+import yaml
 from enum import Enum
 
 checkout_modifiers_list = []
@@ -283,13 +284,17 @@ def create_result_item_for_command_with_param(cmd, location, param):
 def generate_locations_from_yaml(yaml_string):
     def location_entry_processor(entry):
         path = entry['path']
-        if path.startswith('$'):
-            env_var_name = path[1:]
-            path = os.environ.get(env_var_name, path)
+        # Split the path into parts and process parts starting with '$'
+        path_parts = path.split('/')
+        for i, part in enumerate(path_parts):
+            if part.startswith('$'):
+                env_var_name = part[1:]
+                path_parts[i] = os.environ.get(env_var_name, part)
+        path = '/'.join(path_parts)
         return Location(title=entry['title'], directory=path)
 
-    keys = {'title:': 'title', 'path:': 'path'}
-    return process_entries(yaml_string, keys, location_entry_processor)
+    yaml_data = yaml.safe_load(yaml_string)
+    return [location_entry_processor(entry) for entry in yaml_data]
 
 def process_entries(input_string, keys, entry_processor):
     def parse_entry(entry_lines):
