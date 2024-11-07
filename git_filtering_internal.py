@@ -258,10 +258,11 @@ def create_result_item_for_command(cmd, location):
     )
 
 def create_result_item_for_command_with_selection(cmd, location, param):
+    param = param.strip()
 
     title = param
 
-    action = cmd.action.replace('[input]', param.replace(' ', '_'))
+    action = cmd.action.replace('[input]', param)
     subtitle = f"runs `{action}`"
 
     full_command = f"cd {location.directory}; {action}"
@@ -455,8 +456,18 @@ def main():
                             ).to_dict()
                         )
                 elif main_command.values_command:
-                    # need to run the command to get the list of values / could support [input] for dyanmic list like find 
-                    pass
+                    items = run_command(main_command.values_command).splitlines()
+                    filtered_items = [item for item in items if input.unfinished_query in item.lower()]
+
+                    for item in filtered_items:
+                        output['items'].append(
+                            create_result_item_for_command_with_selection(
+                                cmd=main_command,
+                                location=input.location,
+                                param=item
+                            ).to_dict()
+                        )
+
 
     # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
