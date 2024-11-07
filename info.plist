@@ -294,6 +294,12 @@ A customizable git interface for Alfred
 
 ## Version History
 
+#### v2024.6
+* Now really fixed the issue where you couldn't access bash functions that were in your profile, even though it is sourced (the script needed to run as zsh and not bash)
+* Continuing to lay the ground work for more complicated commands (you can now make an action that shows a list of values (predefined or dynamic)
+* Added a way to show repo in alfred (by passing [view in alfred] as the command for an action
+
+
 #### v2024.5
 * Fixed issues where you couldn't create a branch or fetch
 * Fixed an issue where you couldn't access bash functions that were in your profile, even though it is sourced
