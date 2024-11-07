@@ -325,6 +325,7 @@ A customizable git interface for Alfred
 
 #### v2024.6 (WIP)
 * Updated Alfred to stack the `view in alfred` command so you can press escape and get back to gitx
+* Fixed issues in some cases with checkout and push if the branch name was really long
 
 #### v2024.5
 * Fixed issues where you couldn't create a branch or fetch
@@ -589,9 +590,9 @@ mods: `cmd`, `alt`, `cmd+alt`, `shift`, `ctrl`</string>
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>git push -u origin [input]</string>
+				<string>git push -u origin "[input]"</string>
 				<key>placeholder</key>
-				<string>git push -u origin [input]</string>
+				<string>git push -u origin "[input]"</string>
 				<key>required</key>
 				<true/>
 				<key>trim</key>
@@ -610,9 +611,9 @@ mods: `cmd`, `alt`, `cmd+alt`, `shift`, `ctrl`</string>
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>git checkout -b [input]</string>
+				<string>git checkout -b "[input]"</string>
 				<key>placeholder</key>
-				<string>git checkout -b [input]</string>
+				<string>git checkout -b "[input]"</string>
 				<key>required</key>
 				<true/>
 				<key>trim</key>

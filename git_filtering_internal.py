@@ -158,7 +158,7 @@ def subtitle_for_command(command, location):
     if command.command_type == CommandType.SINGLE_ACTION:
         action = command.action
         if command.secondaryAction:
-            value = run_command(command.secondaryAction)
+            value = run_command(command.secondaryAction).strip()
             action = action.replace("[input]", value)
         return f"runs `{action}`"
     return command.subtitle
@@ -234,7 +234,7 @@ def create_result_item_for_command(cmd, location):
 
         # TODO: clean this duplication with the `subtitle_for_command`
         if cmd.secondaryAction:
-            value = run_command(cmd.secondaryAction)
+            value = run_command(cmd.secondaryAction).strip()
             action = action.replace("[input]", value)
 
         full_command = f"cd {location.directory}; {action}"
