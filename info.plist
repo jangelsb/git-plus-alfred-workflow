@@ -21,8 +21,46 @@
 				<false/>
 			</dict>
 		</array>
+		<key>22AA9BE8-E9EF-4C3F-AAE4-5DCC50E5EEFE</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
 		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>88666437-2755-420F-8B11-5A5225C12C47</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>22AA9BE8-E9EF-4C3F-AAE4-5DCC50E5EEFE</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>52D747E7-2FE3-4816-8E1E-AB0A99870D5B</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 			<dict>
 				<key>destinationuid</key>
 				<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
@@ -99,21 +137,87 @@ python3 git_filtering_internal.py "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<false/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
+				<key>path</key>
 				<string></string>
-				<key>title</key>
-				<string></string>
+				<key>sortBy</key>
+				<integer>0</integer>
+				<key>sortDirection</key>
+				<integer>0</integer>
+				<key>sortFoldersAtTop</key>
+				<false/>
+				<key>sortOverride</key>
+				<false/>
+				<key>stackBrowserView</key>
+				<false/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
+			<string>alfred.workflow.action.browseinalfred</string>
 			<key>uid</key>
-			<string>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</string>
+			<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>import sys
+
+query = sys.argv[1]
+
+path = query.split(';')[0].strip()
+
+if path.startswith('cd '):
+    path = path[3:]
+
+sys.stdout.write(path)</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>9</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>22AA9BE8-E9EF-4C3F-AAE4-5DCC50E5EEFE</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>\['?browse'?\]</string>
+						<key>outputlabel</key>
+						<string>browse in alfred</string>
+						<key>uid</key>
+						<string>52D747E7-2FE3-4816-8E1E-AB0A99870D5B</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>88666437-2755-420F-8B11-5A5225C12C47</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -133,7 +237,7 @@ eval "$full_command"</string>
 				<key>scriptfile</key>
 				<string></string>
 				<key>type</key>
-				<integer>0</integer>
+				<integer>11</integer>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
@@ -141,6 +245,27 @@ eval "$full_command"</string>
 			<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string></string>
+				<key>title</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 	</array>
 	<key>readme</key>
@@ -191,23 +316,46 @@ A customizable git interface for Alfred
 		<key>0BA9ED6F-B709-49B6-A448-5F5634D7019F</key>
 		<dict>
 			<key>xpos</key>
-			<real>345</real>
+			<real>440</real>
 			<key>ypos</key>
-			<real>170</real>
+			<real>420</real>
 		</dict>
 		<key>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</key>
 		<dict>
 			<key>xpos</key>
-			<real>560</real>
+			<real>655</real>
 			<key>ypos</key>
-			<real>170</real>
+			<real>420</real>
+		</dict>
+		<key>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</key>
+		<dict>
+			<key>xpos</key>
+			<real>660</real>
+			<key>ypos</key>
+			<real>235</real>
+		</dict>
+		<key>22AA9BE8-E9EF-4C3F-AAE4-5DCC50E5EEFE</key>
+		<dict>
+			<key>note</key>
+			<string>extract path</string>
+			<key>xpos</key>
+			<real>445</real>
+			<key>ypos</key>
+			<real>235</real>
 		</dict>
 		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
 		<dict>
 			<key>xpos</key>
-			<real>125</real>
+			<real>90</real>
 			<key>ypos</key>
 			<real>170</real>
+		</dict>
+		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
+		<dict>
+			<key>xpos</key>
+			<real>265</real>
+			<key>ypos</key>
+			<real>345</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>

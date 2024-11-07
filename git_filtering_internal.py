@@ -33,7 +33,7 @@ class Modifier:
         self.arg = arg
         self.subtitle = subtitle
         self.valid = valid
-        self.key = key  # New attribute to hold a ModifierKey
+        self.key = key
 
     def to_dict(self):
         key_name = self.key.value if self.key else 'unknown'
@@ -82,12 +82,9 @@ class ResultItem:
         if self.text:
             item_dict["text"] = self.text.to_dict()
         if self.icon_path:
-            dict = {
-                # "type": "fileicon",
+            item_dict["icon"] = {
                 "path": self.icon_path
             }
-            item_dict["icon"] = dict
-
         return item_dict
 
 class Location:
@@ -98,17 +95,17 @@ class Location:
 class Command:
     def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None):
         self.title = title
-        self.action = action  # Action is a callable function or a string
+        self.action = action
         self.secondaryAction = secondaryAction
         self.subtitle = subtitle if subtitle else ""
         self.command_type = command_type
         self.icon_path = icon_path
-        self.mods = mods if mods else []  # A list to store Modifier objects
-        self.values = values if values else []  # Optional list to store values
-        self.values_command = values_command  # Optional command related to values
-    
+        self.mods = mods if mods else []
+        self.values = values if values else []
+        self.values_command = values_command
+
     def is_valid(self):
-        self.command_type != CommandType.NO_ACTION
+        return self.command_type != CommandType.NO_ACTION
 
 class TokenizationResult:
     def __init__(self, location=None, commands=None, unfinished_query=None):
@@ -129,7 +126,6 @@ def tokenize(input_string, locations, commands):
     matched_parts = set()
     tokens = re.split(r'\s+', input_string)
 
-    # Try to match with combinations of tokens to check for spaced commands or locations
     for start_index in range(len(tokens)):
         for end_index in range(start_index + 1, len(tokens) + 1):
             part = ' '.join(tokens[start_index:end_index]).lower()
@@ -146,7 +142,6 @@ def tokenize(input_string, locations, commands):
     return TokenizationResult(location, commands_list, unfinished)
 
 def change_directory(location):
-    # Change to the working directory from the environment variable
     if location:
         os.chdir(location.directory)
 
@@ -157,27 +152,21 @@ def run_command(command):
     except subprocess.CalledProcessError as e:
         return f"Error executing {command}: {e.stderr}"
 
-
-
 def subtitle_for_command(command, location):
     if command.command_type == CommandType.NO_ACTION:
         return run_command(command.action)
-    
     if command.command_type == CommandType.SINGLE_ACTION:
         action = command.action
         if command.secondaryAction:
             value = run_command(command.secondaryAction)
             action = action.replace("[input]", value)
-
         return f"runs `{action}`"
-    
     return command.subtitle
-
 
 def list_git_branches(location):
 
     def create_result_item_for_branch(branch, location):
-        checkout_command = os.getenv('input_checkout_command') #f"git checkout [input]"
+        checkout_command = os.getenv('input_checkout_command')
 
         is_remote = branch.startswith('remotes/')
         branch = branch.replace('remotes/', '')
@@ -190,47 +179,33 @@ def list_git_branches(location):
             title = f"{value} [current]"
 
         command = checkout_command.replace('[input]', value)
-        full_command= f"cd {location.directory}; {command}"
+        full_command = f"cd {location.directory}; {command}"
 
         modifier_list = [
             Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', value)}",
-                    subtitle=modifier.subtitle,
-                    valid=modifier.valid,
-                    key=modifier.key)
+                     subtitle=modifier.subtitle,
+                     valid=modifier.valid,
+                     key=modifier.key)
             for modifier in checkout_modifiers_list
         ]
 
         return ResultItem(
             title=title,
             arg=full_command,
-            subtitle=f"runs `{command}`",  # ⌘c to copy
+            subtitle=f"runs `{command}`",
             text=Text(copy=value),
             valid=True,
-            uid=branch, # no * but keeps name of branch `main`` and `origin/main`
+            uid=branch,
             mods=modifier_list,
-            icon_path= "globe.png" if is_remote else "fork.png"
+            icon_path="globe.png" if is_remote else "fork.png"
         )
 
     try:
-        # Run 'git branch --list' to get all local branches
         local_result = subprocess.run(['git', 'branch', '-a'], capture_output=True, text=True, check=True)
         local_branches = local_result.stdout.splitlines()
-        
-        # Run 'git branch -r' to get all remote branches
-        # remote_result = subprocess.run(['git', 'branch', '-r'], capture_output=True, text=True, check=True)
-        # remote_branches = remote_result.stdout.splitlines()
-
-        # Clean up the branch names
         local_branches = [branch.strip() for branch in local_branches]
-        # remote_branches = [branch.strip() for branch in remote_branches]
 
-        items = []
-        for branch in local_branches:
-            items.append(create_result_item_for_branch(branch, location=location))
-
-        # for branch in remote_branches:
-        #     items.append(create_result_item_for_branch(branch, location=location))
-
+        items = [create_result_item_for_branch(branch, location=location) for branch in local_branches]
         return items
 
     except subprocess.CalledProcessError:
@@ -345,7 +320,7 @@ def create_modifiers_from_string(modifier_string):
         except ValueError:
             raise ValueError("Mod key is missing or invalid")
 
-    yaml_data = yaml.safe_load(modifier_string)  # Parse the YAML content
+    yaml_data = yaml.safe_load(modifier_string)
     return [modifier_entry_processor(entry) for entry in yaml_data]
 
 def create_commands_from_string(command_string):
@@ -388,7 +363,6 @@ def create_commands_from_string(command_string):
         )
 
     yaml_data = yaml.safe_load(command_string)
-
     return [command_entry_processor(entry) for entry in yaml_data]
 
 def add_modifiers(modifier_string, target_list):
@@ -420,7 +394,6 @@ def main():
 
     commands.extend(create_commands_from_string(input_additional_actions))
 
-    # Get the query input
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
     ends_with_space = query_input.endswith(" ")
 
