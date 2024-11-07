@@ -323,6 +323,9 @@ A customizable git interface for Alfred
 * Added a way to show repo in alfred (by passing [view in alfred] as the command for an action
 
 
+#### v2024.6 (WIP)
+* Updated Alfred to stack the `view in alfred` command so you can press escape and get back to gitx
+
 #### v2024.5
 * Fixed issues where you couldn't create a branch or fetch
 * Fixed an issue where you couldn't access bash functions that were in your profile, even though it is sourced
@@ -666,7 +669,7 @@ example:
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>2024.5</string>
+	<string>2024.6.WIP</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
