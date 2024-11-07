@@ -44,7 +44,7 @@
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>vitoclose</key>
-				<false/>
+				<true/>
 			</dict>
 		</array>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
@@ -64,6 +64,16 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -137,29 +147,6 @@ python3 git_filtering_internal.py "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>path</key>
-				<string></string>
-				<key>sortBy</key>
-				<integer>0</integer>
-				<key>sortDirection</key>
-				<integer>0</integer>
-				<key>sortFoldersAtTop</key>
-				<false/>
-				<key>sortOverride</key>
-				<false/>
-				<key>stackBrowserView</key>
-				<false/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.browseinalfred</string>
-			<key>uid</key>
-			<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>concurrently</key>
 				<false/>
 				<key>escaping</key>
@@ -188,6 +175,29 @@ sys.stdout.write(path)</string>
 			<string>22AA9BE8-E9EF-4C3F-AAE4-5DCC50E5EEFE</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>path</key>
+				<string></string>
+				<key>sortBy</key>
+				<integer>0</integer>
+				<key>sortDirection</key>
+				<integer>0</integer>
+				<key>sortFoldersAtTop</key>
+				<false/>
+				<key>sortOverride</key>
+				<false/>
+				<key>stackBrowserView</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.browseinalfred</string>
+			<key>uid</key>
+			<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -267,6 +277,19 @@ eval "$full_command"</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>unstackview</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.hidealfred</string>
+			<key>uid</key>
+			<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string># gitx
@@ -322,16 +345,16 @@ A customizable git interface for Alfred
 		<key>0BA9ED6F-B709-49B6-A448-5F5634D7019F</key>
 		<dict>
 			<key>xpos</key>
-			<real>440</real>
+			<real>435</real>
 			<key>ypos</key>
-			<real>420</real>
+			<real>455</real>
 		</dict>
 		<key>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</key>
 		<dict>
 			<key>xpos</key>
 			<real>655</real>
 			<key>ypos</key>
-			<real>420</real>
+			<real>455</real>
 		</dict>
 		<key>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</key>
 		<dict>
@@ -352,16 +375,23 @@ A customizable git interface for Alfred
 		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
 		<dict>
 			<key>xpos</key>
-			<real>90</real>
+			<real>70</real>
 			<key>ypos</key>
 			<real>170</real>
+		</dict>
+		<key>6AF906CF-57FA-41B4-967E-D06828E92FBA</key>
+		<dict>
+			<key>xpos</key>
+			<real>435</real>
+			<key>ypos</key>
+			<real>575</real>
 		</dict>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<dict>
 			<key>xpos</key>
-			<real>265</real>
+			<real>210</real>
 			<key>ypos</key>
-			<real>345</real>
+			<real>370</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
