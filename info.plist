@@ -202,7 +202,7 @@ sys.stdout.write(path)</string>
 						<key>matchmode</key>
 						<integer>4</integer>
 						<key>matchstring</key>
-						<string>\['?browse'?\]</string>
+						<string>\['?view in alfred'?\]</string>
 						<key>outputlabel</key>
 						<string>browse in alfred</string>
 						<key>uid</key>
