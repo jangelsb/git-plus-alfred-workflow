@@ -240,7 +240,7 @@ def create_result_item_for_command(cmd, location):
         full_command = f"cd {location.directory}; {action}"
 
         modifier_list = [
-            Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', value)}",
+            Modifier(arg=f"cd {location.directory}; {modifier.arg}",
                      subtitle=modifier.subtitle,
                      valid=modifier.valid,
                      key=modifier.key)
