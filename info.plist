@@ -643,7 +643,23 @@ mods: `cmd`, `alt`, `cmd+alt`, `shift`, `ctrl`</string>
   command: git stash
 
 - title: pop
-  command: git pop</string>
+  command: git pop
+
+- title: View in Alfred
+  command: [view in alfred]
+
+
+- title: copy diff for this branch
+  command: "branch=$(git branch --show-current); parent=$(git reflog show | grep 'checkout: moving from' | head -n 1 | awk '{print $(NF-2)}'); git log --reverse --format=%B $(git merge-base $parent $branch)..$branch | pbcopy"
+
+
+- title: copy diff from tag
+  command: "branch=$(git branch --show-current); git log --reverse --format=%B $(git merge-base '[input]' $branch)..$branch | pbcopy"
+  values_command: git tag
+  mods:
+    - subtitle: copy for ChatGPT Summary
+      mod: cmd
+      command: "branch=$(git branch --show-current); (echo this is a list of commits for my app. can you break it down into a change log, calling out things that are noteworthy &amp;&amp; git log --reverse --format=%B $(git merge-base '[input]' $branch)..$branch) | pbcopy"</string>
 				<key>required</key>
 				<false/>
 				<key>trim</key>
