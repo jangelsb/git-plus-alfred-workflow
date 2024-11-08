@@ -642,7 +642,7 @@ mods: `cmd`, `alt`, `cmd+alt`, `shift`, `ctrl`</string>
   command: open -a Terminal .
 
 - title: stash
-  command: git stash
+  command: git stash pop
 
 - title: pop
   command: git pop
