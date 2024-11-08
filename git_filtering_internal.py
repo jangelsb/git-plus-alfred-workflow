@@ -224,29 +224,36 @@ def create_result_item_for_location(loc):
         icon_path="folder3.png"
     )
 
+
+def create_modifier_list(cmd, location, param=None):
+    param_replacement = param.replace(' ', '_') if param else None
+    return [
+        Modifier(
+            arg=f"cd {location.directory}; {modifier.arg.replace('[input]', param_replacement)}" if param else f"cd {location.directory}; {modifier.arg}",
+            subtitle=modifier.subtitle,
+            valid=modifier.valid,
+            key=modifier.key
+        ) for modifier in cmd.mods
+    ]
+
+def construct_full_command(cmd, location, param=None):
+    if cmd.secondaryAction:
+        value = run_command(cmd.secondaryAction).strip()
+        action = cmd.action.replace("[input]", value)
+    else:
+        action = cmd.action.replace('[input]', param.replace(' ', '_')) if param else cmd.action
+
+    return f"cd {location.directory}; {action}"
+
 def create_result_item_for_command(cmd, location):
 
     title = cmd.title
     subtitle = subtitle_for_command(cmd, location)
 
     if cmd.command_type == CommandType.SINGLE_ACTION:
-        action = cmd.action
-
-        # TODO: clean this duplication with the `subtitle_for_command`
-        if cmd.secondaryAction:
-            value = run_command(cmd.secondaryAction).strip()
-            action = action.replace("[input]", value)
-
-        full_command = f"cd {location.directory}; {action}"
-
-        modifier_list = [
-            Modifier(arg=f"cd {location.directory}; {modifier.arg}",
-                     subtitle=modifier.subtitle,
-                     valid=modifier.valid,
-                     key=modifier.key)
-                for modifier in cmd.mods
-        ]
-
+        full_command = construct_full_command(cmd, location)
+        modifier_list = create_modifier_list(cmd, location)
+        
         return ResultItem(
             title,
             arg=full_command,
@@ -276,13 +283,7 @@ def create_result_item_for_command_with_selection(cmd, location, param):
 
     full_command = f"cd {location.directory}; {action}"
 
-    modifier_list = [
-        Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', param)}",
-                subtitle=modifier.subtitle,
-                valid=modifier.valid,
-                key=modifier.key)
-            for modifier in cmd.mods
-    ]
+    modifier_list = create_modifier_list(cmd, location, param)
 
     return ResultItem(
         title,
@@ -305,13 +306,7 @@ def create_result_item_for_command_with_param(cmd, location, param):
 
     full_command = f"cd {location.directory}; {action}"
 
-    modifier_list = [
-        Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', param)}",
-                subtitle=modifier.subtitle,
-                valid=modifier.valid,
-                key=modifier.key)
-            for modifier in cmd.mods
-    ]
+    modifier_list = create_modifier_list(cmd, location, param)
 
     return ResultItem(
         title,
