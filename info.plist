@@ -317,16 +317,18 @@ A customizable git interface for Alfred
 
 ## Version History
 
+
+#### v2024.7 (WIP)
+* Updated Alfred to stack the `view in alfred` command so you can press escape and get back to gitx
+* Fixed issues in some cases with checkout and push if the branch name was really long
+* Fixed an issue where modifiers were not getting their commands setup correctly
+* Updated the default additional commands with some sweet commands
+
+
 #### v2024.6
 * Now really fixed the issue where you couldn't access bash functions that were in your profile, even though it is sourced (the script needed to run as zsh and not bash)
 * Continuing to lay the ground work for more complicated commands (you can now make an action that shows a list of values (predefined or dynamic)
 * Added a way to show repo in alfred (by passing [view in alfred] as the command for an action
-* Fixed an issue where modifiers were not getting their commands setup correctly
-
-
-#### v2024.6 (WIP)
-* Updated Alfred to stack the `view in alfred` command so you can press escape and get back to gitx
-* Fixed issues in some cases with checkout and push if the branch name was really long
 
 #### v2024.5
 * Fixed issues where you couldn't create a branch or fetch
@@ -687,7 +689,7 @@ example:
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>2024.6.WIP</string>
+	<string>2024.7.WIP</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
