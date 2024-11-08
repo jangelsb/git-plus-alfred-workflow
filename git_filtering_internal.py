@@ -249,18 +249,13 @@ def construct_action(cmd, param=None):
 
 def construct_full_command(action, location):
     return f"cd {location.directory}; {action}"
+
 def create_result_item_common(title, cmd, location, param=None):
+    action = construct_action(cmd, param)
+    full_command = construct_full_command(action, location)
     subtitle = subtitle_for_command(cmd, param)
     modifier_list = create_modifier_list(cmd, location, param)
-    
-    if param is not None:
-        action = construct_action(cmd, param)
-        full_command = construct_full_command(action, location)
-        valid = bool(param)
-    else:
-        action = construct_action(cmd)
-        full_command = construct_full_command(action, location)
-        valid = True
+    valid = bool(param) if param else True
 
     return ResultItem(
         title,
