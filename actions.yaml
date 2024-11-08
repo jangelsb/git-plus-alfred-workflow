@@ -1,0 +1,45 @@
+- title: open in Terminal
+  command: open -a Terminal .
+
+- title: open in Xcode
+  command: xed .
+
+
+- title: selection
+  command: echo [input]
+  values:
+    - one
+    - two
+    - three
+
+
+- title: View in Alfred
+  command: [view in alfred]
+
+
+- title: find file
+  command: st [input]
+  values_command: find . -type f
+
+
+- title: branches
+  command: "cb=$(echo '[input]' | sed -e 's/^\\* //' -e 's|^remotes/||'); echo $cb"
+  values_command: git branch -a
+
+
+- title: modified files
+  command: echo [input]
+  values_command: git diff --name-only # git status --short
+
+
+- title: copy all commits on branch
+  command: "branch=$(git branch --show-current); parent=$(git reflog show | grep 'checkout: moving from' | head -n 1 | awk '{print $(NF-2)}'); git log --reverse --format=%B $(git merge-base $parent $branch)..$branch | pbcopy"
+
+
+- title: copy diff from tag
+  command: "branch=$(git branch --show-current); git log --reverse --format=%B $(git merge-base '[input]' $branch)..$branch | pbcopy"
+  values_command: git tag
+  mods:
+    - subtitle: copy for ChatGPT Summary
+      mod: cmd
+      command: "branch=$(git branch --show-current); (echo this is a list of commits for my app. can you break it down into a change log, calling out things that are noteworthy && git log --reverse --format=%B $(git merge-base '[input]' $branch)..$branch) | pbcopy"
