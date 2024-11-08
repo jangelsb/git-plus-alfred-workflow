@@ -249,50 +249,42 @@ def construct_action(cmd, param=None):
 
 def construct_full_command(action, location):
     return f"cd {location.directory}; {action}"
-
-# used for commands / no action or signle actions
-def create_result_item_for_command(cmd, location):
-
-    title = cmd.title
-    subtitle = subtitle_for_command(cmd)
-
-    if cmd.command_type == CommandType.SINGLE_ACTION:
+def create_result_item_common(title, cmd, location, param=None):
+    subtitle = subtitle_for_command(cmd, param)
+    modifier_list = create_modifier_list(cmd, location, param)
+    
+    if param is not None:
+        action = construct_action(cmd, param)
+        full_command = construct_full_command(action, location)
+        valid = bool(param)
+    else:
         action = construct_action(cmd)
         full_command = construct_full_command(action, location)
-        modifier_list = create_modifier_list(cmd, location)
-        
-        return ResultItem(
-            title,
-            arg=full_command,
-            subtitle=subtitle,
-            valid=True,
-            location=location,
-            mods=modifier_list,
-            icon_path=cmd.icon_path
-            )
-
-    return ResultItem(
-        f"{title}",
-        arg=f"{cmd.title}",
-        subtitle=subtitle,
-        location=location,
-        mods=cmd.mods,
-        icon_path=cmd.icon_path
-    )
-
-def create_result_item_common(title, cmd, location, param):
-    action = construct_action(cmd, param)
-    subtitle = subtitle_for_command(cmd, param)
-    full_command = construct_full_command(action, location)
-    modifier_list = create_modifier_list(cmd, location, param)
+        valid = True
 
     return ResultItem(
         title,
         arg=full_command,
         subtitle=subtitle,
         location=location,
-        valid=bool(param),  # if param has value,
+        valid=valid,
         mods=modifier_list,
+        icon_path=cmd.icon_path
+    )
+
+def create_result_item_for_command(cmd, location):
+    title = cmd.title
+    
+    if cmd.command_type == CommandType.SINGLE_ACTION:
+        return create_result_item_common(title, cmd, location)
+
+    # For non-single action commands
+    return ResultItem(
+        title,
+        arg=title,
+        subtitle=subtitle_for_command(cmd),
+        location=location,
+        mods=cmd.mods,
         icon_path=cmd.icon_path
     )
 
@@ -306,6 +298,7 @@ def create_result_item_for_command_with_selection(cmd, location, param):
 def create_result_item_for_command_with_param(cmd, location, param):
     title = cmd.title
     return create_result_item_common(title, cmd, location, param)
+
 
 def generate_locations_from_yaml(yaml_string):
     def location_entry_processor(entry):
