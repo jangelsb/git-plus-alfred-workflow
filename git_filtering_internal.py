@@ -152,16 +152,18 @@ def run_command(command):
     except subprocess.CalledProcessError as e:
         return f"Error executing {command}: {e.stderr}"
 
-def subtitle_for_command(command, location):
+def subtitle_for_command(command, param=None):
     if command.command_type == CommandType.NO_ACTION:
         return run_command(command.action)
-    if command.command_type == CommandType.SINGLE_ACTION:
-        action = command.action
-        if command.secondaryAction:
-            value = run_command(command.secondaryAction).strip()
-            action = action.replace("[input]", value)
+    
+    if command.subtitle:
+        return command.subtitle
+    
+    if command.command_type !=  CommandType.INLINE:
+        action = construct_action(command, param)
         return f"runs `{action}`"
-    return command.subtitle
+    
+    return ''
 
 def list_git_branches(location):
 
@@ -236,22 +238,27 @@ def create_modifier_list(cmd, location, param=None):
         ) for modifier in cmd.mods
     ]
 
-def construct_full_command(cmd, location, param=None):
+def construct_action(cmd, param=None):
     if cmd.secondaryAction:
         value = run_command(cmd.secondaryAction).strip()
         action = cmd.action.replace("[input]", value)
     else:
         action = cmd.action.replace('[input]', param.replace(' ', '_')) if param else cmd.action
 
+    return action
+
+def construct_full_command(action, location):
     return f"cd {location.directory}; {action}"
 
+# used for commands / no action or signle actions
 def create_result_item_for_command(cmd, location):
 
     title = cmd.title
-    subtitle = subtitle_for_command(cmd, location)
+    subtitle = subtitle_for_command(cmd)
 
     if cmd.command_type == CommandType.SINGLE_ACTION:
-        full_command = construct_full_command(cmd, location)
+        action = construct_action(cmd)
+        full_command = construct_full_command(action, location)
         modifier_list = create_modifier_list(cmd, location)
         
         return ResultItem(
@@ -265,7 +272,7 @@ def create_result_item_for_command(cmd, location):
             )
 
     return ResultItem(
-        title,
+        f"{title}",
         arg=f"{cmd.title}",
         subtitle=subtitle,
         location=location,
@@ -273,50 +280,32 @@ def create_result_item_for_command(cmd, location):
         icon_path=cmd.icon_path
     )
 
+def create_result_item_common(title, cmd, location, param):
+    action = construct_action(cmd, param)
+    subtitle = subtitle_for_command(cmd, param)
+    full_command = construct_full_command(action, location)
+    modifier_list = create_modifier_list(cmd, location, param)
+
+    return ResultItem(
+        title,
+        arg=full_command,
+        subtitle=subtitle,
+        location=location,
+        valid=bool(param),  # if param has value,
+        mods=modifier_list,
+        icon_path=cmd.icon_path
+    )
+
 def create_result_item_for_command_with_selection(cmd, location, param):
     param = param.strip()
-
     title = param
-
-    action = cmd.action.replace('[input]', param)
-    subtitle = f"runs `{action}`"
-
-    full_command = f"cd {location.directory}; {action}"
-
-    modifier_list = create_modifier_list(cmd, location, param)
-
-    return ResultItem(
-        title,
-        arg=full_command,
-        subtitle=subtitle,
-        location=location,
-        autocomplete=f"{location.title} {cmd.title} {title} ",
-        valid=bool(param), # if param has value,
-        mods=modifier_list,
-        icon_path=cmd.icon_path
-    )
-
+    result_item = create_result_item_common(title, cmd, location, param)
+    result_item.autocomplete = f"{location.title} {cmd.title} {title} "
+    return result_item
 
 def create_result_item_for_command_with_param(cmd, location, param):
-
     title = cmd.title
-
-    action = cmd.action.replace('[input]', param.replace(' ', '_'))
-    subtitle = f"runs `{action}`"
-
-    full_command = f"cd {location.directory}; {action}"
-
-    modifier_list = create_modifier_list(cmd, location, param)
-
-    return ResultItem(
-        title,
-        arg=full_command,
-        subtitle=subtitle,
-        location=location,
-        valid=bool(param), # if param has value,
-        mods=modifier_list,
-        icon_path=cmd.icon_path
-    )
+    return create_result_item_common(title, cmd, location, param)
 
 def generate_locations_from_yaml(yaml_string):
     def location_entry_processor(entry):
