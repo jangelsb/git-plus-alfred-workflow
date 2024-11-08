@@ -238,13 +238,22 @@ def create_result_item_for_command(cmd, location):
             action = action.replace("[input]", value)
 
         full_command = f"cd {location.directory}; {action}"
+
+        modifier_list = [
+            Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', value)}",
+                     subtitle=modifier.subtitle,
+                     valid=modifier.valid,
+                     key=modifier.key)
+                for modifier in cmd.mods
+        ]
+
         return ResultItem(
             title,
             arg=full_command,
             subtitle=subtitle,
             valid=True,
             location=location,
-            mods=cmd.mods,
+            mods=modifier_list,
             icon_path=cmd.icon_path
             )
 
@@ -267,6 +276,14 @@ def create_result_item_for_command_with_selection(cmd, location, param):
 
     full_command = f"cd {location.directory}; {action}"
 
+    modifier_list = [
+        Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', param)}",
+                subtitle=modifier.subtitle,
+                valid=modifier.valid,
+                key=modifier.key)
+            for modifier in cmd.mods
+    ]
+
     return ResultItem(
         title,
         arg=full_command,
@@ -274,7 +291,7 @@ def create_result_item_for_command_with_selection(cmd, location, param):
         location=location,
         autocomplete=f"{location.title} {cmd.title} {title} ",
         valid=bool(param), # if param has value,
-        mods=cmd.mods,
+        mods=modifier_list,
         icon_path=cmd.icon_path
     )
 
@@ -288,13 +305,21 @@ def create_result_item_for_command_with_param(cmd, location, param):
 
     full_command = f"cd {location.directory}; {action}"
 
+    modifier_list = [
+        Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', param)}",
+                subtitle=modifier.subtitle,
+                valid=modifier.valid,
+                key=modifier.key)
+            for modifier in cmd.mods
+    ]
+
     return ResultItem(
         title,
         arg=full_command,
         subtitle=subtitle,
         location=location,
         valid=bool(param), # if param has value,
-        mods=cmd.mods,
+        mods=modifier_list,
         icon_path=cmd.icon_path
     )
 
