@@ -37,8 +37,10 @@
   values_command: git branch -a
   should_use_values_as_inline_commands: true
   subcommands:
-    - title: echo command
+    - title: echo
       command: "cb=$(echo '[parent]' | sed -e 's/^\\* //' -e 's|^remotes/||'); echo $cb"
+    - title: echo 2
+      command: "cb=$(echo '[parent]' | sed -e 's/^\\* //' -e 's|^remotes/||'); echo $cb $cb"
 
 
 - title: modified files
