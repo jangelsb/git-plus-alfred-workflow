@@ -81,6 +81,30 @@
 				<key>vitoclose</key>
 				<false/>
 			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>2B6F959B-E985-412D-A7EC-D2D084773017</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>305D3D82-5368-44F1-B4BB-6F707F32771B</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>305D3D82-5368-44F1-B4BB-6F707F32771B</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
 		</array>
 	</dict>
 	<key>createdby</key>
@@ -218,6 +242,20 @@ sys.stdout.write(path)</string>
 						<key>uid</key>
 						<string>52D747E7-2FE3-4816-8E1E-AB0A99870D5B</string>
 					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>^(?!cd).+</string>
+						<key>outputlabel</key>
+						<string>not a command</string>
+						<key>uid</key>
+						<string>305D3D82-5368-44F1-B4BB-6F707F32771B</string>
+					</dict>
 				</array>
 				<key>elselabel</key>
 				<string>else</string>
@@ -287,6 +325,42 @@ eval "$full_command"</string>
 			<string>alfred.workflow.utility.hidealfred</string>
 			<key>uid</key>
 			<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{var:input_keyword} {query}</string>
+				<key>leftcursor</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.showalfred</string>
+			<key>uid</key>
+			<string>2B6F959B-E985-412D-A7EC-D2D084773017</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<false/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string></string>
+				<key>title</key>
+				<string></string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -380,12 +454,26 @@ A customizable git interface for Alfred
 			<key>ypos</key>
 			<real>235</real>
 		</dict>
+		<key>23C1F948-18A5-486D-8658-BFFDFD5D3F47</key>
+		<dict>
+			<key>xpos</key>
+			<real>450</real>
+			<key>ypos</key>
+			<real>755</real>
+		</dict>
+		<key>2B6F959B-E985-412D-A7EC-D2D084773017</key>
+		<dict>
+			<key>xpos</key>
+			<real>450</real>
+			<key>ypos</key>
+			<real>665</real>
+		</dict>
 		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
 		<dict>
 			<key>xpos</key>
 			<real>70</real>
 			<key>ypos</key>
-			<real>170</real>
+			<real>165</real>
 		</dict>
 		<key>6AF906CF-57FA-41B4-967E-D06828E92FBA</key>
 		<dict>

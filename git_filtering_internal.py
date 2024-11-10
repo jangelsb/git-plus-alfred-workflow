@@ -348,10 +348,10 @@ def create_result_item_common(title, cmd, location, param=None):
 
     return ResultItem(
         title,
-        arg=full_command,
+        arg=full_command if valid else alfred_input.create_path(title), # TODO: might want to clean this up with the other place `alfred_input.create_path(title)` is called
         subtitle=subtitle,
         location=location,
-        valid=valid,
+        valid=True,
         mods=modifier_list,
         icon_path=cmd.icon_path
     )
