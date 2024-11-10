@@ -60,7 +60,7 @@ class ResultItem:
         self.title = title
         self.arg = arg
         self.subtitle = subtitle
-        self.autocomplete = autocomplete if autocomplete else f"{alfred_input.create_path(title)} " # if location else title
+        self.autocomplete = autocomplete if autocomplete else alfred_input.create_path(title) # if location else title
         self.valid = valid
         self.mods = mods if mods else {}
         self.text = text
@@ -124,6 +124,7 @@ class TokenizationResult:
     def create_path(self, next_path):
         location_title = self.location.title if self.location else ""
         commands_titles = [cmd.title for cmd in self.commands]
+        suffix = ' '
 
         output = ''
         if len(commands_titles) > 0:
@@ -132,12 +133,12 @@ class TokenizationResult:
             output = f"{location_title}"
 
         if output.endswith(next_path):
-            return output
+            return output + suffix
 
         if output:
-            return f"{output} {next_path}"
+            return f"{output} {next_path}" + suffix
 
-        return next_path
+        return next_path + suffix
 
 
     def parent_command_title(self):
@@ -304,7 +305,7 @@ def create_result_item_for_location(loc):
         title=loc.title,
         arg=alfred_input.create_path(loc.title),
         subtitle=loc.directory,
-        autocomplete=f"{alfred_input.create_path(loc.title)} ",
+        autocomplete=alfred_input.create_path(loc.title),
         icon_path="folder3.png",
         valid=True
     )
