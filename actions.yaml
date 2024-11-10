@@ -1,3 +1,14 @@
+- title: subcommands
+  subcommands:
+    - title: open in Terminal
+      command: open -a Terminal .
+    - title: level 2
+      subcommands:
+        - title: level 3
+          subcommands:
+            - title: open in Sublime
+              command: echo [parent]
+
 - title: open in Terminal
   command: open -a Terminal .
 
