@@ -11,8 +11,6 @@ import re
 import yaml
 from enum import Enum
 
-checkout_modifiers_list = []
-
 class CommandType(Enum):
     NO_ACTION = 2       # Shows information inline without further action
     INLINE = 3          # Shows a list after running, then requires another selection
@@ -62,7 +60,7 @@ class ResultItem:
         self.title = title
         self.arg = arg
         self.subtitle = subtitle
-        self.autocomplete = autocomplete if autocomplete else f"{location.title} {title} " if location else title
+        self.autocomplete = autocomplete if autocomplete else f"{alfred_input.to_str()} {title} " # if location else title
         self.valid = valid
         self.mods = mods if mods else {}
         self.text = text
@@ -121,6 +119,17 @@ class TokenizationResult:
         commands_titles = [cmd.title for cmd in self.commands]
         return f"loc: {location_title}, cmds: {commands_titles}, query: '{self.unfinished_query}'"
 
+    def to_str(self):
+        location_title = self.location.title if self.location else "None"
+        commands_titles = [cmd.title for cmd in self.commands]
+
+        if len(commands_titles) > 0:
+            return f"{location_title} {' '.join(commands_titles)}"
+
+        return f"{location_title}"
+
+checkout_modifiers_list = []
+alfred_input = TokenizationResult()
 
 def extend_with_subcommands(seed_commands, tokens, matched_parts):
     commands_collected = []
@@ -351,7 +360,7 @@ def create_result_item_for_command_with_selection(cmd, location, param):
     param = param.strip()
     title = param
     result_item = create_result_item_common(title, cmd, location, param)
-    result_item.autocomplete = f"{location.title} {cmd.title} {title} "
+    # result_item.autocomplete = f"{alfred_input.to_str()} {title} "
     return result_item
 
 def create_result_item_for_command_with_param(cmd, location, param):
@@ -363,7 +372,6 @@ def create_result_items_for_command_with_subcommands(cmd, location):
 
     for subcommand in cmd.subcommands:
         result_item = create_result_item_common(subcommand.title, subcommand, location)
-        result_item.autocomplete = f"{location.title} {cmd.title} {subcommand.title} " # TODO: doesn't work with sub sub since it only keeps track of the parent command...
         result_items.append(result_item)
 
     return result_items
@@ -501,9 +509,10 @@ def main():
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
     ends_with_space = query_input.endswith(" ")
 
-    input = tokenize(query_input, locations, commands)
+    global alfred_input
+    alfred_input = tokenize(query_input, locations, commands)
 
-    num_cmds = len(input.commands)
+    num_cmds = len(alfred_input.commands)
 
     output = {"items": []}
 
@@ -516,69 +525,69 @@ def main():
         """
         output['items'] += [ResultItem(f"Invalid repo yaml", arg=f"pbcopy <<EOF{yaml_text}", subtitle=f"Press enter to copy a template", valid=True).to_dict()]
 
-    elif not input.location:
-        filtered_locations = [loc for loc in locations if input.unfinished_query in loc.title.lower()]
+    elif not alfred_input.location:
+        filtered_locations = [loc for loc in locations if alfred_input.unfinished_query in loc.title.lower()]
         output['items'] += [create_result_item_for_location(loc).to_dict() for loc in filtered_locations]
     
     else:
-        change_directory(input.location)
+        change_directory(alfred_input.location)
 
         if num_cmds == 0:
-            filtered_commands = [cmd for cmd in commands if input.unfinished_query in cmd.title.lower()]
-            output['items'].extend(create_result_item_for_command(cmd=cmd, location=input.location).to_dict() for cmd in filtered_commands)
+            filtered_commands = [cmd for cmd in commands if alfred_input.unfinished_query in cmd.title.lower()]
+            output['items'].extend(create_result_item_for_command(cmd=cmd, location=alfred_input.location).to_dict() for cmd in filtered_commands)
 
         elif num_cmds > 0:
-            main_command = input.commands[num_cmds-1]
+            main_command = alfred_input.commands[num_cmds-1]
 
             if main_command.subcommands:
-                output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
+                output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
                 output['items'].extend(
                     item.to_dict()
-                    for item in create_result_items_for_command_with_subcommands(main_command, input.location)
-                    if input.unfinished_query.lower() in item.title.lower()
+                    for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)
+                    if alfred_input.unfinished_query.lower() in item.title.lower()
                 )
 
             elif main_command.command_type == CommandType.INLINE:
-                items = main_command.action(input.location)
-                filtered_items = [item for item in items if input.unfinished_query in item.title.lower()]
+                items = main_command.action(alfred_input.location)
+                filtered_items = [item for item in items if alfred_input.unfinished_query in item.title.lower()]
                 output['items'] += [item.to_dict() for item in filtered_items]
             
             elif main_command.command_type == CommandType.NO_ACTION:
-                output['items'] += [create_result_item_for_command(cmd=main_command, location=input.location).to_dict()]
+                output['items'] += [create_result_item_for_command(cmd=main_command, location=alfred_input.location).to_dict()]
             
             elif main_command.command_type == CommandType.SINGLE_ACTION:
-                output['items'] += [create_result_item_for_command(cmd=main_command, location=input.location).to_dict()]
+                output['items'] += [create_result_item_for_command(cmd=main_command, location=alfred_input.location).to_dict()]
 
             elif main_command.command_type == CommandType.NEEDS_PARAM:
-                output['items'] += [create_result_item_for_command_with_param(cmd=main_command, location=input.location, param=input.unfinished_query).to_dict()]
+                output['items'] += [create_result_item_for_command_with_param(cmd=main_command, location=alfred_input.location, param=alfred_input.unfinished_query).to_dict()]
             
             elif main_command.command_type == CommandType.NEEDS_SELECTION:
                 if main_command.values:
-                    filtered_items = [item for item in main_command.values if input.unfinished_query in item.lower()]
+                    filtered_items = [item for item in main_command.values if alfred_input.unfinished_query in item.lower()]
                     for item in filtered_items:
                         output['items'].append(
                             create_result_item_for_command_with_selection(
                                 cmd=main_command,
-                                location=input.location,
+                                location=alfred_input.location,
                                 param=item
                             ).to_dict()
                         )
                 elif main_command.values_command:
                     items = run_command(main_command.values_command).splitlines()
-                    filtered_items = [item for item in items if input.unfinished_query in item.lower()]
+                    filtered_items = [item for item in items if alfred_input.unfinished_query in item.lower()]
 
                     for item in filtered_items:
                         output['items'].append(
                             create_result_item_for_command_with_selection(
                                 cmd=main_command,
-                                location=input.location,
+                                location=alfred_input.location,
                                 param=item
                             ).to_dict()
                         )
 
 
-    # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
+    output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
     print(json.dumps(output))
 
