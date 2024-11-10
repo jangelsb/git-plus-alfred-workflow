@@ -363,6 +363,7 @@ def create_result_items_for_command_with_subcommands(cmd, location):
 
     for subcommand in cmd.subcommands:
         result_item = create_result_item_common(subcommand.title, subcommand, location)
+        result_item.autocomplete = f"{location.title} {cmd.title} {subcommand.title} " # TODO: doesn't work with sub sub since it only keeps track of the parent command...
         result_items.append(result_item)
 
     return result_items
