@@ -60,7 +60,7 @@ class ResultItem:
         self.title = title
         self.arg = arg
         self.subtitle = subtitle
-        self.autocomplete = autocomplete if autocomplete else f"{alfred_input.to_str()} {title} " # if location else title
+        self.autocomplete = autocomplete if autocomplete else f"{alfred_input.create_path(title)} " # if location else title
         self.valid = valid
         self.mods = mods if mods else {}
         self.text = text
@@ -119,14 +119,20 @@ class TokenizationResult:
         commands_titles = [cmd.title for cmd in self.commands]
         return f"loc: {location_title}, cmds: {commands_titles}, query: '{self.unfinished_query}'"
 
-    def to_str(self):
+    def create_path(self, next_path):
         location_title = self.location.title if self.location else "None"
         commands_titles = [cmd.title for cmd in self.commands]
 
+        output = ''
         if len(commands_titles) > 0:
-            return f"{location_title} {' '.join(commands_titles)}"
+            output = f"{location_title} {' '.join(commands_titles)}"
+        else:
+            output = f"{location_title}"
 
-        return f"{location_title}"
+        if output.endswith(next_path):
+            return output
+
+        return f"{output} {next_path}"
 
 checkout_modifiers_list = []
 alfred_input = TokenizationResult()
@@ -210,10 +216,23 @@ def subtitle_for_command(command, param=None):
     if command.subtitle:
         return command.subtitle
     
-    if command.command_type !=  CommandType.INLINE:
+    if command.command_type ==  CommandType.INLINE:
+        return ''
+
+    if command.command_type ==  CommandType.NEEDS_PARAM:
+        # if param:
         action = process_action(command.action, param, command.secondaryAction)
         return f"runs `{action}`"
-    
+
+    if command.command_type ==  CommandType.NEEDS_SELECTION:
+        if param:
+            action = process_action(command.action, param, command.secondaryAction)
+            return f"runs `{action}`"
+
+    if command.command_type ==  CommandType.SINGLE_ACTION:
+        action = process_action(command.action, param, command.secondaryAction)
+        return f"runs `{action}`"
+
     return ''
 
 def list_git_branches(location):
