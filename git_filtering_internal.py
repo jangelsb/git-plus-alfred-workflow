@@ -93,7 +93,7 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, inline_command=None):
         self.title = title
         self.action = action
         self.secondaryAction = secondaryAction
@@ -103,6 +103,9 @@ class Command:
         self.mods = mods if mods else []
         self.values = values if values else []
         self.values_command = values_command
+        self.subcommands = subcommands if subcommands else []
+        self.values_icon = values_icon
+        self.inline_command = inline_command
 
     def is_valid(self):
         return self.command_type != CommandType.NO_ACTION
@@ -255,7 +258,7 @@ def create_result_item_common(title, cmd, location, param=None):
     full_command = construct_full_command(action, location)
     subtitle = subtitle_for_command(cmd, param)
     modifier_list = create_modifier_list(cmd, location, param)
-    valid = bool(param) if param else True
+    valid = bool(param) if param else not cmd.subcommands
 
     return ResultItem(
         title,
@@ -273,7 +276,29 @@ def create_result_item_for_command(cmd, location):
     if cmd.command_type == CommandType.SINGLE_ACTION:
         return create_result_item_common(title, cmd, location)
 
-    # For non-single action commands
+    # elif cmd.command_type == CommandType.NO_ACTION:
+    #     return ResultItem(
+    #         title,
+    #         arg=cmd.action,
+    #         subtitle=subtitle_for_command(cmd),
+    #         location=location,
+    #         mods=cmd.mods,
+    #         icon_path=cmd.icon_path
+    #     )
+
+    # elif cmd.command_type == CommandType.INLINE:
+    #     return create_result_item_common(title, cmd, location)
+
+    # # For commands with subcommands
+    # if cmd.subcommands:
+    #     return [
+    #         create_result_item_common(subcommand['title'], cmd, location)
+    #         for subcommand in cmd.subcommands
+    #     ]
+
+    # # Handle other complex scenarios (like NEEDS_SELECTION) as needed
+
+    print(f"when does this get called? {cmd.command_type}")
     return ResultItem(
         title,
         arg=title,
@@ -293,6 +318,37 @@ def create_result_item_for_command_with_selection(cmd, location, param):
 def create_result_item_for_command_with_param(cmd, location, param):
     title = cmd.title
     return create_result_item_common(title, cmd, location, param)
+
+def create_result_items_for_command_with_subcommands(cmd, location):
+    result_items = []
+
+    for subcommand in cmd.subcommands:
+        result_item = create_result_item_common(subcommand.title, subcommand, location)
+        result_items.append(result_item)
+
+    return result_items
+
+
+    # if subcommand.command_type == CommandType.NO_ACTION:
+    #     create_result_item_for_command(cmd=subcommand, location=location)
+
+    # elif subcommand.command_type == CommandType.SINGLE_ACTION:
+    #     create_result_item_for_command(cmd=subcommand, location=location)
+
+    # elif subcommand.command_type == CommandType.NEEDS_PARAM:
+    #     create_result_item_for_command_with_param(cmd=subcommand, location=location, param=input.unfinished_query).to_dict()
+
+    # elif main_command.command_type == CommandType.NEEDS_SELECTION:
+    #     if main_command.values:
+    #         filtered_items = [item for item in main_command.values if input.unfinished_query in item.lower()]
+    #         for item in filtered_items:
+    #             output['items'].append(
+    #                 create_result_item_for_command_with_selection(
+    #                     cmd=main_command,
+    #                     location=location,
+    #                     param=item
+    #                 ).to_dict()
+    #             )
 
 
 def generate_locations_from_yaml(yaml_string):
@@ -335,17 +391,22 @@ def create_commands_from_string(command_string):
         ]
 
     def command_entry_processor(entry):
+        def process_subcommands(subcommands):
+            return [command_entry_processor(subcommand) for subcommand in subcommands]
+
         mods = process_modifiers(entry.get('mods', []))
         values = entry.get('values', [])
         values_command = entry.get('values_command', None)
         action = entry.get('command', '')
+        subcommands = process_subcommands(entry.get('subcommands', []))
+        values_icon = entry.get('values_icon', None)
+        inline_command = entry.get('inline_command', None)
 
         command_type = CommandType.SINGLE_ACTION
 
-        # if entry.get('inline_command'):
-        #     command_type = CommandType.NO_ACTION
-        # el
-        if values or values_command: 
+        if inline_command:
+            command_type = CommandType.NO_ACTION
+        elif values or values_command:
             command_type = CommandType.NEEDS_SELECTION
         elif '[input]' in action:
             command_type = CommandType.NEEDS_PARAM
@@ -357,11 +418,15 @@ def create_commands_from_string(command_string):
             icon_path=entry.get('icon', None),
             mods=mods,
             values=values,
-            values_command=values_command
+            values_command=values_command,
+            subcommands=subcommands,
+            values_icon=values_icon,
+            inline_command=inline_command
         )
 
     yaml_data = yaml.safe_load(command_string)
     return [command_entry_processor(entry) for entry in yaml_data]
+
 
 def add_modifiers(modifier_string, target_list):
     modifiers = create_modifiers_from_string(modifier_string)
@@ -382,16 +447,17 @@ def main():
     locations = generate_locations_from_yaml(input_repo_list_yaml)
     
     commands = [
-        Command("checkout_branch", list_git_branches, subtitle="", command_type=CommandType.INLINE, icon_path='fork.png'),
-        Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION, icon_path='up.big.png'),
-        Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.big.png'),
-        Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.small.png'),
-        Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM, icon_path='fork.plus.png'),
-        Command("status", input_status_command, command_type=CommandType.NO_ACTION),
+        # Command("checkout_branch", list_git_branches, subtitle="", command_type=CommandType.INLINE, icon_path='fork.png'),
+        # Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION, icon_path='up.big.png'),
+        # Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.big.png'),
+        # Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.small.png'),
+        # Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM, icon_path='fork.plus.png'),
+        # Command("status", input_status_command, command_type=CommandType.NO_ACTION),
     ]
 
     commands.extend(create_commands_from_string(input_additional_actions))
 
+    # print(commands[0].command_type)
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
     ends_with_space = query_input.endswith(" ")
 
@@ -421,13 +487,21 @@ def main():
             filtered_commands = [cmd for cmd in commands if input.unfinished_query in cmd.title.lower()]
             output['items'].extend(create_result_item_for_command(cmd=cmd, location=input.location).to_dict() for cmd in filtered_commands)
 
-        elif num_cmds == 1:
-            main_command = input.commands[0]
+        elif num_cmds > 0:
+            main_command = input.commands[num_cmds-1]
 
-            if main_command.command_type == CommandType.INLINE:
+            if main_command.subcommands:
+                output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
+
+                output['items'].extend(
+                    item.to_dict()
+                    for item in create_result_items_for_command_with_subcommands(main_command, input.location)
+                    if input.unfinished_query.lower() in item.title.lower()
+                )
+
+            elif main_command.command_type == CommandType.INLINE:
                 items = main_command.action(input.location)
                 filtered_items = [item for item in items if input.unfinished_query in item.title.lower()]
-
                 output['items'] += [item.to_dict() for item in filtered_items]
             
             elif main_command.command_type == CommandType.NO_ACTION:
@@ -440,10 +514,8 @@ def main():
                 output['items'] += [create_result_item_for_command_with_param(cmd=main_command, location=input.location, param=input.unfinished_query).to_dict()]
             
             elif main_command.command_type == CommandType.NEEDS_SELECTION:
-
                 if main_command.values:
                     filtered_items = [item for item in main_command.values if input.unfinished_query in item.lower()]
-
                     for item in filtered_items:
                         output['items'].append(
                             create_result_item_for_command_with_selection(
