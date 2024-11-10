@@ -121,6 +121,27 @@ class TokenizationResult:
         commands_titles = [cmd.title for cmd in self.commands]
         return f"loc: {location_title}, cmds: {commands_titles}, query: '{self.unfinished_query}'"
 
+
+def extend_with_subcommands(seed_commands, tokens, matched_parts):
+    commands_collected = []
+    command_dict = {cmd.title.lower(): cmd for cmd in seed_commands}
+
+    for start_index in range(len(tokens)):
+        for end_index in range(start_index + 1, len(tokens) + 1):
+            part = ' '.join(tokens[start_index:end_index]).lower()
+            if part in command_dict:
+                subcommand = command_dict[part]
+                commands_collected.append(subcommand)
+                matched_parts.update(tokens[start_index:end_index])
+
+                # Recursively handle nested subcommands
+                if hasattr(subcommand, 'subcommands') and subcommand.subcommands:
+                    nested_commands = extend_with_subcommands(subcommand.subcommands, tokens[end_index:], matched_parts)
+                    commands_collected.extend(nested_commands)
+                break
+
+    return commands_collected
+
 def tokenize(input_string, locations, commands):
     location_dict = {loc.title.lower(): loc for loc in locations}
     command_dict = {cmd.title.lower(): cmd for cmd in commands}
@@ -136,11 +157,29 @@ def tokenize(input_string, locations, commands):
                 location = location_dict[part]
                 matched_parts.update(tokens[start_index:end_index])
             elif part in command_dict:
-                commands_list.append(command_dict[part])
+                initial_command = command_dict[part]
+                commands_list.append(initial_command)
+                commands_list.extend(extend_with_subcommands(initial_command.subcommands, tokens[end_index:], matched_parts))
                 matched_parts.update(tokens[start_index:end_index])
+                break
 
-    unfinished_parts = [part for part in tokens if part not in matched_parts]
-    unfinished = ' '.join(unfinished_parts).strip()
+    unfinished = input_string
+
+    # Remove commands from query
+    for command in commands_list:
+        item = command.title
+        index = unfinished.find(item)
+        if index != -1:
+            unfinished = unfinished[:index] + unfinished[index+len(item):]
+
+    # Remove location from query
+    if location:
+        location_title = location.title
+        index = unfinished.find(location_title)
+        if index != -1:
+            unfinished = unfinished[:index] + unfinished[index+len(location_title):]
+
+    unfinished = unfinished.strip()
 
     return TokenizationResult(location, commands_list, unfinished)
 
