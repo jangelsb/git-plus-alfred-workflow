@@ -211,7 +211,7 @@ def subtitle_for_command(command, param=None):
         return command.subtitle
     
     if command.command_type !=  CommandType.INLINE:
-        action = construct_action(command, param)
+        action = process_action(command.action, param, command.secondaryAction)
         return f"runs `{action}`"
     
     return ''
@@ -279,22 +279,21 @@ def create_result_item_for_location(loc):
 
 
 def create_modifier_list(cmd, location, param=None):
-    param_replacement = param.replace(' ', '_') if param else None
     return [
         Modifier(
-            arg=f"cd {location.directory}; {modifier.arg.replace('[input]', param_replacement)}" if param else f"cd {location.directory}; {modifier.arg}",
+            arg=construct_full_command(process_action(modifier.arg, param), location),
             subtitle=modifier.subtitle,
             valid=modifier.valid,
             key=modifier.key
         ) for modifier in cmd.mods
     ]
 
-def construct_action(cmd, param=None):
-    if cmd.secondaryAction:
-        value = run_command(cmd.secondaryAction).strip()
-        action = cmd.action.replace("[input]", value)
+def process_action(action, param, secondaryAction=None):
+    if secondaryAction:
+        value = run_command(secondaryAction).strip()
+        action = action.replace("[input]", value)
     else:
-        action = cmd.action.replace('[input]', param.replace(' ', '_')) if param else cmd.action
+        action = action.replace('[input]', param.replace(' ', '_')) if param else action
 
     return action
 
@@ -302,7 +301,7 @@ def construct_full_command(action, location):
     return f"cd {location.directory}; {action}"
 
 def create_result_item_common(title, cmd, location, param=None):
-    action = construct_action(cmd, param)
+    action = process_action(cmd.action, param, secondaryAction=cmd.secondaryAction)
     full_command = construct_full_command(action, location)
     subtitle = subtitle_for_command(cmd, param)
     modifier_list = create_modifier_list(cmd, location, param)
@@ -332,14 +331,11 @@ def create_result_item_for_command(cmd, location):
 
 def create_result_item_for_command_with_selection(cmd, location, param):
     param = param.strip()
-    title = param
-    result_item = create_result_item_common(title, cmd, location, param)
-    # result_item.autocomplete = f"{alfred_input.to_str()} {title} "
+    result_item = create_result_item_common(param, cmd, location, param)
     return result_item
 
 def create_result_item_for_command_with_param(cmd, location, param):
-    title = cmd.title
-    return create_result_item_common(title, cmd, location, param)
+    return create_result_item_common(cmd.title, cmd, location, param)
 
 def create_result_items_for_command_with_subcommands(cmd, location):
     result_items = []
@@ -350,27 +346,6 @@ def create_result_items_for_command_with_subcommands(cmd, location):
 
     return result_items
 
-
-    # if subcommand.command_type == CommandType.NO_ACTION:
-    #     create_result_item_for_command(cmd=subcommand, location=location)
-
-    # elif subcommand.command_type == CommandType.SINGLE_ACTION:
-    #     create_result_item_for_command(cmd=subcommand, location=location)
-
-    # elif subcommand.command_type == CommandType.NEEDS_PARAM:
-    #     create_result_item_for_command_with_param(cmd=subcommand, location=location, param=input.unfinished_query).to_dict()
-
-    # elif main_command.command_type == CommandType.NEEDS_SELECTION:
-    #     if main_command.values:
-    #         filtered_items = [item for item in main_command.values if input.unfinished_query in item.lower()]
-    #         for item in filtered_items:
-    #             output['items'].append(
-    #                 create_result_item_for_command_with_selection(
-    #                     cmd=main_command,
-    #                     location=location,
-    #                     param=item
-    #                 ).to_dict()
-    #             )
 
 
 def generate_locations_from_yaml(yaml_string):
