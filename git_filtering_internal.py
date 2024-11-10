@@ -122,7 +122,7 @@ class TokenizationResult:
         return f"loc: {location_title}, cmds: {commands_titles}, query: '{self.unfinished_query}'"
 
     def create_path(self, next_path):
-        location_title = self.location.title if self.location else "None"
+        location_title = self.location.title if self.location else ""
         commands_titles = [cmd.title for cmd in self.commands]
 
         output = ''
@@ -134,7 +134,11 @@ class TokenizationResult:
         if output.endswith(next_path):
             return output
 
-        return f"{output} {next_path}"
+        if output:
+            return f"{output} {next_path}"
+
+        return next_path
+
 
     def parent_command_title(self):
         if len(self.commands) > 0:
@@ -298,10 +302,11 @@ def list_git_branches(location):
 def create_result_item_for_location(loc):
     return ResultItem(
         title=loc.title,
-        arg=loc.directory,
+        arg=alfred_input.create_path(loc.title),
         subtitle=loc.directory,
-        autocomplete=f"{loc.title} ",
-        icon_path="folder3.png"
+        autocomplete=f"{alfred_input.create_path(loc.title)} ",
+        icon_path="folder3.png",
+        valid=True
     )
 
 
@@ -492,6 +497,9 @@ def main():
     ends_with_space = query_input.endswith(" ")
 
     global alfred_input
+
+    # TODO: idea: don't process commands yet - do just locations
+    # after the location is set - then do commands?
     alfred_input = tokenize(query_input, locations, commands)
 
     num_cmds = len(alfred_input.commands)
