@@ -91,7 +91,7 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, inline_command=None):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, inline_command=None, should_use_values_as_inline_commands=False):
         self.title = title
         self.action = action
         self.secondaryAction = secondaryAction
@@ -101,9 +101,11 @@ class Command:
         self.mods = mods if mods else []
         self.values = values if values else []
         self.values_command = values_command
-        self.subcommands = subcommands if subcommands else []
         self.values_icon = values_icon
+        self.should_use_values_as_inline_commands = should_use_values_as_inline_commands
         self.inline_command = inline_command
+        self.subcommands = subcommands if subcommands else []
+
 
     def is_valid(self):
         return self.command_type != CommandType.NO_ACTION
@@ -426,6 +428,8 @@ def create_commands_from_string(command_string):
         subcommands = process_subcommands(entry.get('subcommands', []))
         values_icon = entry.get('values_icon', None)
         inline_command = entry.get('inline_command', None)
+        should_use_values_as_inline_commands = entry.get('should_use_values_as_inline_commands', False)
+
 
         command_type = CommandType.SINGLE_ACTION
 
@@ -446,7 +450,8 @@ def create_commands_from_string(command_string):
             values_command=values_command,
             subcommands=subcommands,
             values_icon=values_icon,
-            inline_command=inline_command
+            inline_command=inline_command,
+            should_use_values_as_inline_commands=should_use_values_as_inline_commands
         )
 
     yaml_data = yaml.safe_load(command_string)
@@ -508,6 +513,24 @@ def main():
     
     else:
         change_directory(alfred_input.location)
+
+        new_list = []
+
+        for cmd in commands:
+            if cmd.should_use_values_as_inline_commands:
+                items = run_command(cmd.values_command).splitlines()
+
+                for item in items:
+                    new_list.append(Command(title=f"{item.strip()}", action="", subcommands=cmd.subcommands))
+            else:
+                new_list.append(cmd)
+        if new_list:
+            commands = new_list
+
+        # TODO: clean this up - does the UID work?
+        
+        alfred_input = tokenize(query_input, locations, commands)
+        num_cmds = len(alfred_input.commands)
 
         if num_cmds == 0:
             filtered_commands = [cmd for cmd in commands if alfred_input.unfinished_query in cmd.title.lower()]

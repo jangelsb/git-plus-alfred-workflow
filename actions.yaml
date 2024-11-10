@@ -34,8 +34,11 @@
 
 
 - title: branches
-  command: "cb=$(echo '[input]' | sed -e 's/^\\* //' -e 's|^remotes/||'); echo $cb"
   values_command: git branch -a
+  should_use_values_as_inline_commands: true
+  subcommands:
+    - title: echo command
+      command: "cb=$(echo '[parent]' | sed -e 's/^\\* //' -e 's|^remotes/||'); echo $cb"
 
 
 - title: modified files
