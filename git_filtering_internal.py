@@ -134,6 +134,12 @@ class TokenizationResult:
 
         return f"{output} {next_path}"
 
+    def parent_command_title(self):
+        if len(self.commands) > 0:
+            return self.commands[-1].title
+
+        return ''
+
 checkout_modifiers_list = []
 alfred_input = TokenizationResult()
 
@@ -311,8 +317,11 @@ def process_action(action, param, secondaryAction=None):
     if secondaryAction:
         value = run_command(secondaryAction).strip()
         action = action.replace("[input]", value)
+        action = action.replace("[parent]", alfred_input.parent_command_title())
     else:
-        action = action.replace('[input]', param.replace(' ', '_')) if param else action
+        if isinstance(action, str):
+            action = action.replace('[input]', param.replace(' ', '_')) if param else action
+            action = action.replace("[parent]", alfred_input.parent_command_title())
 
     return action
 
