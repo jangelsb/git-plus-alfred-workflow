@@ -306,7 +306,16 @@ def create_result_item_common(title, cmd, location, param=None):
     full_command = construct_full_command(action, location)
     subtitle = subtitle_for_command(cmd, param)
     modifier_list = create_modifier_list(cmd, location, param)
-    valid = bool(param) if param else not cmd.subcommands
+
+    switcher = {
+        CommandType.NO_ACTION: False,
+        CommandType.INLINE: False,
+        CommandType.SINGLE_ACTION: True,
+        CommandType.NEEDS_PARAM: bool(param),
+        CommandType.NEEDS_SELECTION: bool(param)
+    }
+
+    valid = switcher.get(cmd.command_type, False) and not cmd.subcommands
 
     return ResultItem(
         title,
@@ -319,42 +328,7 @@ def create_result_item_common(title, cmd, location, param=None):
     )
 
 def create_result_item_for_command(cmd, location):
-    title = cmd.title
-    
-    if cmd.command_type == CommandType.SINGLE_ACTION:
-        return create_result_item_common(title, cmd, location)
-
-    # elif cmd.command_type == CommandType.NO_ACTION:
-    #     return ResultItem(
-    #         title,
-    #         arg=cmd.action,
-    #         subtitle=subtitle_for_command(cmd),
-    #         location=location,
-    #         mods=cmd.mods,
-    #         icon_path=cmd.icon_path
-    #     )
-
-    # elif cmd.command_type == CommandType.INLINE:
-    #     return create_result_item_common(title, cmd, location)
-
-    # # For commands with subcommands
-    # if cmd.subcommands:
-    #     return [
-    #         create_result_item_common(subcommand['title'], cmd, location)
-    #         for subcommand in cmd.subcommands
-    #     ]
-
-    # # Handle other complex scenarios (like NEEDS_SELECTION) as needed
-
-    print(f"when does this get called? {cmd.command_type}")
-    return ResultItem(
-        title,
-        arg=title,
-        subtitle=subtitle_for_command(cmd),
-        location=location,
-        mods=cmd.mods,
-        icon_path=cmd.icon_path
-    )
+    return create_result_item_common(cmd.title, cmd, location)
 
 def create_result_item_for_command_with_selection(cmd, location, param):
     param = param.strip()
@@ -495,11 +469,11 @@ def main():
     locations = generate_locations_from_yaml(input_repo_list_yaml)
     
     commands = [
-        # Command("checkout_branch", list_git_branches, subtitle="", command_type=CommandType.INLINE, icon_path='fork.png'),
+        Command("checkout_branch", list_git_branches, subtitle="", command_type=CommandType.INLINE, icon_path='fork.png'),
         # Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION, icon_path='up.big.png'),
         # Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.big.png'),
         # Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.small.png'),
-        # Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM, icon_path='fork.plus.png'),
+        Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM, icon_path='fork.plus.png'),
         # Command("status", input_status_command, command_type=CommandType.NO_ACTION),
     ]
 
@@ -538,6 +512,9 @@ def main():
 
         elif num_cmds > 0:
             main_command = alfred_input.commands[num_cmds-1]
+
+            output['items'] += [ResultItem(f"{main_command.command_type}", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
+
 
             if main_command.subcommands:
                 output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
