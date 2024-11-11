@@ -37,10 +37,10 @@
   values_command: git branch -a
   should_use_values_as_inline_commands: true
   subcommands:
-    - title: copy branch
-      command: "cb=$(echo '[parent]' | sed -e 's/^\\* //' -e 's|^remotes/||'); echo $cb | pbcopy"
+    - title: copy branch name
+      command: "cb=$(echo '[parent]' | sed -e 's/^\\* //' -e 's|^remotes/||'); echo $cb | xargs echo -n | pbcopy"
     - title: checkout
-      command: "cb=$(echo '[parent]' | sed -e 's/^\\* //' -e 's|^remotes/||'); git stash; git checkout $cb; git pull;"
+      command: "cb=$(echo '[parent]' | sed -e 's/^\\* //' -e 's|^remotes/||'); killall Xcode; git stash; git checkout $cb; git pull;"
 
 
 - title: modified files
