@@ -229,23 +229,24 @@ def subtitle_for_command(command, param=None):
     if command.subtitle:
         return command.subtitle
     
-    if command.command_type ==  CommandType.INLINE:
+    if command.command_type == CommandType.INLINE:
         return ''
 
-    if command.command_type ==  CommandType.NEEDS_PARAM:
+    if command.command_type == CommandType.NEEDS_PARAM:
         # if param:
         action = process_action(command.action, param, command.secondaryAction)
         return f"runs `{action}`"
 
-    if command.command_type ==  CommandType.NEEDS_SELECTION:
+    if command.command_type == CommandType.NEEDS_SELECTION:
         if param:
             action = process_action(command.action, param, command.secondaryAction)
             return f"runs `{action}`"
 
     if command.command_type ==  CommandType.SINGLE_ACTION:
-        action = process_action(command.action, param, command.secondaryAction)
-        return f"runs `{action}`"
-
+        if not command.subcommands: # TODO: this should be a different command type! And the title should have a "..."
+            action = process_action(command.action, param, command.secondaryAction)
+            return f"runs `{action}`"
+        
     return ''
 
 def list_git_branches(location):
@@ -328,7 +329,8 @@ def process_action(action, param, secondaryAction=None):
         action = action.replace("[parent]", alfred_input.parent_command_title())
     else:
         if isinstance(action, str):
-            action = action.replace('[input]', param.replace(' ', '_')) if param else action
+            action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
+            action = action.replace('[input]', param) if param else action
             action = action.replace("[parent]", alfred_input.parent_command_title())
 
     return action
@@ -443,7 +445,7 @@ def create_commands_from_string(command_string):
             command_type = CommandType.NO_ACTION
         elif values or values_command:
             command_type = CommandType.NEEDS_SELECTION
-        elif '[input]' in action:
+        elif any(inp in action for inp in ['[input]', '[input_snake_case]']):
             command_type = CommandType.NEEDS_PARAM
 
         return Command(
