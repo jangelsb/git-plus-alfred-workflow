@@ -81,6 +81,12 @@
   values_command: |
     git branch -a | sed 's/^..//' | sed 's/remotes\/origin\///' | sort | uniq
   should_use_values_as_inline_commands: true
+  icon_path: fork.png
+  subtitle_command: |
+    if [ "$(git branch --show-current)" == "[parent]" ]; then 
+      echo "current";
+    fi
+
   subcommands:
 
     - title: checkout

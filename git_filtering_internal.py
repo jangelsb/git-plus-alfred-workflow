@@ -91,7 +91,7 @@ class Location:
         self.directory = directory
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, inline_command=None, should_use_values_as_inline_commands=False):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False):
         self.title = title
         self.action = action
         self.secondaryAction = secondaryAction
@@ -103,7 +103,7 @@ class Command:
         self.values_command = values_command
         self.values_icon = values_icon
         self.should_use_values_as_inline_commands = should_use_values_as_inline_commands
-        self.inline_command = inline_command
+        self.subtitle_command = subtitle_command
         self.subcommands = subcommands if subcommands else []
 
 
@@ -231,7 +231,10 @@ def subtitle_for_command(command, param=None):
         return f"runs `{stripped_action}`"
 
     if command.command_type == CommandType.NO_ACTION:
-        return run_command(command.action)
+        return run_command(command.action).strip()
+
+    if command.subtitle_command:
+        return run_command(command.subtitle_command).strip()
     
     if command.subtitle:
         return command.subtitle.strip()
@@ -442,15 +445,16 @@ def create_commands_from_yaml(yaml_data):
         action = entry.get('command', '')
         subcommands = process_subcommands(entry.get('subcommands', []))
         values_icon = entry.get('values_icon', None)
-        inline_command = entry.get('inline_command', None)
+        subtitle_command = entry.get('subtitle_command', None)
         should_use_values_as_inline_commands = entry.get('should_use_values_as_inline_commands', False)
 
 
         command_type = CommandType.SINGLE_ACTION
 
-        if inline_command:
-            command_type = CommandType.NO_ACTION
-        elif values or values_command:
+        # if subtitle_command:
+        #     command_type = CommandType.NO_ACTION
+        # el
+        if values or values_command:
             command_type = CommandType.NEEDS_SELECTION
         elif any(inp in action for inp in ['[input]', '[input_snake_case]']):
             command_type = CommandType.NEEDS_PARAM
@@ -465,7 +469,7 @@ def create_commands_from_yaml(yaml_data):
             values_command=values_command,
             subcommands=subcommands,
             values_icon=values_icon,
-            inline_command=inline_command,
+            subtitle_command=subtitle_command,
             should_use_values_as_inline_commands=should_use_values_as_inline_commands
         )
 
@@ -555,7 +559,22 @@ def main():
                 items = run_command(cmd.values_command).splitlines()
 
                 for item in items:
-                    new_list.append(Command(title=f"{item.strip()}", action="", subcommands=cmd.subcommands))
+                    # new_list.append(Command(title=f"{item.strip()}", action="", subcommands=cmd.subcommands))
+                    new_list.append(Command(
+                        title=f"{item.strip()}",
+                        action=cmd.action,
+                        secondaryAction=cmd.secondaryAction,
+                        subtitle=cmd.subtitle,
+                        command_type=cmd.command_type,
+                        icon_path=cmd.icon_path,
+                        mods=cmd.mods,
+                        values=cmd.values,
+                        values_command=cmd.values_command,
+                        values_icon=cmd.values_icon,
+                        subtitle_command=cmd.subtitle_command,
+                        subcommands=cmd.subcommands,
+                        should_use_values_as_inline_commands=cmd.should_use_values_as_inline_commands
+                    ))
             else:
                 new_list.append(cmd)
         if new_list:
