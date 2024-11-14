@@ -11,16 +11,19 @@
 
 
 - title: pull
+  icon: down.big.png
   command: |
     git pull
 
 - title: fetch
+  icon: down.small.png
   command: |
     git fetch -p
 
-- title: create_branch
+- title: create
+  icon: fork.plus.png
   command: |
-    echo git checkout -b "[input_snake_case]"
+    git checkout -b "[input_snake_case]"
 
 
 - title: copy current branch name
@@ -50,6 +53,7 @@
 
 
 - title: push
+  icon: up.big.png
   command: |
     branch=$(git branch --show-current);
     git push -u origin $branch
@@ -77,44 +81,99 @@
     find . -type f
 
 
-- title: branches
+- title: current branch
   values_command: |
-    git branch -a | sed 's/^..//' | sed 's/remotes\/origin\///' | sort | uniq
+    git branch --show-current # just the current branch
   should_use_values_as_inline_commands: true
-  icon_path: fork.png
+  subtitle: current # add support subtitle non commands
   subtitle_command: |
-    if [[ "$(git branch --show-current)" == "[title]" ]]; 
-      then echo "current"; 
-    fi
-
+    echo 'current'
+  icon: fork.png
   subcommands:
-
     - title: checkout
       command: |
         killall Xcode; git stash; git checkout "[parent]"; git pull;
       mods:
         - subtitle: Launch Xcode after
           mod: cmd
-          command: killall Xcode; git stash; git checkout "[parent]"; git pull; git pull; xed .
+          command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
 
         - subtitle: Launch Sublime after
           mod: alt
-          command: killall Xcode; git stash; git checkout "[parent]"; git pull; git pull; st .
+          command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+
+    - title: checkout master & delete this branch
+      command: |
+        branch="[parent]"
+        if [ "$branch" != "master" ] && [ "$branch" != "main" ]; then
+          killall Xcode; git stash; git checkout main; git pull;
+          git branch -D "[parent]"
+        fi
+
+    - title: copy branch name
+      command: |
+        echo "[parent]" | xargs echo -n | pbcopy
+
+
+- title: local branches
+  values_command: |
+    git branch | grep -v '*' # all local branches minus the current one
+  should_use_values_as_inline_commands: true
+  subtitle: local
+  icon: fork.png
+  subcommands:
+    - title: checkout
+      command: |
+        killall Xcode; git stash; git checkout "[parent]"; git pull;
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+
+        - subtitle: Launch Sublime after
+          mod: alt
+          command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
 
     - title: delete local branch
       command: |
         git branch -d "[parent]"
       mods:
-        - subtitle: Force delete
+        - subtitle: force delete
           mod: cmd
           command: |
             git branch -D "[parent]"
 
+
+    - title: copy branch name
+      command: |
+        echo "[parent]" | xargs echo -n | pbcopy
+
+
+
+- title: remote branches
+  values_command: |
+    git branch -r
+  should_use_values_as_inline_commands: true
+  icon: globe.png
+
+  subcommands:
+    - title: checkout
+      command: |
+        killall Xcode; git stash; git checkout -t "[parent]"; git pull;
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; xed .
+
+        - subtitle: Launch Sublime after
+          mod: alt
+          command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; st .
+
     - title: delete remote branch
       command: |
-        git push origin --delete "[parent]"
+        branch="[parent]"
+        git push origin --delete ${branch#origin/}
 
-    
 
     - title: copy branch name
       command: |
