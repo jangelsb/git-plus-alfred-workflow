@@ -604,13 +604,34 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 				<true/>
 			</dict>
 			<key>description</key>
-			<string></string>
+			<string>Use default for default values</string>
 			<key>label</key>
-			<string>Path to a config file for your actions</string>
+			<string>main actions config</string>
 			<key>type</key>
 			<string>filepicker</string>
 			<key>variable</key>
 			<string>input_actions_path</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>filtermode</key>
+				<integer>2</integer>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>additional actions config</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>input_additional_actions_path</string>
 		</dict>
 	</array>
 	<key>version</key>

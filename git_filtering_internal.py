@@ -481,6 +481,7 @@ def add_modifiers(modifier_string, target_list):
 def main():
     input_repo_list_yaml = os.getenv('input_repo_list')
     input_actions_path = os.getenv('input_actions_path')
+    input_additional_actions_path = os.getenv('input_additional_actions_path')
     input_status_command = os.getenv('input_status_command')
     input_pull_command = os.getenv('input_pull_command')
     input_fetch_command = os.getenv('input_fetch_command')
@@ -503,6 +504,9 @@ def main():
     ]
 
     commands.extend(create_commands_from_config(input_actions_path))
+
+    if input_additional_actions_path:
+        commands.extend(create_commands_from_config(input_actions_path))
 
     # print(commands[0].command_type)
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
