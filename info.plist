@@ -606,7 +606,7 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 			<key>description</key>
 			<string>Use default for default values</string>
 			<key>label</key>
-			<string>main actions config</string>
+			<string>default actions</string>
 			<key>type</key>
 			<string>filepicker</string>
 			<key>variable</key>
@@ -625,13 +625,49 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 				<false/>
 			</dict>
 			<key>description</key>
-			<string></string>
+			<string>Use this for any actions you want to add to the default actions</string>
 			<key>label</key>
-			<string>additional actions config</string>
+			<string>additional actions</string>
 			<key>type</key>
 			<string>filepicker</string>
 			<key>variable</key>
 			<string>input_additional_actions_path</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>- title: open in Terminal
+  command: |
+    open -a Terminal .
+
+- title: open in Xcode
+  command: |
+    xed .</string>
+				<key>required</key>
+				<false/>
+				<key>trim</key>
+				<true/>
+				<key>verticalsize</key>
+				<integer>9</integer>
+			</dict>
+			<key>description</key>
+			<string>a simple yaml file to create additional commands to run
+
+example:
+- title: open in Terminal
+  command: |
+    open -a Terminal .
+
+- title: open in Xcode
+  command: |
+    xed .</string>
+			<key>label</key>
+			<string>additional actions</string>
+			<key>type</key>
+			<string>textarea</string>
+			<key>variable</key>
+			<string>input_additional_actions</string>
 		</dict>
 	</array>
 	<key>version</key>

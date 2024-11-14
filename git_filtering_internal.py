@@ -488,7 +488,7 @@ def main():
     input_push_command = os.getenv('input_push_command')
     # input_create_branch_command = os.getenv('input_create_branch_command')
     # input_checkout_command_modifiers = os.getenv('input_checkout_command_modifiers')
-    # input_additional_actions = os.getenv('input_additional_actions')
+    input_additional_actions = os.getenv('input_additional_actions')
     
     # add_modifiers(input_checkout_command_modifiers, checkout_modifiers_list)
 
@@ -506,7 +506,10 @@ def main():
     commands.extend(create_commands_from_config(input_actions_path))
 
     if input_additional_actions_path:
-        commands.extend(create_commands_from_config(input_actions_path))
+        commands.extend(create_commands_from_config(input_additional_actions_path))
+
+    if input_additional_actions:
+        commands.extend(create_commands_from_string(input_additional_actions))
 
     # print(commands[0].command_type)
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
