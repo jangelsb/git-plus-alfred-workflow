@@ -139,9 +139,10 @@
 
     - title: checkout master & delete this branch
       command: |
+        master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
         branch="[parent]"
-        if [ "$branch" != "master" ] && [ "$branch" != "main" ]; then
-          killall Xcode; git stash; git checkout main; git pull;
+        if [ "$branch" != "$master" ]; then
+          killall Xcode; git stash; git checkout "$master"; git pull;
           git branch -D "[parent]"
         fi
 
