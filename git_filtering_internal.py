@@ -590,8 +590,9 @@ def main():
         num_cmds = len(alfred_input.commands)
 
         if num_cmds == 0:
-            filtered_commands = [cmd for cmd in commands if alfred_input.unfinished_query in cmd.title.lower()]
-            output['items'].extend(create_result_item_for_command(cmd=cmd, location=alfred_input.location).to_dict() for cmd in filtered_commands)
+            results = [create_result_item_for_command(cmd=cmd, location=alfred_input.location) for cmd in commands]
+            filtered_results = [r.to_dict() for r in results if alfred_input.unfinished_query.lower() in r.subtitle.lower() or alfred_input.unfinished_query.lower() in r.title.lower()]
+            output['items'].extend(filtered_results)
 
         elif num_cmds > 0:
             main_command = alfred_input.commands[num_cmds-1]
@@ -600,10 +601,12 @@ def main():
 
 
             if main_command.subcommands:
+                results = [item for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)]
+
                 output['items'].extend(
-                    item.to_dict()
-                    for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)
-                    if alfred_input.unfinished_query.lower() in item.title.lower()
+                    result.to_dict()
+                    for result in results
+                    if alfred_input.unfinished_query.lower() in result.subtitle.lower() or alfred_input.unfinished_query.lower() in result.title.lower()
                 )
 
             elif main_command.command_type == CommandType.INLINE:
@@ -622,27 +625,28 @@ def main():
             
             elif main_command.command_type == CommandType.NEEDS_SELECTION:
                 if main_command.values:
-                    filtered_items = [item for item in main_command.values if alfred_input.unfinished_query in item.lower()]
-                    for item in filtered_items:
-                        output['items'].append(
-                            create_result_item_for_command_with_selection(
-                                cmd=main_command,
-                                location=alfred_input.location,
-                                param=item
-                            ).to_dict()
+                    # filtered_items = [item for item in main_command.values if
+                    #                   alfred_input.unfinished_query.lower() in item.lower()]
+                    for item in main_command.values:
+                        result_item = create_result_item_for_command_with_selection(
+                            cmd=main_command,
+                            location=alfred_input.location,
+                            param=item
                         )
+                        if alfred_input.unfinished_query.lower() in result_item.title.lower() or alfred_input.unfinished_query.lower() in result_item.subtitle.lower():
+                            output['items'].append(result_item.to_dict())
+
                 elif main_command.values_command:
                     items = run_command(main_command.values_command).splitlines()
-                    filtered_items = [item for item in items if alfred_input.unfinished_query in item.lower()]
-
-                    for item in filtered_items:
-                        output['items'].append(
-                            create_result_item_for_command_with_selection(
-                                cmd=main_command,
-                                location=alfred_input.location,
-                                param=item
-                            ).to_dict()
+                    # filtered_items = [item for item in items if alfred_input.unfinished_query.lower() in item.lower()]
+                    for item in items:
+                        result_item = create_result_item_for_command_with_selection(
+                            cmd=main_command,
+                            location=alfred_input.location,
+                            param=item
                         )
+                        if alfred_input.unfinished_query.lower() in result_item.title.lower() or alfred_input.unfinished_query.lower() in result_item.subtitle.lower():
+                            output['items'].append(result_item.to_dict())
 
 
     output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
