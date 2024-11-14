@@ -345,7 +345,7 @@ def process_action(action, param, title, secondaryAction=None):
             action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
             action = action.replace('[input]', param) if param else action
             action = action.replace("[parent]", alfred_input.parent_command_title())
-            action = action.replace("[title]", title.strip())
+            action = action.replace("[title]", param.strip() if param else title.strip())
 
     return action
 
@@ -600,6 +600,7 @@ def main():
             output['items'] += [ResultItem(f"{main_command.command_type}", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
 
+            # TODO: support subcommands even if there are values command (branches > show branches > show subcommands)
             if main_command.subcommands:
                 results = [item for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)]
 
