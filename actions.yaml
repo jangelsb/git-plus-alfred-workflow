@@ -25,11 +25,46 @@
   command: |
     git checkout -b "[input_snake_case]"
 
-
-- title: copy current branch name
+- title: cherry-pick
   command: |
-    git branch --show-current | xargs echo -n | pbcopy
+   git cherry-pick [input]
 
+- title: commit
+  command: |
+   git commit -m "[input]"
+  mods:
+    - subtitle: and push
+      mod: cmd
+      command: |
+        branch=$(git branch --show-current);
+        git commit -m "[input]"
+        git push -u origin $branch
+
+- title: add all & commit
+  command: |
+    git add .
+    git commit -m "[input]"
+  mods:
+    - subtitle: and push
+      mod: cmd
+      command: |
+        branch=$(git branch --show-current);
+        git add .
+        git commit -m "[input]"
+        git push -u origin $branch
+
+- title: add modified & commit
+  command: |
+    git add -u
+    git commit -m "[input]"
+  mods:
+    - subtitle: and push
+      mod: cmd
+      command: |
+        branch=$(git branch --show-current);
+        git add -u
+        git commit -m "[input]"
+        git push -u origin $branch
 
 - title: open in Terminal
   command: |
