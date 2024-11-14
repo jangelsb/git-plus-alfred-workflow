@@ -559,6 +559,7 @@ def main():
         new_list = []
 
         for cmd in commands:
+            # TODO: DO THIS FOR values as well!
             if cmd.should_use_values_as_inline_commands:
                 items = run_command(cmd.values_command).splitlines()
 
@@ -601,7 +602,7 @@ def main():
 
 
             # TODO: support subcommands even if there are values command (branches > show branches > show subcommands)
-            if main_command.subcommands:
+            if main_command.subcommands and main_command.should_use_values_as_inline_commands: #  and main_command.should_use_values_as_inline_commands may not be needed once values are treated like commmands
                 results = [item for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)]
 
                 output['items'].extend(
