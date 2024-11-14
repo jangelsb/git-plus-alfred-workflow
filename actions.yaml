@@ -131,7 +131,7 @@
 - title: copy diff from tag
   command: |
     branch=$(git branch --show-current); 
-    git log --reverse --format=%B $(git merge-base "[input]"" $branch)..$branch | pbcopy
+    git log --reverse --format=%B $(git merge-base "[input]" $branch)..$branch | pbcopy
   values_command: git tag
   mods:
     - subtitle: copy for ChatGPT Summary
@@ -141,5 +141,5 @@
         {
           echo "this is a list of commits for my project. can you break it down into a change log, calling out things that are noteworthy"
           echo ''
-          git log --reverse --format=%B $(git merge-base "[input]"" $branch)..$branch)
+          git log --reverse --format=%B $(git merge-base "[input]" $branch)..$branch)
         } | pbcopy"

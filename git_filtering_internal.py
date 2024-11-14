@@ -223,11 +223,18 @@ def run_command(command):
         return f"Error executing {command}: {e.stderr}"
 
 def subtitle_for_command(command, param=None):
+    def process_action_text(value):
+        stripped_action = value.strip()
+        lines = stripped_action.splitlines()
+        if len(lines) > 1:
+            return f"runs `{lines[0]} ..."
+        return f"runs `{stripped_action}`"
+
     if command.command_type == CommandType.NO_ACTION:
         return run_command(command.action)
     
     if command.subtitle:
-        return command.subtitle
+        return command.subtitle.strip()
     
     if command.command_type == CommandType.INLINE:
         return ''
@@ -235,17 +242,17 @@ def subtitle_for_command(command, param=None):
     if command.command_type == CommandType.NEEDS_PARAM:
         # if param:
         action = process_action(command.action, param, command.secondaryAction)
-        return f"runs `{action}`"
+        return process_action_text(action)
 
     if command.command_type == CommandType.NEEDS_SELECTION:
         if param:
             action = process_action(command.action, param, command.secondaryAction)
-            return f"runs `{action}`"
+            return process_action_text(action)
 
     if command.command_type ==  CommandType.SINGLE_ACTION:
         if not command.subcommands: # TODO: this should be a different command type! And the title should have a "..."
             action = process_action(command.action, param, command.secondaryAction)
-            return f"runs `{action}`"
+            return process_action_text(action)
         
     return ''
 
@@ -278,7 +285,7 @@ def list_git_branches(location):
         return ResultItem(
             title=title,
             arg=full_command,
-            subtitle=f"runs `{command}`",
+            subtitle=f"runs `{command.strip()}`",
             text=Text(copy=value),
             valid=True,
             uid=branch,
@@ -570,8 +577,6 @@ def main():
 
 
             if main_command.subcommands:
-                output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
-
                 output['items'].extend(
                     item.to_dict()
                     for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)
