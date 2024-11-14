@@ -409,6 +409,7 @@ A customizable git interface for Alfred
 * Add support for subtitle actions
 * Add support for subcommands
 * Add support for searching the subtitle as well
+* Update the actions yaml to have icons and to split the branches into 3 different categories: current, local, remote
 
 
 #### v2024.6
@@ -678,7 +679,7 @@ example:
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>2024.7.WIP4</string>
+	<string>2024.7.WIP5</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
