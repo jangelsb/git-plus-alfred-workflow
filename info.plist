@@ -279,6 +279,7 @@ sys.stdout.write(path)</string>
 				<key>script</key>
 				<string>full_command="source $input_var_profile_path; $1"
 
+# eval "$full_command" 2&gt;&amp;1
 output=$(eval "$full_command" 2&gt;&amp;1)
 
 if [ -z "$output" ]; then
@@ -404,6 +405,10 @@ A customizable git interface for Alfred
 * Fixed an issue where modifiers were not getting their commands setup correctly
 * Fixed issue with the pop command
 * Updated the default additional commands with some sweet commands
+* Add support for inline commands
+* Add support for subtitle actions
+* Add support for subcommands
+* Add support for searching the subtitle as well
 
 
 #### v2024.6
@@ -670,8 +675,10 @@ example:
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>2024.7.WIP3</string>
+	<string>2024.7.WIP4</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
