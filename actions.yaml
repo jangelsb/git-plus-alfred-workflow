@@ -83,8 +83,8 @@
   should_use_values_as_inline_commands: true
   icon_path: fork.png
   subtitle_command: |
-    if [ "$(git branch --show-current)" == "[parent]" ]; then 
-      echo "current";
+    if [[ "$(git branch --show-current)" == "[title]" ]]; 
+      then echo "current"; 
     fi
 
   subcommands:

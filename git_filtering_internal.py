@@ -234,7 +234,9 @@ def subtitle_for_command(command, param=None):
         return run_command(command.action).strip()
 
     if command.subtitle_command:
-        return run_command(command.subtitle_command).strip()
+        action = process_action(action=command.subtitle_command, param=param, title=command.title)
+        action = run_command(action).strip()
+        return action
     
     if command.subtitle:
         return command.subtitle.strip()
@@ -244,17 +246,17 @@ def subtitle_for_command(command, param=None):
 
     if command.command_type == CommandType.NEEDS_PARAM:
         # if param:
-        action = process_action(command.action, param, command.secondaryAction)
+        action = process_action(action=command.action, param=param, title=command.title, secondaryAction=command.secondaryAction)
         return process_action_text(action)
 
     if command.command_type == CommandType.NEEDS_SELECTION:
         if param:
-            action = process_action(command.action, param, command.secondaryAction)
+            action = process_action(action=command.action, param=param, title=command.title, secondaryAction=command.secondaryAction)
             return process_action_text(action)
 
     if command.command_type ==  CommandType.SINGLE_ACTION:
         if not command.subcommands: # TODO: this should be a different command type! And the title should have a "..."
-            action = process_action(command.action, param, command.secondaryAction)
+            action = process_action(action=command.action, param=param, title=command.title, secondaryAction=command.secondaryAction)
             return process_action_text(action)
         
     return ''
@@ -325,23 +327,25 @@ def create_result_item_for_location(loc):
 def create_modifier_list(cmd, location, param=None):
     return [
         Modifier(
-            arg=construct_full_command(process_action(modifier.arg, param), location),
+            arg=construct_full_command(process_action(action=modifier.arg, param=param, title=cmd.title), location),
             subtitle=modifier.subtitle,
             valid=modifier.valid,
             key=modifier.key
         ) for modifier in cmd.mods
     ]
 
-def process_action(action, param, secondaryAction=None):
+def process_action(action, param, title, secondaryAction=None):
     if secondaryAction:
         value = run_command(secondaryAction).strip()
         action = action.replace("[input]", value)
         action = action.replace("[parent]", alfred_input.parent_command_title())
+        action = action.replace("[title]", title.strip())
     else:
         if isinstance(action, str):
             action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
             action = action.replace('[input]', param) if param else action
             action = action.replace("[parent]", alfred_input.parent_command_title())
+            action = action.replace("[title]", title.strip())
 
     return action
 
@@ -349,7 +353,7 @@ def construct_full_command(action, location):
     return f"cd {location.directory}; {action}"
 
 def create_result_item_common(title, cmd, location, param=None):
-    action = process_action(cmd.action, param, secondaryAction=cmd.secondaryAction)
+    action = process_action(action=cmd.action, param=param, title=title, secondaryAction=cmd.secondaryAction)
     full_command = construct_full_command(action, location)
     subtitle = subtitle_for_command(cmd, param)
     modifier_list = create_modifier_list(cmd, location, param)
