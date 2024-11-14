@@ -129,7 +129,7 @@
 				<key>argumenttrimmode</key>
 				<integer>0</integer>
 				<key>argumenttype</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>keyword</key>
@@ -159,7 +159,7 @@ python3 git_filtering_internal.py "$1"</string>
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
-				<false/>
+				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
@@ -279,7 +279,13 @@ sys.stdout.write(path)</string>
 				<key>script</key>
 				<string>full_command="source $input_var_profile_path; $1"
 
-eval "$full_command"</string>
+output=$(eval "$full_command" 2&gt;&amp;1)
+
+if [ -z "$output" ]; then
+  echo "command succeeded"
+else
+  echo "$output"
+fi</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -300,7 +306,7 @@ eval "$full_command"</string>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
-				<false/>
+				<true/>
 				<key>removeextension</key>
 				<false/>
 				<key>text</key>
@@ -464,7 +470,7 @@ A customizable git interface for Alfred
 		<key>2B6F959B-E985-412D-A7EC-D2D084773017</key>
 		<dict>
 			<key>xpos</key>
-			<real>450</real>
+			<real>430</real>
 			<key>ypos</key>
 			<real>665</real>
 		</dict>
@@ -774,9 +780,28 @@ example:
 			<key>variable</key>
 			<string>input_additional_actions</string>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>actions.yaml</string>
+				<key>filtermode</key>
+				<integer>2</integer>
+				<key>placeholder</key>
+				<string>actions.yaml</string>
+				<key>required</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string></string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>input_actions_path</string>
+		</dict>
 	</array>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>2024.7.WIP3</string>
 	<key>webaddress</key>
