@@ -795,7 +795,7 @@ example:
 			<key>description</key>
 			<string></string>
 			<key>label</key>
-			<string></string>
+			<string>Path to a config file for your actions</string>
 			<key>type</key>
 			<string>filepicker</string>
 			<key>variable</key>

@@ -412,7 +412,7 @@ def create_modifiers_from_string(modifier_string):
     yaml_data = yaml.safe_load(modifier_string)
     return [modifier_entry_processor(entry) for entry in yaml_data]
 
-def create_commands_from_string(command_string):
+def create_commands_from_yaml(yaml_data):
     def process_modifiers(mods):
         if not mods:
             return []
@@ -462,9 +462,17 @@ def create_commands_from_string(command_string):
             should_use_values_as_inline_commands=should_use_values_as_inline_commands
         )
 
-    yaml_data = yaml.safe_load(command_string)
     return [command_entry_processor(entry) for entry in yaml_data]
 
+def create_commands_from_config(config_path):
+    with open(config_path, 'r') as file:
+        yaml_data = yaml.safe_load(file)
+
+    return create_commands_from_yaml(yaml_data)
+
+def create_commands_from_string(yaml_string):
+    yaml_data = yaml.safe_load(yaml_string)
+    return create_commands_from_yaml(yaml_data)
 
 def add_modifiers(modifier_string, target_list):
     modifiers = create_modifiers_from_string(modifier_string)
@@ -472,15 +480,16 @@ def add_modifiers(modifier_string, target_list):
 
 def main():
     input_repo_list_yaml = os.getenv('input_repo_list')
+    input_actions_path = os.getenv('input_actions_path')
     input_status_command = os.getenv('input_status_command')
     input_pull_command = os.getenv('input_pull_command')
     input_fetch_command = os.getenv('input_fetch_command')
     input_push_command = os.getenv('input_push_command')
-    input_create_branch_command = os.getenv('input_create_branch_command')
-    input_checkout_command_modifiers = os.getenv('input_checkout_command_modifiers')
-    input_additional_actions = os.getenv('input_additional_actions')
+    # input_create_branch_command = os.getenv('input_create_branch_command')
+    # input_checkout_command_modifiers = os.getenv('input_checkout_command_modifiers')
+    # input_additional_actions = os.getenv('input_additional_actions')
     
-    add_modifiers(input_checkout_command_modifiers, checkout_modifiers_list)
+    # add_modifiers(input_checkout_command_modifiers, checkout_modifiers_list)
 
     locations = generate_locations_from_yaml(input_repo_list_yaml)
     
@@ -489,11 +498,11 @@ def main():
         # Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION, icon_path='up.big.png'),
         # Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.big.png'),
         # Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.small.png'),
-        Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM, icon_path='fork.plus.png'),
+        # Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM, icon_path='fork.plus.png'),
         # Command("status", input_status_command, command_type=CommandType.NO_ACTION),
     ]
 
-    commands.extend(create_commands_from_string(input_additional_actions))
+    commands.extend(create_commands_from_config(input_actions_path))
 
     # print(commands[0].command_type)
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
