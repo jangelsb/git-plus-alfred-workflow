@@ -150,68 +150,25 @@ class TokenizationResult:
 checkout_modifiers_list = []
 alfred_input = TokenizationResult()
 
-# def extend_with_subcommands(seed_commands, tokens, matched_parts):
-#     commands_collected = []
-#     command_dict = {cmd.title.lower(): cmd for cmd in seed_commands}
-#
-#     for start_index in range(len(tokens)):
-#         for end_index in range(start_index + 1, len(tokens) + 1):
-#             part = ' '.join(tokens[start_index:end_index]).lower()
-#             if part in command_dict:
-#                 subcommand = command_dict[part]
-#                 commands_collected.append(subcommand)
-#                 matched_parts.update(tokens[start_index:end_index])
-#
-#                 # Recursively handle nested subcommands
-#                 if hasattr(subcommand, 'subcommands') and subcommand.subcommands:
-#                     nested_commands = extend_with_subcommands(subcommand.subcommands, tokens[end_index:], matched_parts)
-#                     commands_collected.extend(nested_commands)
-#                 break
-#
-#     return commands_collected
+def tokenize(query, locations, commands):
+    command_objects = []
+    location = None
+    sorted_locations = sorted(locations, key=lambda loc: len(loc.title), reverse=True)
 
-def tokenize(input_string, locations, commands):
-    location_dict = {loc.title.lower(): loc for loc in locations}
-    command_dict = {cmd.title.lower(): cmd for cmd in commands}
+    for loc in sorted_locations:
+        if query.startswith(loc.title):
+            location = loc
+            break
+    unfinished_query = query
 
-    location, commands_list = None, []
-    matched_parts = set()
-    tokens = re.split(r'\s+', input_string)
-
-    for start_index in range(len(tokens)):
-        for end_index in range(start_index + 1, len(tokens) + 1):
-            part = ' '.join(tokens[start_index:end_index]).lower()
-            if location is None and part in location_dict:
-                location = location_dict[part]
-                matched_parts.update(tokens[start_index:end_index])
-                break
-            elif part in command_dict:
-                if not commands_list or len(part) > len(commands_list[-1].title):  # Ensure only longer match is kept
-                    initial_command = command_dict[part]
-                    commands_list.append(initial_command)  # Replace existing with this longer match
-                    # commands_list.extend(
-                    #     extend_with_subcommands(initial_command.subcommands, tokens[end_index:], matched_parts))
-                    matched_parts.update(tokens[start_index:end_index])
-
-    unfinished = input_string
-
-    # Remove commands from query
-    for command in commands_list:
-        item = command.title
-        index = unfinished.find(item)
-        if index != -1:
-            unfinished = unfinished[:index] + unfinished[index+len(item):]
-
-    # Remove location from query
     if location:
-        location_title = location.title
-        index = unfinished.find(location_title)
-        if index != -1:
-            unfinished = unfinished[:index] + unfinished[index+len(location_title):]
+        unfinished_query = unfinished_query[len(location.title):].strip()
+        for command in commands:
+            if unfinished_query.startswith(command.title):
+                command_objects.append(command)
+                unfinished_query = unfinished_query[len(command.title):].strip() # TODO: still strips a single space
 
-    unfinished = unfinished.strip()
-
-    return TokenizationResult(location, commands_list, unfinished)
+    return TokenizationResult(location, command_objects, unfinished_query=unfinished_query)
 
 def change_directory(location):
     if location:
@@ -449,18 +406,18 @@ def process_commands_recursively(query_input, locations, commands):
 
 # no locations: show locations
 # no commands: show main list
-    print(f"---------------------------------------------------")
+#     print(f"---------------------------------------------------")
 
     num_cmds_before = len(alfred_input.commands)
-    print(f"num_cmds_before: {num_cmds_before}")
-    print(f"alfred_input: {alfred_input}")
-    print([obj.title for obj in commands])
+#     print(f"num_cmds_before: {num_cmds_before}")
+#     print(f"alfred_input: {alfred_input}")
+#     print([obj.title for obj in commands])
 
     alfred_input = tokenize(query_input, locations, commands)
 
     num_cmds = len(alfred_input.commands)
-    print(f"num_cmds_after: {num_cmds}")
-    print(f"alfred_input: {alfred_input}")
+#     print(f"num_cmds_after: {num_cmds}")
+#     print(f"alfred_input: {alfred_input}")
 
     if num_cmds > num_cmds_before:
         new_commands = list(alfred_input.commands)
