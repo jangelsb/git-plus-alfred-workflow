@@ -114,7 +114,7 @@
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>gitx</string>
+	<string>git+</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -153,9 +153,9 @@ python3 git_filtering_internal.py "$1"</string>
 				<key>scriptfile</key>
 				<string></string>
 				<key>subtext</key>
-				<string></string>
+				<string>A customizable git interface for Alfred</string>
 				<key>title</key>
-				<string>gitx</string>
+				<string>git+</string>
 				<key>type</key>
 				<integer>0</integer>
 				<key>withspace</key>
