@@ -150,25 +150,25 @@ class TokenizationResult:
 checkout_modifiers_list = []
 alfred_input = TokenizationResult()
 
-def extend_with_subcommands(seed_commands, tokens, matched_parts):
-    commands_collected = []
-    command_dict = {cmd.title.lower(): cmd for cmd in seed_commands}
-
-    for start_index in range(len(tokens)):
-        for end_index in range(start_index + 1, len(tokens) + 1):
-            part = ' '.join(tokens[start_index:end_index]).lower()
-            if part in command_dict:
-                subcommand = command_dict[part]
-                commands_collected.append(subcommand)
-                matched_parts.update(tokens[start_index:end_index])
-
-                # Recursively handle nested subcommands
-                if hasattr(subcommand, 'subcommands') and subcommand.subcommands:
-                    nested_commands = extend_with_subcommands(subcommand.subcommands, tokens[end_index:], matched_parts)
-                    commands_collected.extend(nested_commands)
-                break
-
-    return commands_collected
+# def extend_with_subcommands(seed_commands, tokens, matched_parts):
+#     commands_collected = []
+#     command_dict = {cmd.title.lower(): cmd for cmd in seed_commands}
+#
+#     for start_index in range(len(tokens)):
+#         for end_index in range(start_index + 1, len(tokens) + 1):
+#             part = ' '.join(tokens[start_index:end_index]).lower()
+#             if part in command_dict:
+#                 subcommand = command_dict[part]
+#                 commands_collected.append(subcommand)
+#                 matched_parts.update(tokens[start_index:end_index])
+#
+#                 # Recursively handle nested subcommands
+#                 if hasattr(subcommand, 'subcommands') and subcommand.subcommands:
+#                     nested_commands = extend_with_subcommands(subcommand.subcommands, tokens[end_index:], matched_parts)
+#                     commands_collected.extend(nested_commands)
+#                 break
+#
+#     return commands_collected
 
 def tokenize(input_string, locations, commands):
     location_dict = {loc.title.lower(): loc for loc in locations}
@@ -189,8 +189,8 @@ def tokenize(input_string, locations, commands):
                 if not commands_list or len(part) > len(commands_list[-1].title):  # Ensure only longer match is kept
                     initial_command = command_dict[part]
                     commands_list.append(initial_command)  # Replace existing with this longer match
-                    commands_list.extend(
-                        extend_with_subcommands(initial_command.subcommands, tokens[end_index:], matched_parts))
+                    # commands_list.extend(
+                    #     extend_with_subcommands(initial_command.subcommands, tokens[end_index:], matched_parts))
                     matched_parts.update(tokens[start_index:end_index])
 
     unfinished = input_string
@@ -444,6 +444,35 @@ def add_modifiers(modifier_string, target_list):
     modifiers = create_modifiers_from_string(modifier_string)
     target_list.extend(modifiers)
 
+def process_commands_recursively(query_input, locations, commands):
+    global alfred_input
+
+# no locations: show locations
+# no commands: show main list
+    print(f"---------------------------------------------------")
+
+    num_cmds_before = len(alfred_input.commands)
+    print(f"num_cmds_before: {num_cmds_before}")
+    print(f"alfred_input: {alfred_input}")
+    print([obj.title for obj in commands])
+
+    alfred_input = tokenize(query_input, locations, commands)
+
+    num_cmds = len(alfred_input.commands)
+    print(f"num_cmds_after: {num_cmds}")
+    print(f"alfred_input: {alfred_input}")
+
+    if num_cmds > num_cmds_before:
+        new_commands = list(alfred_input.commands)
+        main_command = alfred_input.commands[num_cmds-1]
+        if main_command.subcommands:
+            for subcmd in main_command.subcommands:
+                new_commands.append(subcmd)
+            # print([obj.title for obj in new_commands])
+
+            process_commands_recursively(query_input=query_input, locations=locations, commands=new_commands)
+
+
 def main():
     input_repo_list_yaml = os.getenv('input_repo_list')
     input_actions_path = os.getenv('input_actions_path')
@@ -459,7 +488,16 @@ def main():
     # add_modifiers(input_checkout_command_modifiers, checkout_modifiers_list)
 
     locations = generate_locations_from_yaml(input_repo_list_yaml)
-    
+
+
+
+    # print(commands[0].command_type)
+    query_input = sys.argv[1] if len(sys.argv) > 1 else ""
+    ends_with_space = query_input.endswith(" ")
+
+    global alfred_input
+    alfred_input = tokenize(query_input, locations, [])
+
     commands = [
         # Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION, icon_path='up.big.png'),
         # Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.big.png'),
@@ -475,18 +513,6 @@ def main():
 
     if input_additional_actions:
         commands.extend(create_commands_from_string(input_additional_actions))
-
-    # print(commands[0].command_type)
-    query_input = sys.argv[1] if len(sys.argv) > 1 else ""
-    ends_with_space = query_input.endswith(" ")
-
-    global alfred_input
-
-    # TODO: idea: don't process commands yet - do just locations
-    # after the location is set - then do commands?
-    alfred_input = tokenize(query_input, locations, commands)
-
-    num_cmds = len(alfred_input.commands)
 
     output = {"items": []}
 
@@ -506,39 +532,42 @@ def main():
     else:
         change_directory(alfred_input.location)
 
-        new_list = []
+        process_commands_recursively(query_input=query_input, locations=locations, commands=commands)
+        num_cmds = len(alfred_input.commands)
 
-        for cmd in commands:
-            # TODO: DO THIS FOR values as well!
-            if cmd.should_use_values_as_inline_commands:
-                items = run_command(cmd.values_command).splitlines()
+        # new_list = []
 
-                for item in items:
-                    # new_list.append(Command(title=f"{item.strip()}", action="", subcommands=cmd.subcommands))
-                    new_list.append(Command(
-                        title=f"{item.strip()}",
-                        action=cmd.action,
-                        secondaryAction=cmd.secondaryAction,
-                        subtitle=cmd.subtitle,
-                        command_type=cmd.command_type,
-                        icon_path=cmd.icon_path,
-                        mods=cmd.mods,
-                        values=cmd.values,
-                        values_command=cmd.values_command,
-                        values_icon=cmd.values_icon,
-                        subtitle_command=cmd.subtitle_command,
-                        subcommands=cmd.subcommands,
-                        should_use_values_as_inline_commands=cmd.should_use_values_as_inline_commands
-                    ))
-            else:
-                new_list.append(cmd)
-        if new_list:
-            commands = new_list
+        # for cmd in commands:
+        #     # TODO: DO THIS FOR values as well!
+        #     if cmd.should_use_values_as_inline_commands:
+        #         items = run_command(cmd.values_command).splitlines()
+        #
+        #         for item in items:
+        #             # new_list.append(Command(title=f"{item.strip()}", action="", subcommands=cmd.subcommands))
+        #             new_list.append(Command(
+        #                 title=f"{item.strip()}",
+        #                 action=cmd.action,
+        #                 secondaryAction=cmd.secondaryAction,
+        #                 subtitle=cmd.subtitle,
+        #                 command_type=cmd.command_type,
+        #                 icon_path=cmd.icon_path,
+        #                 mods=cmd.mods,
+        #                 values=cmd.values,
+        #                 values_command=cmd.values_command,
+        #                 values_icon=cmd.values_icon,
+        #                 subtitle_command=cmd.subtitle_command,
+        #                 subcommands=cmd.subcommands,
+        #                 should_use_values_as_inline_commands=cmd.should_use_values_as_inline_commands
+        #             ))
+        #     else:
+        #         new_list.append(cmd)
+        # if new_list:
+        #     commands = new_list
 
         # TODO: clean this up - does the UID work?
         
-        alfred_input = tokenize(query_input, locations, commands)
-        num_cmds = len(alfred_input.commands)
+        # alfred_input = tokenize(query_input, locations, commands)
+        # num_cmds = len(alfred_input.commands)
 
         if num_cmds == 0:
             results = [create_result_item_for_command(cmd=cmd, location=alfred_input.location) for cmd in commands]
@@ -546,13 +575,16 @@ def main():
             output['items'].extend(filtered_results)
 
         elif num_cmds > 0:
+
             main_command = alfred_input.commands[num_cmds-1]
+
 
             # output['items'] += [ResultItem(f"> debug info {main_command.command_type}", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
 
             # TODO: support subcommands even if there are values command (branches > show branches > show subcommands)
             if main_command.subcommands: # and main_command.should_use_values_as_inline_commands: #  and main_command.should_use_values_as_inline_commands may not be needed once values are treated like commmands
+
                 results = [item for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)]
 
                 output['items'].extend(
@@ -601,7 +633,7 @@ def main():
                             output['items'].append(result_item.to_dict())
 
 
-    # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
+    output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
     print(json.dumps(output))
 
