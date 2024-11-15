@@ -263,57 +263,6 @@ def subtitle_for_command(command, param=None):
         
     return ''
 
-def list_git_branches(location):
-
-    def create_result_item_for_branch(branch, location):
-        checkout_command = os.getenv('input_checkout_command')
-
-        is_remote = branch.startswith('remotes/')
-        branch = branch.replace('remotes/', '')
-        title = branch
-        value = branch.replace('origin/', '')
-
-        if branch.startswith('*'):
-            branch = branch.strip('*').strip()
-            value = branch
-            title = f"{value} [current]"
-
-        command = checkout_command.replace('[input]', value)
-        full_command = f"cd {location.directory}; {command}"
-
-        modifier_list = [
-            Modifier(arg=f"cd {location.directory}; {modifier.arg.replace('[input]', value)}",
-                     subtitle=modifier.subtitle,
-                     valid=modifier.valid,
-                     key=modifier.key)
-            for modifier in checkout_modifiers_list
-        ]
-
-        return ResultItem(
-            title=title,
-            arg=full_command,
-            subtitle=f"runs `{command.strip()}`",
-            text=Text(copy=value),
-            valid=True,
-            uid=branch,
-            mods=modifier_list,
-            icon_path="globe.png" if is_remote else "fork.png"
-        )
-
-    try:
-        local_result = subprocess.run(['git', 'branch', '-a'], capture_output=True, text=True, check=True)
-        local_branches = local_result.stdout.splitlines()
-        local_branches = [branch.strip() for branch in local_branches]
-
-        items = [create_result_item_for_branch(branch, location=location) for branch in local_branches]
-        return items
-
-    except subprocess.CalledProcessError:
-        # return [ResultItem(title="Not a Git repository", arg='')]
-        return []
-    except FileNotFoundError:
-        # return [ResultItem(title="Invalid directory path", arg='')]
-        return []
 
 def create_result_item_for_location(loc):
     return ResultItem(
@@ -512,7 +461,6 @@ def main():
     locations = generate_locations_from_yaml(input_repo_list_yaml)
     
     commands = [
-        # Command("checkout_branch", list_git_branches, subtitle="", command_type=CommandType.INLINE, icon_path='fork.png'),
         # Command("push", input_push_command, secondaryAction="git branch --show-current", command_type=CommandType.SINGLE_ACTION, icon_path='up.big.png'),
         # Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.big.png'),
         # Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.small.png'),
