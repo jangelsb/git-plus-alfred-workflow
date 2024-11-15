@@ -184,12 +184,14 @@ def tokenize(input_string, locations, commands):
             if location is None and part in location_dict:
                 location = location_dict[part]
                 matched_parts.update(tokens[start_index:end_index])
-            elif part in command_dict:
-                initial_command = command_dict[part]
-                commands_list.append(initial_command)
-                commands_list.extend(extend_with_subcommands(initial_command.subcommands, tokens[end_index:], matched_parts))
-                matched_parts.update(tokens[start_index:end_index])
                 break
+            elif part in command_dict:
+                if not commands_list or len(part) > len(commands_list[-1].title):  # Ensure only longer match is kept
+                    initial_command = command_dict[part]
+                    commands_list.append(initial_command)  # Replace existing with this longer match
+                    commands_list.extend(
+                        extend_with_subcommands(initial_command.subcommands, tokens[end_index:], matched_parts))
+                    matched_parts.update(tokens[start_index:end_index])
 
     unfinished = input_string
 
@@ -602,7 +604,7 @@ def main():
 
 
             # TODO: support subcommands even if there are values command (branches > show branches > show subcommands)
-            if main_command.subcommands and main_command.should_use_values_as_inline_commands: #  and main_command.should_use_values_as_inline_commands may not be needed once values are treated like commmands
+            if main_command.subcommands: # and main_command.should_use_values_as_inline_commands: #  and main_command.should_use_values_as_inline_commands may not be needed once values are treated like commmands
                 results = [item for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)]
 
                 output['items'].extend(
