@@ -60,7 +60,7 @@ class ResultItem:
         self.title = title
         self.arg = arg
         self.subtitle = subtitle
-        self.autocomplete = autocomplete if autocomplete else alfred_input.create_path(title) # if location else title
+        self.autocomplete = autocomplete if autocomplete else alfred_input.create_path(self.uid) # if location else title
         self.valid = valid
         self.mods = mods if mods else {}
         self.text = text
