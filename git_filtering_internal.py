@@ -106,6 +106,8 @@ class Command:
         self.subtitle_command = subtitle_command
         self.subcommands = subcommands if subcommands else []
 
+    def __repr__(self):
+        return f"{self.title}"
 
     def is_valid(self):
         return self.command_type != CommandType.NO_ACTION
@@ -150,7 +152,7 @@ class TokenizationResult:
 checkout_modifiers_list = []
 alfred_input = TokenizationResult()
 
-def tokenize(query, locations, commands):
+def tokenize(query, locations, commands, level=1):
     command_objects = []
     location = None
     sorted_locations = sorted(locations, key=lambda loc: len(loc.title), reverse=True)
@@ -165,8 +167,7 @@ def tokenize(query, locations, commands):
     unfinished_query = query
     if location:
         unfinished_query = unfinished_query[len(location.title):].strip()
-        while unfinished_query:
-
+        for i in range(level):
             #  finds the first command in sorted_commands whose title matches the start of unfinished_query.
             #  If a match is found, command is set to that command;
             #  otherwise, it defaults to None.
@@ -465,11 +466,11 @@ def add_modifiers(modifier_string, target_list):
     modifiers = create_modifiers_from_string(modifier_string)
     target_list.extend(modifiers)
 
-def process_commands_recursively(query_input, locations, commands):
+def process_commands_recursively(query_input, locations, commands, level=1):
     global alfred_input
 
     num_cmds_before = len(alfred_input.commands)
-    alfred_input = tokenize(query_input, locations, commands)
+    alfred_input = tokenize(query_input, locations, commands, level=level)
     num_cmds = len(alfred_input.commands)
 
     if num_cmds > num_cmds_before:
@@ -481,11 +482,11 @@ def process_commands_recursively(query_input, locations, commands):
             for subcmd in main_command.subcommands:
                 new_commands.extend(create_inline_commands(subcmd))
                 new_commands.append(subcmd)
-            process_commands_recursively(query_input=query_input, locations=locations, commands=new_commands)
+            process_commands_recursively(query_input=query_input, locations=locations, commands=new_commands, level=level+1)
 
         elif main_command.subcommands and (main_command.values or main_command.values_command):
             new_commands.extend(create_value_commands(main_command))
-            process_commands_recursively(query_input=query_input, locations=locations, commands=new_commands)
+            process_commands_recursively(query_input=query_input, locations=locations, commands=new_commands, level=level+1)
 
 
 def main():
