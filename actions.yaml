@@ -90,6 +90,30 @@
     else 
       echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
     fi
+  subcommands:
+    - title: staged
+      subtitle_command: |
+        staged=$(git diff --cached --name-only | wc -l | xargs)
+        echo "$staged file(s)"
+      command: echo [input]
+      values_command: |
+        git diff --cached --name-only
+
+    - title: modified
+      subtitle_command: |
+        modified=$(git diff --name-only | wc -l | xargs)
+        echo "$modified file(s)"
+      command: echo [input]
+      values_command: |
+        git diff --name-only # git status --short
+
+    - title: untracked
+      subtitle_command: |
+        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+        echo "$untracked file(s)"
+      command: echo [input]
+      values_command: |
+        git ls-files --others --exclude-standard 
 
 - title: pull
   icon: down.big.png
@@ -315,12 +339,6 @@
         - title: copy branch name
           command: |
             echo "[parent]" | xargs echo -n | pbcopy 
-
-
-- title: modified files
-  command: echo [input]
-  values_command: |
-    git diff --name-only # git status --short
 
 
 - title: copy diff for current branch
