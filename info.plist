@@ -580,27 +580,6 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>branch=$(git branch --show-current); modified=$(git diff --name-only | wc -l | xargs); if [ "$modified" -eq 0 ]; then echo "branch: ${branch}; clean"; else echo "branch: ${branch}; modified files: $modified"; fi</string>
-				<key>placeholder</key>
-				<string>git status</string>
-				<key>required</key>
-				<true/>
-				<key>trim</key>
-				<true/>
-			</dict>
-			<key>description</key>
-			<string>this command is run inline and what it returns is displayed as a subtitle</string>
-			<key>label</key>
-			<string>status command</string>
-			<key>type</key>
-			<string>textfield</string>
-			<key>variable</key>
-			<string>input_status_command</string>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>default</key>
 				<string>actions.yaml</string>
 				<key>filtermode</key>
 				<integer>2</integer>
@@ -676,8 +655,6 @@ example:
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
 	<string>2024.7.WIP5</string>
 	<key>webaddress</key>
