@@ -96,6 +96,32 @@
   command: |
    git cherry-pick [input]
 
+- title: diff
+  command: |
+   git diff --compact-summary
+
+- title: rebase
+  command: |
+    git rebase "[input]"
+  values_command: |
+    git branch | grep -v '*' # all local branches minus the current one
+
+- title: rebase --onto
+  values_command: |
+    git branch | grep -v '*' # all local branches minus the current one
+  subcommands:
+    - title: start hash
+      command: |
+        git rebase --onto "[parent~2]" "[input]"
+
+#
+#Easiest way to git rebase ONTO
+#1. Checkout the branch you want to change (CURRENT_BRANCH)
+#2. git rebase --onto NEW_BRANCH START_HASH
+#    - This replays commits from (not including) START_HASH to CURRENT_BRANCH onto NEW_BRANCH
+#    - NOTE: START_HASH is not included in the replayed commits, so you should use one commit older than the commit you actually want replayed.
+
+
 - title: commit
   command: |
    git commit -m "[input]"
