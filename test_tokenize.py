@@ -53,25 +53,29 @@ class TestTokenization(unittest.TestCase):
         self.assertEqual(len(result.commands), 1)
         self.assertEqual(result.commands[0].title, "commit")
         self.assertEqual(result.unfinished_query, "hi")
-        # self.assertEqual(result.commands[1].title, "level 2")
-        # self.assertEqual(result.unfinished_query, "level")
 
     def test_multiple_comands(self):
         commands = [Command(title="subcommands", action=""),Command(title="level 2", action=""),]
         locations = [Location(title="timer", directory="."), Location(title="calc", directory=".")]
 
-        result = tokenize("timer subcommands level 2", locations, commands)
+        result = tokenize("timer subcommands level 2", locations, commands, level=2)
         self.assertEqual(result.location.title, "timer")
         self.assertEqual(len(result.commands), 2)
         self.assertEqual(result.commands[0].title, "subcommands")
         self.assertEqual(result.commands[1].title, "level 2")
         self.assertEqual(result.unfinished_query, "")
 
-    def test_muli_word_locations(self):
+    def test_multi_word_locations_and_level(self):
         commands = [Command(title="subcommands", action=""),Command(title="level 2", action=""),]
         locations = [Location(title="timer", directory="."), Location(title="timer test", directory=".")]
 
-        result = tokenize("timer test subcommands level 2 s ", locations, commands)
+        result = tokenize("timer test subcommands level 2 s ", locations, commands, level=1)
+        self.assertEqual(result.location.title, "timer test")
+        self.assertEqual(len(result.commands), 1)
+        self.assertEqual(result.commands[0].title, "subcommands")
+        self.assertEqual(result.unfinished_query, "level 2 s")
+
+        result = tokenize("timer test subcommands level 2 s ", locations, commands, level=2)
         self.assertEqual(result.location.title, "timer test")
         self.assertEqual(len(result.commands), 2)
         self.assertEqual(result.commands[0].title, "subcommands")
@@ -82,12 +86,23 @@ class TestTokenization(unittest.TestCase):
         commands = [Command(title="bbb", action=""), Command(title="feature/blurredBackGround", action=""),Command(title="feature/blurredBackGround_simple", action=""),]
         locations = [Location(title="timer", directory="."), Location(title="test", directory=".")]
 
-        result = tokenize("timer bbb feature/blurredBackGround_simple", locations, commands)
+        result = tokenize("timer bbb feature/blurredBackGround_simple", locations, commands, level=2)
         self.assertEqual(result.location.title, "timer")
         self.assertEqual(len(result.commands), 2)
         self.assertEqual(result.commands[0].title, "bbb")
         self.assertEqual(result.commands[1].title, "feature/blurredBackGround_simple")
         self.assertEqual(result.unfinished_query, "")
+
+    def test_similar_names4(self): # git timer bbb feature/blurredBackGround_simple
+        commands = [Command(title="bbb", action=""), Command(title="f", action=""),Command(title="feature/blurredBackGround_simple", action=""),]
+        locations = [Location(title="timer", directory="."), Location(title="test", directory=".")]
+
+        result = tokenize("timer bbb feature/blurredBackGround_simple something", locations, commands, level=2)
+        self.assertEqual(result.location.title, "timer")
+        self.assertEqual(len(result.commands), 2)
+        self.assertEqual(result.commands[0].title, "bbb")
+        self.assertEqual(result.commands[1].title, "feature/blurredBackGround_simple")
+        self.assertEqual(result.unfinished_query, "something")
 
 if __name__ == '__main__':
     unittest.main()
