@@ -218,10 +218,10 @@
         echo "[parent]" | xargs echo -n | pbcopy
 
 
-- title: local branches
+- title: bbb
   values_command: |
     git branch | grep -v '*' # all local branches minus the current one
-  should_use_values_as_inline_commands: true
+  should_use_values_as_inline_commands: false
   subtitle: local
   icon: fork.png
   subcommands:
