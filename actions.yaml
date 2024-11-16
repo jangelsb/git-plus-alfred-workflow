@@ -77,6 +77,20 @@
     - three
   should_use_values_as_inline_commands: true
 
+- title: status
+  subtitle_command: |
+    branch=$(git branch --show-current)
+    modified=$(git diff --name-only | wc -l | xargs)
+    untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+    staged=$(git diff --cached --name-only | wc -l | xargs)
+    
+    if [ "$modified" -eq 0 ] && [ "$untracked" -eq 0 ] && [ "$staged" -eq 0 ]
+    then 
+      echo "branch: ${branch}; clean"
+    else 
+      echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
+    fi
+
 - title: pull
   icon: down.big.png
   command: |

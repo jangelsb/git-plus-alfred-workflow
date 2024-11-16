@@ -519,7 +519,7 @@ def main():
         # Command("pull", input_pull_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.big.png'),
         # Command("fetch", input_fetch_command, command_type=CommandType.SINGLE_ACTION, icon_path='down.small.png'),
         # Command("create_branch", input_create_branch_command, subtitle="", command_type=CommandType.NEEDS_PARAM, icon_path='fork.plus.png'),
-        Command("status", input_status_command, command_type=CommandType.NO_ACTION),
+        # Command("status", input_status_command, command_type=CommandType.NO_ACTION),
     ]
 
     commands.extend(create_commands_from_config(input_actions_path))
