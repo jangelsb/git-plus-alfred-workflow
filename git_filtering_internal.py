@@ -544,6 +544,10 @@ def main():
     elif not alfred_input.location:
         filtered_locations = [loc for loc in locations if alfred_input.unfinished_query in loc.title.lower()]
         output['items'] += [create_result_item_for_location(loc).to_dict() for loc in filtered_locations]
+
+        output['items'] += [
+            ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
+                       autocomplete=' ').to_dict()]
     
     else:
         change_directory(alfred_input.location)
@@ -560,6 +564,10 @@ def main():
             filtered_results = [r.to_dict() for r in results if alfred_input.unfinished_query.lower() in r.subtitle.lower() or alfred_input.unfinished_query.lower() in r.title.lower()]
             output['items'].extend(filtered_results)
 
+            output['items'] += [
+                ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
+                           autocomplete=' ').to_dict()]
+
         elif num_cmds > 0:
 
             main_command = alfred_input.commands[num_cmds-1]
@@ -572,11 +580,6 @@ def main():
             if main_command.subcommands and main_command.values is None and main_command.values_command is None:
 
                 results = [item for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)]
-
-                output['items'] += [
-                    ResultItem(f"> debug info SUBCOMMANDS", arg=' ',
-                               subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
-                               autocomplete=' ').to_dict()]
 
                 output['items'].extend(
                     result.to_dict()
@@ -624,7 +627,7 @@ def main():
                             output['items'].append(result_item.to_dict())
 
 
-    output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
+    # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
     print(json.dumps(output))
 
