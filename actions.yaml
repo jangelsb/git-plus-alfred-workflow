@@ -67,6 +67,16 @@
 
 
 
+
+- title: selection
+  command: |
+    echo [input]
+  values:
+    - one
+    - two
+    - three
+  should_use_values_as_inline_commands: true
+
 - title: pull
   icon: down.big.png
   command: |

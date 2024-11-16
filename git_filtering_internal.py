@@ -318,7 +318,7 @@ def create_result_items_for_command_with_subcommands(cmd, location):
                     action=subcommand.action,
                     secondaryAction=subcommand.secondaryAction,
                     subtitle=subcommand.subtitle,
-                    command_type= CommandType.SINGLE_ACTION, #subcommand.command_type,
+                    command_type= subcommand.command_type,
                     icon_path=subcommand.icon_path,
                     mods=subcommand.mods,
                     values=None, # should this mirror parent?
@@ -579,7 +579,12 @@ def main():
         # initial row of inline values
         for cmd in commands:
             if cmd.should_use_values_as_inline_commands:
-                items = run_command(cmd.values_command).splitlines()
+                items = []
+                if cmd.values_command:
+                    items = run_command(cmd.values_command).splitlines()
+                elif cmd.values:
+                    items = cmd.values
+
                 for item in items:
                     commands.append(Command(
                         title=f"{item.strip()}",
