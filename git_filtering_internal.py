@@ -362,7 +362,7 @@ def create_value_commands(cmd):
             values=None,
             values_command=None,
             values_icon=cmd.values_icon,
-            subtitle_command=cmd.subtitle_command,
+            subtitle_command=None, #cmd.subtitle_command, # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
             subcommands=cmd.subcommands,
             should_use_values_as_inline_commands=False
         ))
@@ -603,6 +603,7 @@ def main():
             
             elif main_command.command_type == CommandType.NEEDS_SELECTION:
                 if main_command.values:
+                    main_command.subtitle_command = None # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
                     # filtered_items = [item for item in main_command.values if
                     #                   alfred_input.unfinished_query.lower() in item.lower()]
                     for item in main_command.values:
@@ -615,6 +616,7 @@ def main():
                             output['items'].append(result_item.to_dict())
 
                 elif main_command.values_command:
+                    main_command.subtitle_command = None # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
                     items = run_command(main_command.values_command).splitlines()
                     # filtered_items = [item for item in items if alfred_input.unfinished_query.lower() in item.lower()]
                     for item in items:
