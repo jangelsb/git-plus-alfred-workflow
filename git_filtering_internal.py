@@ -210,7 +210,7 @@ def subtitle_for_command(command, param=None):
         return process_action_text(action)
 
     if command.command_type == CommandType.NEEDS_SELECTION:
-        if param:
+        if param and not command.subcommands:
             action = process_action(action=command.action, param=param, title=command.title, secondaryAction=command.secondaryAction)
             return process_action_text(action)
 
