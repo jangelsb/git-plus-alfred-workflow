@@ -335,38 +335,42 @@ def create_result_items_for_command_with_subcommands(cmd, location):
 
     return result_items
 
-def create_inline_commands(cmd):
+def create_value_commands(cmd):
     commands = []
-    if cmd.should_use_values_as_inline_commands:
-        items = []
-        if cmd.values_command:
-            items = run_command(cmd.values_command).splitlines()
-        elif cmd.values:
-            items = cmd.values
+    items = []
+    if cmd.values_command:
+        items = run_command(cmd.values_command).splitlines()
+    elif cmd.values:
+        items = cmd.values
 
-        for item in items:
-            action = cmd.action
-            command_type = cmd.command_type
-            if cmd.command_type == CommandType.NEEDS_SELECTION:
-                action = action.replace('[input]', item.strip())
-                command_type = CommandType.SINGLE_ACTION
+    for item in items:
+        action = cmd.action
+        command_type = cmd.command_type
+        if cmd.command_type == CommandType.NEEDS_SELECTION:
+            action = action.replace('[input]', item.strip()) # TODO: should this move else where?
+            command_type = CommandType.SINGLE_ACTION
 
-            commands.append(Command(
-                title=f"{item.strip()}",
-                action=action,
-                secondaryAction=cmd.secondaryAction,
-                subtitle=cmd.subtitle,
-                command_type=command_type,
-                icon_path=cmd.icon_path,
-                mods=cmd.mods,
-                values=None,
-                values_command=None,
-                values_icon=cmd.values_icon,
-                subtitle_command=cmd.subtitle_command,
-                subcommands=cmd.subcommands,
-                should_use_values_as_inline_commands=False
-            ))
+        commands.append(Command(
+            title=f"{item.strip()}",
+            action=action,
+            secondaryAction=cmd.secondaryAction,
+            subtitle=cmd.subtitle,
+            command_type=command_type,
+            icon_path=cmd.icon_path,
+            mods=cmd.mods,
+            values=None,
+            values_command=None,
+            values_icon=cmd.values_icon,
+            subtitle_command=cmd.subtitle_command,
+            subcommands=cmd.subcommands,
+            should_use_values_as_inline_commands=False
+        ))
     return commands
+
+def create_inline_commands(cmd):
+    if cmd.should_use_values_as_inline_commands:
+        return create_value_commands(cmd)
+    return []
 
 def generate_locations_from_yaml(yaml_string):
     def location_entry_processor(entry):
@@ -480,32 +484,7 @@ def process_commands_recursively(query_input, locations, commands):
             process_commands_recursively(query_input=query_input, locations=locations, commands=new_commands)
 
         elif main_command.subcommands and (main_command.values or main_command.values_command):
-            items = []
-
-            if main_command.values_command:
-                items = run_command(main_command.values_command).splitlines()
-            elif main_command.values:
-                items = main_command.values
-
-            # print(f"😎😎😎 {items}")
-
-            for item in items:
-                new_commands.append(Command(
-                    title=f"{item.strip()}",
-                    action=main_command.action,
-                    secondaryAction=main_command.secondaryAction,
-                    subtitle=main_command.subtitle,
-                    command_type=main_command.command_type,
-                    icon_path=main_command.icon_path,
-                    mods=main_command.mods,
-                    values=None,
-                    values_command=None,
-                    values_icon=main_command.values_icon,
-                    subtitle_command=main_command.subtitle_command,
-                    subcommands=main_command.subcommands,
-                    should_use_values_as_inline_commands=False
-                ))
-
+            new_commands.extend(create_value_commands(main_command))
             process_commands_recursively(query_input=query_input, locations=locations, commands=new_commands)
 
 
@@ -570,35 +549,7 @@ def main():
 
         # initial row of inline values
         for cmd in commands:
-            if cmd.should_use_values_as_inline_commands:
-                items = []
-                if cmd.values_command:
-                    items = run_command(cmd.values_command).splitlines()
-                elif cmd.values:
-                    items = cmd.values
-
-                for item in items:
-                    action = cmd.action
-                    command_type = cmd.command_type
-                    if cmd.command_type == CommandType.NEEDS_SELECTION:
-                        action = action.replace('[input]', item.strip())
-                        command_type = CommandType.SINGLE_ACTION
-
-                    commands.append(Command(
-                        title=f"{item.strip()}",
-                        action=action,
-                        secondaryAction=cmd.secondaryAction,
-                        subtitle=cmd.subtitle,
-                        command_type=command_type,
-                        icon_path=cmd.icon_path,
-                        mods=cmd.mods,
-                        values=None,
-                        values_command=None,
-                        values_icon=cmd.values_icon,
-                        subtitle_command=cmd.subtitle_command,
-                        subcommands=cmd.subcommands,
-                        should_use_values_as_inline_commands=False
-                    ))
+            commands.extend(create_inline_commands(cmd))
 
         process_commands_recursively(query_input=query_input, locations=locations, commands=commands)
         num_cmds = len(alfred_input.commands)
