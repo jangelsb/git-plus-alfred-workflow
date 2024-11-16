@@ -313,12 +313,19 @@ def create_result_items_for_command_with_subcommands(cmd, location):
                 items = subcommand.values
 
             for item in items:
+
+                action = subcommand.action
+                command_type = subcommand.command_type
+                if subcommand.command_type == CommandType.NEEDS_SELECTION:
+                    action = action.replace('[input]', item.strip())
+                    command_type = CommandType.SINGLE_ACTION
+
                 additional_commands.append(Command(
                     title=f"{item.strip()}",
-                    action=subcommand.action,
+                    action=action,
                     secondaryAction=subcommand.secondaryAction,
                     subtitle=subcommand.subtitle,
-                    command_type= subcommand.command_type,
+                    command_type= command_type,
                     icon_path=subcommand.icon_path,
                     mods=subcommand.mods,
                     values=None, # should this mirror parent?
@@ -586,16 +593,22 @@ def main():
                     items = cmd.values
 
                 for item in items:
+                    action = cmd.action
+                    command_type = cmd.command_type
+                    if cmd.command_type == CommandType.NEEDS_SELECTION:
+                        action = action.replace('[input]', item.strip())
+                        command_type = CommandType.SINGLE_ACTION
+
                     commands.append(Command(
                         title=f"{item.strip()}",
-                        action=cmd.action,
+                        action=action,
                         secondaryAction=cmd.secondaryAction,
                         subtitle=cmd.subtitle,
-                        command_type=cmd.command_type,
+                        command_type=command_type,
                         icon_path=cmd.icon_path,
                         mods=cmd.mods,
-                        values=cmd.values,
-                        values_command=cmd.values_command,
+                        values=None,
+                        values_command=None,
                         values_icon=cmd.values_icon,
                         subtitle_command=cmd.subtitle_command,
                         subcommands=cmd.subcommands,
@@ -618,18 +631,15 @@ def main():
                 ResultItem(f"> debug info {main_command.command_type}", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
                            autocomplete=' ').to_dict()]
 
-            # output['items'] += [ResultItem(f"> debug info {main_command.command_type}", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
-
-            # TODO: support subcommands even if there are values command (branches > show branches > show subcommands)
             if main_command.subcommands and main_command.values is None and main_command.values_command is None:
 
-                # print(f"😎😎😎 {main_command.subcommands}")
-                # print(f"😎😎😎 {main_command.should_use_values_as_inline_commands}")
-                # print(f"😎😎😎 {main_command.values}")
-                # print(f"😎😎😎 {main_command.values_command}")
-
                 results = [item for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)]
+
+                output['items'] += [
+                    ResultItem(f"> debug info SUBCOMMANDS", arg=' ',
+                               subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
+                               autocomplete=' ').to_dict()]
 
                 output['items'].extend(
                     result.to_dict()
