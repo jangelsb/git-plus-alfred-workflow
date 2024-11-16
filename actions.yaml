@@ -183,104 +183,105 @@
     find . -type f
 
 
-- title: current branch
-  values_command: |
-    git branch --show-current # just the current branch
-  should_use_values_as_inline_commands: true
-  subtitle: current # add support subtitle non commands
-  subtitle_command: |
-    echo 'current'
-  icon: fork.png
+- title: b
   subcommands:
-    - title: checkout
-      command: |
-        killall Xcode; git stash; git checkout "[parent]"; git pull;
-      mods:
-        - subtitle: Launch Xcode after
-          mod: cmd
-          command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
-
-        - subtitle: Launch Sublime after
-          mod: alt
-          command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
-
-    - title: checkout master & delete this branch
-      command: |
-        master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
-        branch="[parent]"
-        if [ "$branch" != "$master" ]; then
-          killall Xcode; git stash; git checkout "$master"; git pull;
-          git branch -D "[parent]"
-        fi
-
-    - title: copy branch name
-      command: |
-        echo "[parent]" | xargs echo -n | pbcopy
-
-
-- title: bbb
-  values_command: |
-    git branch | grep -v '*' # all local branches minus the current one
-  should_use_values_as_inline_commands: false
-  subtitle: local
-  icon: fork.png
-  subcommands:
-    - title: checkout
-      command: |
-        killall Xcode; git stash; git checkout "[parent]"; git pull;
-      mods:
-        - subtitle: Launch Xcode after
-          mod: cmd
-          command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
-
-        - subtitle: Launch Sublime after
-          mod: alt
-          command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
-
-    - title: delete local branch
-      command: |
-        git branch -d "[parent]"
-      mods:
-        - subtitle: force delete
-          mod: cmd
+    - title: current branch
+      values_command: |
+        git branch --show-current # just the current branch
+      should_use_values_as_inline_commands: true
+      subtitle: current # add support subtitle non commands
+      subtitle_command: |
+        echo 'current'
+      icon: fork.png
+      subcommands:
+        - title: checkout
           command: |
-            git branch -D "[parent]"
+            killall Xcode; git stash; git checkout "[parent]"; git pull;
+          mods:
+            - subtitle: Launch Xcode after
+              mod: cmd
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+
+            - subtitle: Launch Sublime after
+              mod: alt
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+
+        - title: checkout master & delete this branch
+          command: |
+            master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
+            branch="[parent]"
+            if [ "$branch" != "$master" ]; then
+              killall Xcode; git stash; git checkout "$master"; git pull;
+              git branch -D "[parent]"
+            fi
+
+        - title: copy branch name
+          command: |
+            echo "[parent]" | xargs echo -n | pbcopy
 
 
-    - title: copy branch name
-      command: |
-        echo "[parent]" | xargs echo -n | pbcopy
+    - title: local branches
+      values_command: |
+        git branch | grep -v '*' # all local branches minus the current one
+      should_use_values_as_inline_commands: true
+      subtitle: local
+      icon: fork.png
+      subcommands:
+        - title: checkout
+          command: |
+            killall Xcode; git stash; git checkout "[parent]"; git pull;
+          mods:
+            - subtitle: Launch Xcode after
+              mod: cmd
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+
+            - subtitle: Launch Sublime after
+              mod: alt
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+
+        - title: delete local branch
+          command: |
+            git branch -d "[parent]"
+          mods:
+            - subtitle: force delete
+              mod: cmd
+              command: |
+                git branch -D "[parent]"
 
 
-
-- title: remote branches
-  values_command: |
-    git branch -r
-  should_use_values_as_inline_commands: true
-  icon: globe.png
-
-  subcommands:
-    - title: checkout
-      command: |
-        killall Xcode; git stash; git checkout -t "[parent]"; git pull;
-      mods:
-        - subtitle: Launch Xcode after
-          mod: cmd
-          command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; xed .
-
-        - subtitle: Launch Sublime after
-          mod: alt
-          command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; st .
-
-    - title: delete remote branch
-      command: |
-        branch="[parent]"
-        git push origin --delete ${branch#origin/}
+        - title: copy branch name
+          command: |
+            echo "[parent]" | xargs echo -n | pbcopy
 
 
-    - title: copy branch name
-      command: |
-        echo "[parent]" | xargs echo -n | pbcopy
+    - title: remote branches
+      values_command: |
+        git branch -r
+      should_use_values_as_inline_commands: true
+      icon: globe.png
+
+      subcommands:
+        - title: checkout
+          command: |
+            killall Xcode; git stash; git checkout -t "[parent]"; git pull;
+          mods:
+            - subtitle: Launch Xcode after
+              mod: cmd
+              command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; xed .
+
+            - subtitle: Launch Sublime after
+              mod: alt
+              command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; st .
+
+        - title: delete remote branch
+          command: |
+            branch="[parent]"
+            git push origin --delete ${branch#origin/}
+
+
+        - title: copy branch name
+          command: |
+            echo "[parent]" | xargs echo -n | pbcopy 
 
 
 - title: modified files

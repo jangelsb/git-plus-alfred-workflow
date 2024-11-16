@@ -286,8 +286,10 @@ def create_result_item_common(title, cmd, location, param=None):
 
     valid = switcher.get(cmd.command_type, False) and not cmd.subcommands
 
+
     return ResultItem(
-        title,
+        f"{title}{'...' if not valid else ''}",
+        uid=title,
         arg=full_command if valid else alfred_input.create_path(title), # TODO: might want to clean this up with the other place `alfred_input.create_path(title)` is called
         subtitle=subtitle,
         location=location,
