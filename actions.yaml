@@ -224,13 +224,16 @@
               mod: alt
               command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
 
-        - title: checkout master & delete this branch
+        - title: checkout 'main branch' & delete this branch
           command: |
+            # if on 'main branch', does nothing
             master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
             branch="[parent]"
             if [ "$branch" != "$master" ]; then
               killall Xcode; git stash; git checkout "$master"; git pull;
               git branch -D "[parent]"
+            else 
+              echo "on $master; doing nothing"
             fi
 
         - title: copy branch name
@@ -266,6 +269,8 @@
             - title: start hash
               command: |
                 echo git rebase --onto "[parent~3]" "[input]"
+              values_command: |
+                git log --pretty=format:"%H" 
 
         - title: delete local branch
           command: |
