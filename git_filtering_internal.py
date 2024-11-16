@@ -141,9 +141,9 @@ class TokenizationResult:
         return next_path + suffix
 
 
-    def parent_command_title(self):
-        if len(self.commands) > 0:
-            return self.commands[-1].title
+    def parent_command_title(self, n):
+        if len(self.commands) > n - 1:
+            return self.commands[-n].title
 
         return ''
 
@@ -253,16 +253,25 @@ def create_modifier_list(cmd, location, param=None):
     ]
 
 def process_action(action, param, title, secondaryAction=None):
+    def replace_parent_action(action):
+        # Find all occurrences of [parent] or [parent~n]
+        matches = re.finditer(r"\[parent(?:~(\d+))?\]", action)
+        for match in matches:
+            n = int(match.group(1) or 1)  # Default to 1 if n is not provided
+            replacement = alfred_input.parent_command_title(n)
+            action = action.replace(match.group(0), replacement)
+        return action
+
     if secondaryAction:
         value = run_command(secondaryAction).strip()
         action = action.replace("[input]", value)
-        action = action.replace("[parent]", alfred_input.parent_command_title())
+        action = replace_parent_action(action)
         action = action.replace("[title]", title.strip())
     else:
         if isinstance(action, str):
             action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
             action = action.replace('[input]', param) if param else action
-            action = action.replace("[parent]", alfred_input.parent_command_title())
+            action = replace_parent_action(action)
             action = action.replace("[title]", param.strip() if param else title.strip())
 
     return action
