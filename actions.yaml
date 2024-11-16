@@ -40,6 +40,7 @@
           #  icon: fork.png
           subcommands:
             - title: checkout
+              icon: fork.png
               command: |
                 killall Xcode; git stash; git checkout "[parent]"; git pull;
               mods:
@@ -78,6 +79,7 @@
   should_use_values_as_inline_commands: true
 
 - title: status
+  icon: info.png
   subtitle_command: |
     branch=$(git branch --show-current)
     modified=$(git diff --name-only | wc -l | xargs)
@@ -219,6 +221,7 @@
 
 
 - title: find
+  icon: search.png
   command: |
     st "[input]"
   values_command: |
@@ -226,6 +229,7 @@
 
 
 - title: b
+  icon: fork.png
   subcommands:
     - title: current branch
       values_command: |
@@ -237,6 +241,7 @@
       icon: fork.png
       subcommands:
         - title: checkout
+          icon: fork.png
           command: |
             killall Xcode; git stash; git checkout "[parent]"; git pull;
           mods:
@@ -249,6 +254,7 @@
               command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
 
         - title: checkout 'main branch' & delete this branch
+          icon: trash.png
           command: |
             # if on 'main branch', does nothing
             master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
@@ -261,6 +267,7 @@
             fi
 
         - title: copy branch name
+          icon: copy.png
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
@@ -273,6 +280,7 @@
       icon: fork.png
       subcommands:
         - title: checkout
+          icon: fork.png
           command: |
             killall Xcode; git stash; git checkout "[parent]"; git pull;
           mods:
@@ -297,6 +305,7 @@
                 git log --pretty=format:"%H" 
 
         - title: delete local branch
+          icon: trash.png
           command: |
             git branch -d "[parent]"
           mods:
@@ -307,6 +316,7 @@
 
 
         - title: copy branch name
+          icon: copy.png
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
@@ -319,6 +329,7 @@
 
       subcommands:
         - title: checkout
+          icon: fork.png
           command: |
             killall Xcode; git stash; git checkout -t "[parent]"; git pull;
           mods:
@@ -331,17 +342,20 @@
               command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; st .
 
         - title: delete remote branch
+          icon: trash.png
           command: |
             branch="[parent]"
             git push origin --delete ${branch#origin/}
 
 
         - title: copy branch name
+          icon: copy.png
           command: |
             echo "[parent]" | xargs echo -n | pbcopy 
 
 
 - title: copy diff for current branch
+  icon: copy.png
   command: |
     branch=$(git branch --show-current); 
     parent=$(git reflog show | grep 'checkout: moving from' | head -n 1 | awk '{print $(NF-2)}'); 
@@ -349,9 +363,16 @@
 
 
 - title: tags
+  icon: tag.png
   values_command: git tag | sort -r
   subcommands:
+    - title: checkout
+      icon: fork.png
+      command: |
+        git checkout "[parent]"
+
     - title: copy diff from tag
+      icon: copy.png
       command: |
         branch=$(git branch --show-current); 
         git log --reverse --format=%B $(git merge-base "[parent]" $branch)..$branch | pbcopy
@@ -367,6 +388,7 @@
             } | pbcopy
 
     - title: delete tag
+      icon: trash.png
       command: |
         git tag -d "[parent]"
       mods:
