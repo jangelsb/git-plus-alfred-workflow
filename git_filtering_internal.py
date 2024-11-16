@@ -154,20 +154,29 @@ def tokenize(query, locations, commands):
     command_objects = []
     location = None
     sorted_locations = sorted(locations, key=lambda loc: len(loc.title), reverse=True)
+    sorted_commands = sorted(commands, key=lambda cmd: len(cmd.title), reverse=True)
 
-    query = query.lstrip()
+    query = query.strip()
     for loc in sorted_locations:
         if query.startswith(loc.title):
             location = loc
             break
-    unfinished_query = query
 
+    unfinished_query = query
     if location:
         unfinished_query = unfinished_query[len(location.title):].strip()
-        for command in commands:
-            if unfinished_query.startswith(command.title):
+        while unfinished_query:
+
+            #  finds the first command in sorted_commands whose title matches the start of unfinished_query.
+            #  If a match is found, command is set to that command;
+            #  otherwise, it defaults to None.
+            #  This is done using a generator expression within the next() function, where None acts as the default value if no matches are found.
+            command = next((cmd for cmd in sorted_commands if unfinished_query.startswith(cmd.title)), None)
+            if command:
                 command_objects.append(command)
-                unfinished_query = unfinished_query[len(command.title):].strip() # TODO: still strips a single space
+                unfinished_query = unfinished_query[len(command.title):].strip()
+            else:
+                break
 
     return TokenizationResult(location, command_objects, unfinished_query=unfinished_query)
 

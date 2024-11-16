@@ -76,7 +76,18 @@ class TestTokenization(unittest.TestCase):
         self.assertEqual(len(result.commands), 2)
         self.assertEqual(result.commands[0].title, "subcommands")
         self.assertEqual(result.commands[1].title, "level 2")
-        self.assertEqual(result.unfinished_query, "s ")
+        self.assertEqual(result.unfinished_query, "s")
+
+    def test_similar_names3(self): # git timer bbb feature/blurredBackGround_simple
+        commands = [Command(title="bbb", action=""), Command(title="feature/blurredBackGround", action=""),Command(title="feature/blurredBackGround_simple", action=""),]
+        locations = [Location(title="timer", directory="."), Location(title="test", directory=".")]
+
+        result = tokenize("timer bbb feature/blurredBackGround_simple", locations, commands)
+        self.assertEqual(result.location.title, "timer")
+        self.assertEqual(len(result.commands), 2)
+        self.assertEqual(result.commands[0].title, "bbb")
+        self.assertEqual(result.commands[1].title, "feature/blurredBackGround_simple")
+        self.assertEqual(result.unfinished_query, "")
 
 if __name__ == '__main__':
     unittest.main()
