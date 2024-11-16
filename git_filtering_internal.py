@@ -224,7 +224,7 @@ def subtitle_for_command(command, param=None):
             return process_action_text(action)
 
     if command.command_type ==  CommandType.SINGLE_ACTION:
-        if not command.subcommands: # TODO: this should be a different command type! And the title should have a "..."
+        if not command.subcommands:
             action = process_action(action=command.action, param=param, title=command.title, secondaryAction=command.secondaryAction)
             return process_action_text(action)
         
