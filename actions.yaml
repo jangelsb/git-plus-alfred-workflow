@@ -244,9 +244,7 @@
       values_command: |
         git branch --show-current # just the current branch
       should_use_values_as_inline_commands: true
-      subtitle: current # TODO: add support subtitle non commands
-      subtitle_command: |
-        echo 'current'
+      subtitle: current
       icon: fork.png
       subcommands:
         - title: checkout
@@ -285,7 +283,6 @@
       values_command: |
         git branch | grep -v '*' # all local branches minus the current one
       should_use_values_as_inline_commands: true
-      subtitle: local
       icon: fork.png
       subcommands:
         - title: checkout

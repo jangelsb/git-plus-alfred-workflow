@@ -426,6 +426,7 @@ def create_commands_from_yaml(yaml_data):
         action = entry.get('command', '')
         subcommands = process_subcommands(entry.get('subcommands', []))
         values_icon = entry.get('values_icon', None)
+        subtitle = entry.get('subtitle', None)
         subtitle_command = entry.get('subtitle_command', None)
         should_use_values_as_inline_commands = entry.get('should_use_values_as_inline_commands', False)
 
@@ -450,6 +451,7 @@ def create_commands_from_yaml(yaml_data):
             values_command=values_command,
             subcommands=subcommands,
             values_icon=values_icon,
+            subtitle=subtitle,
             subtitle_command=subtitle_command,
             should_use_values_as_inline_commands=should_use_values_as_inline_commands
         )
