@@ -1,0 +1,7 @@
+- title: fromgit
+  command: |
+    echo [input]
+  values:
+    - one
+    - two
+    - three
