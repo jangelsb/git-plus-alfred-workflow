@@ -453,14 +453,32 @@ def create_commands_from_yaml(yaml_data):
     return [command_entry_processor(entry) for entry in yaml_data]
 
 def create_commands_from_config(config_path):
-    with open(config_path, 'r') as file:
-        yaml_data = yaml.safe_load(file)
+    try:
+        with open(config_path, 'r') as file:
+            yaml_data = yaml.safe_load(file)
+        return create_commands_from_yaml(yaml_data)
+    except FileNotFoundError as e:
+        # print(f"File not found: {e}")
+        pass
+    except yaml.YAMLError as e:
+        # print(f"YAML error: {e}")
+        pass
+    except Exception as e:
+        # print(f"An error occurred: {e}")
+        pass
 
-    return create_commands_from_yaml(yaml_data)
+    return []
 
 def create_commands_from_string(yaml_string):
-    yaml_data = yaml.safe_load(yaml_string)
-    return create_commands_from_yaml(yaml_data)
+    try:
+        yaml_data = yaml.safe_load(yaml_string)
+        return create_commands_from_yaml(yaml_data)
+    except yaml.YAMLError as e:
+        # print(f"YAML error: {e}")
+        return []
+    except Exception as e:
+        # print(f"An error occurred: {e}")
+        return []
 
 def add_modifiers(modifier_string, target_list):
     modifiers = create_modifiers_from_string(modifier_string)
