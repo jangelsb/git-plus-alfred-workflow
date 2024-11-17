@@ -622,17 +622,11 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>- title: open in Terminal
-  command: |
-    open -a Terminal .
-
-- title: open in Xcode
-  command: |
-    xed .</string>
+				<string></string>
 				<key>required</key>
 				<false/>
 				<key>trim</key>
-				<true/>
+				<false/>
 				<key>verticalsize</key>
 				<integer>9</integer>
 			</dict>
