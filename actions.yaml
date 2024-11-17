@@ -1,82 +1,91 @@
-- title: subcommands
-  subcommands:
-    - title: open in Terminal
-      command: open -a Terminal .
+#- title: subcommands
+#  subcommands:
+#    - title: open in Terminal
+#      command: open -a Terminal .
+#
+#    - title: selection
+#      command: |
+#        echo [input]
+#      values:
+#        - one
+#        - two
+#        - three
+#      should_use_values_as_inline_commands: true
+#
+#    - title: input
+#      command: |
+#        echo [input]
+#
+#    - title: level 2
+#      subcommands:
+#        - title: level 3
+#          subcommands:
+#            - title: open in Sublime
+#              command: echo "st [[parent]]"
+#
+#        - title: selection
+#          command: |
+#            echo [input]
+#          values:
+#            - one
+#            - two
+#            - three
+#
+#
+#        - title: bbb
+#          values_command: |
+#            git branch | grep -v '*' # all local branches minus the current one
+#          should_use_values_as_inline_commands: true
+#          subtitle: local
+#          #  icon: fork.png
+#          subcommands:
+#            - title: checkout
+#              icon: fork.png
+#              command: |
+#                killall Xcode; git stash; git checkout "[parent]"; git pull;
+#              mods:
+#                - subtitle: Launch Xcode after
+#                  mod: cmd
+#                  command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+#
+#                - subtitle: Launch Sublime after
+#                  mod: alt
+#                  command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+#
+#            - title: delete local branch
+#              command: |
+#                git branch -d "[parent]"
+#              mods:
+#                - subtitle: force delete
+#                  mod: cmd
+#                  command: |
+#                    git branch -D "[parent]"
+#
+#
+#            - title: copy branch name
+#              command: |
+#                echo "[parent]" | xargs echo -n | pbcopy
+#
+#
+#
+#
+#- title: selection
+#  command: |
+#    echo [input]
+#  values:
+#    - one
+#    - two
+#    - three
+#  should_use_values_as_inline_commands: true
+#
+#- title: selection
+#  command: |
+#    echo [input]
+#  values:
+#    - one
+#    - two
+#    - three
 
-    - title: selection
-      command: |
-        echo [input]
-      values:
-        - one
-        - two
-        - three
-      should_use_values_as_inline_commands: true
-
-    - title: input
-      command: |
-        echo [input]
-
-    - title: level 2
-      subcommands:
-        - title: level 3
-          subcommands:
-            - title: open in Sublime
-              command: echo "st [[parent]]"
-
-        - title: selection
-          command: |
-            echo [input]
-          values:
-            - one
-            - two
-            - three
-
-
-        - title: bbb
-          values_command: |
-            git branch | grep -v '*' # all local branches minus the current one
-          should_use_values_as_inline_commands: true
-          subtitle: local
-          #  icon: fork.png
-          subcommands:
-            - title: checkout
-              icon: fork.png
-              command: |
-                killall Xcode; git stash; git checkout "[parent]"; git pull;
-              mods:
-                - subtitle: Launch Xcode after
-                  mod: cmd
-                  command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
-
-                - subtitle: Launch Sublime after
-                  mod: alt
-                  command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
-
-            - title: delete local branch
-              command: |
-                git branch -d "[parent]"
-              mods:
-                - subtitle: force delete
-                  mod: cmd
-                  command: |
-                    git branch -D "[parent]"
-
-
-            - title: copy branch name
-              command: |
-                echo "[parent]" | xargs echo -n | pbcopy
-
-
-
-
-- title: selection
-  command: |
-    echo [input]
-  values:
-    - one
-    - two
-    - three
-  should_use_values_as_inline_commands: true
 
 - title: status
   icon: info.png
@@ -217,15 +226,6 @@
       command: |
         branch=$(git branch --show-current);
         git push -uf origin $branch
-
-
-- title: selection
-  command: |
-    echo [input]
-  values:
-    - one
-    - two
-    - three
 
 
 - title: find
