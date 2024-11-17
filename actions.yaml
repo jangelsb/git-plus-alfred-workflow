@@ -298,10 +298,12 @@
               command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
 
         - title: rebase
+          icon: rebase.png
           command: |
             git rebase "[parent]"
 
         - title: rebase --onto
+          icon: rebase.png
           subcommands:
             - title: start hash
               command: |
