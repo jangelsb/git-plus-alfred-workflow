@@ -242,7 +242,7 @@ def create_result_item_for_location(loc):
         arg=alfred_input.create_path(loc.title),
         subtitle=loc.directory,
         autocomplete=alfred_input.create_path(loc.title),
-        icon_path="folder3.png",
+        icon_path="folder.png",
         valid=True
     )
 

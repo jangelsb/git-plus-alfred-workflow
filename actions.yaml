@@ -137,7 +137,7 @@
     git fetch -p
 
 - title: create
-  icon: fork.plus.png
+  icon: create.png
   command: |
     git checkout -b "[input_snake_case]"
 
