@@ -142,6 +142,7 @@
     git checkout -b "[input_snake_case]"
 
 - title: cherry-pick
+  icon: pick.png
   command: |
    git cherry-pick [input]
 
