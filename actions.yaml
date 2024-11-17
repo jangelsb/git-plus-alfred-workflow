@@ -178,22 +178,27 @@
         git push -u origin $branch
 
 - title: open in Terminal
+  icon: open.png
   command: |
     open -a Terminal .
 
 - title: open in Xcode
+  icon: open.png
   command: |
     xed .
 
 - title: open in Sublime (st)
+  icon: open.png
   command: |
     st .
 
 - title: open in Finder
+  icon: open.png
   command: |
     open .
 
 - title: View in Alfred
+  icon: open.png
   command: |
     [view in alfred]
 
