@@ -141,6 +141,7 @@
    git diff --compact-summary
 
 - title: commit
+  icon: pencil.png
   command: |
    git commit -m "[input]"
   mods:
@@ -152,6 +153,7 @@
         git push -u origin $branch
 
 - title: add all & commit
+  icon: pencil.png
   command: |
     git add .
     git commit -m "[input]"
@@ -165,6 +167,7 @@
         git push -u origin $branch
 
 - title: add modified & commit
+  icon: pencil.png
   command: |
     git add -u
     git commit -m "[input]"
