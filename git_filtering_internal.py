@@ -439,11 +439,17 @@ def create_commands_from_yaml(yaml_data):
         # el
         if values or values_command:
             command_type = CommandType.NEEDS_SELECTION
-            icon = icon if icon else "list.png"
+
+            # only use the list if they will go to another level
+            if should_use_values_as_inline_commands == False or subcommands:
+                icon = icon if icon else "list.png"
 
         elif any(inp in action for inp in ['[input]', '[input_snake_case]']):
             command_type = CommandType.NEEDS_PARAM
             icon = icon if icon else "pencil.png"
+
+        elif subcommands:
+            icon = icon if icon else "list.png"
 
         return Command(
             title=entry['title'],
