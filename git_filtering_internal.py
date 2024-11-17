@@ -429,6 +429,7 @@ def create_commands_from_yaml(yaml_data):
         subtitle = entry.get('subtitle', None)
         subtitle_command = entry.get('subtitle_command', None)
         should_use_values_as_inline_commands = entry.get('should_use_values_as_inline_commands', False)
+        icon = entry.get('icon', None)
 
 
         command_type = CommandType.SINGLE_ACTION
@@ -438,14 +439,17 @@ def create_commands_from_yaml(yaml_data):
         # el
         if values or values_command:
             command_type = CommandType.NEEDS_SELECTION
+            icon = icon if icon else "list.png"
+
         elif any(inp in action for inp in ['[input]', '[input_snake_case]']):
             command_type = CommandType.NEEDS_PARAM
+            icon = icon if icon else "pencil.png"
 
         return Command(
             title=entry['title'],
             action=action,
             command_type=command_type,
-            icon_path=entry.get('icon', None),
+            icon_path=icon,
             mods=mods,
             values=values,
             values_command=values_command,
