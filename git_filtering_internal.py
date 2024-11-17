@@ -204,6 +204,10 @@ def subtitle_for_command(command, param=None):
         return run_command(command.action).strip()
 
     if command.subtitle_command:
+        # print(f"😎😎😎----------------------------------------------------------------------------")
+        # print(f"😎😎😎{command}")
+        # print(f"😎😎😎----------------------------------------------------------------------------")
+
         action = process_action(action=command.subtitle_command, param=param, title=command.title)
         action = run_command(action).strip()
         return action
@@ -486,10 +490,17 @@ def add_modifiers(modifier_string, target_list):
 
 def process_commands_recursively(query_input, locations, commands, level=1):
     global alfred_input
+    # print(f"😎😎😎----------------------------------------------------------------------------")
+    # print(f"😎😎😎{commands}")
+    # print(f"😎😎😎before {alfred_input}")
 
     num_cmds_before = len(alfred_input.commands)
     alfred_input = tokenize(query_input, locations, commands, level=level)
     num_cmds = len(alfred_input.commands)
+
+#     print(f"😎😎😎")
+#     print(f"😎😎😎after {alfred_input}")
+#     print(f"😎😎😎----------------------------------------------------------------------------")
 
     if num_cmds > num_cmds_before:
         new_commands = list(alfred_input.commands)
@@ -582,22 +593,20 @@ def main():
             filtered_results = [r.to_dict() for r in results if alfred_input.unfinished_query.lower() in r.subtitle.lower() or alfred_input.unfinished_query.lower() in r.title.lower()]
             output['items'].extend(filtered_results)
 
-            output['items'] += [
-                ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
-                           autocomplete=' ').to_dict()]
+            # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
         elif num_cmds > 0:
 
             main_command = alfred_input.commands[num_cmds-1]
 
-            output['items'] += [
-                ResultItem(f"> debug info {main_command.command_type}", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
-                           autocomplete=' ').to_dict()]
+#             output['items'] += [ResultItem(f"> debug info {main_command.command_type}", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
 
             if main_command.subcommands and main_command.values is None and main_command.values_command is None:
 
                 results = [item for item in create_result_items_for_command_with_subcommands(main_command, alfred_input.location)]
+
+#                 output['items'] += [ResultItem(f"> debug info SUBCOMMANDS", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
                 output['items'].extend(
                     result.to_dict()
@@ -645,9 +654,6 @@ def main():
                         )
                         if alfred_input.unfinished_query.lower() in result_item.title.lower() or alfred_input.unfinished_query.lower() in result_item.subtitle.lower():
                             output['items'].append(result_item.to_dict())
-
-
-    # output['items'] += [ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}", autocomplete=' ').to_dict()]
 
     print(json.dumps(output))
 
