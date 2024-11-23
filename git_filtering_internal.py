@@ -126,16 +126,20 @@ class TokenizationResult:
         commands_titles = [cmd.title for cmd in self.commands]
         return f"loc: {location_title}, cmds: {commands_titles}, query: '{self.unfinished_query}'"
 
-    def create_path(self, next_path):
-        location_title = self.location.title if self.location else ""
-        commands_titles = [cmd.title for cmd in self.commands]
-        suffix = ' '
 
-        output = ''
+    def create_current_path(self, back=0):
+        location_title = self.location.title if self.location else ""
+        commands = self.commands[:-back] if back else self.commands
+        commands_titles = [cmd.title for cmd in commands]
+
         if len(commands_titles) > 0:
-            output = f"{location_title} {' '.join(commands_titles)}"
+            return f"{location_title} {' '.join(commands_titles)}"
         else:
-            output = f"{location_title}"
+            return f"{location_title}"
+
+    def create_path(self, next_path):
+        suffix = ' '
+        output = self.create_current_path()
 
         if output.endswith(next_path):
             return output + suffix
@@ -289,8 +293,16 @@ def process_action(action, param, title, secondaryAction=None):
     return action
 
 def construct_full_command(action, location):
-    reload_keyword = "[reload]"
-    action = action.replace(reload_keyword, f"[reload:{alfred_input.create_path('').strip()}]")
+    def replace_reload_action(action):
+        # Find all occurrences of [reload] or [reload~n]
+        matches = re.finditer(r"\[reload(?:~(\d+))?\]", action)
+        for match in matches:
+            n = int(match.group(1) or 0)  # Default to 0 if n is not provided
+            replacement = f"[reload:{alfred_input.create_current_path(back=n)}]"
+            action = action.replace(match.group(0), replacement)
+        return action
+
+    action = replace_reload_action(action)
     return f"cd {location.directory}; {action}"
 
 def create_result_item_common(title, cmd, location, param=None):
