@@ -585,10 +585,11 @@ def main():
 
     output = {"items": []}
 
+    # TODO: this doesn't work anymore
     if len(locations) < 1:
         yaml_text = """
 - title: Repo 1
-  path: \$env_var
+  path: \\$env_var
 - title: Repo 2
   path: /path/to/repo
         """
