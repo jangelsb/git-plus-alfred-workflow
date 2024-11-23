@@ -683,7 +683,7 @@ def main():
                         if alfred_input.unfinished_query.lower() in result_item.title.lower() or alfred_input.unfinished_query.lower() in result_item.subtitle.lower():
                             output['items'].append(result_item.to_dict())
 
-    print(json.dumps(output))
+    sys.stdout.write(json.dumps(output))
 
 if __name__ == "__main__":
     main()

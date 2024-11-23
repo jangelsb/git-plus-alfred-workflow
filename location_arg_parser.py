@@ -39,5 +39,5 @@ locations = generate_locations_from_yaml(input_repo_list_yaml)
 
 for location in locations:
     if location.directory == path:
-        print(location.title)
+        sys.stdout.write(f"{location.title.strip()} ")
         break
