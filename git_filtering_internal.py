@@ -55,7 +55,7 @@ class Text:
         }
 
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None):
         self.uid = uid if uid else title
         self.title = title
         self.arg = arg
@@ -65,6 +65,7 @@ class ResultItem:
         self.mods = mods if mods else {}
         self.text = text
         self.icon_path = icon_path
+        self.type = type
 
     def to_dict(self):
         item_dict = {
@@ -73,7 +74,8 @@ class ResultItem:
             "arg": self.arg,
             "subtitle": self.subtitle,
             "autocomplete": f" {self.autocomplete}",
-            "valid": self.valid
+            "valid": self.valid,
+            "type": self.type if self.type else "default"
         }
         if self.mods:
             item_dict["mods"] = {mod.key.value: mod.to_dict()[mod.key.value] for mod in self.mods if mod.key is not None}
@@ -240,10 +242,11 @@ def subtitle_for_command(command, param=None):
 def create_result_item_for_location(loc):
     return ResultItem(
         title=loc.title,
-        arg=alfred_input.create_path(loc.title),
+        arg=loc.directory,
         subtitle=loc.directory,
         autocomplete=alfred_input.create_path(loc.title),
         icon_path="folder.png",
+        type="file:skipcheck",
         valid=True
     )
 

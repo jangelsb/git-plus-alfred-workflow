@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>com.jangelsb.gitx</string>
+	<string>com.jangelsb.git</string>
 	<key>category</key>
 	<string>Tools</string>
 	<key>connections</key>
@@ -95,6 +95,18 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>C679AB43-6F01-45E7-968D-B70DD4FF5218</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>14821CD6-3F96-4D38-8F2B-C72F6F147739</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -102,6 +114,19 @@
 				<string></string>
 				<key>sourceoutputuid</key>
 				<string>305D3D82-5368-44F1-B4BB-6F707F32771B</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2B6F959B-E985-412D-A7EC-D2D084773017</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -250,6 +275,20 @@ sys.stdout.write(path)</string>
 						<key>matchmode</key>
 						<integer>4</integer>
 						<key>matchstring</key>
+						<string>^\/</string>
+						<key>outputlabel</key>
+						<string>location</string>
+						<key>uid</key>
+						<string>14821CD6-3F96-4D38-8F2B-C72F6F147739</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
 						<string>^(?!cd).+</string>
 						<key>outputlabel</key>
 						<string>not a command</string>
@@ -349,6 +388,31 @@ fi</string>
 			<string>2B6F959B-E985-412D-A7EC-D2D084773017</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>source "$input_var_profile_path"
+
+python3 location_arg_parser.py "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>C679AB43-6F01-45E7-968D-B70DD4FF5218</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -469,16 +533,16 @@ A customizable git interface for Alfred
 		<key>23C1F948-18A5-486D-8658-BFFDFD5D3F47</key>
 		<dict>
 			<key>xpos</key>
-			<real>450</real>
+			<real>475</real>
 			<key>ypos</key>
-			<real>755</real>
+			<real>795</real>
 		</dict>
 		<key>2B6F959B-E985-412D-A7EC-D2D084773017</key>
 		<dict>
 			<key>xpos</key>
-			<real>430</real>
+			<real>445</real>
 			<key>ypos</key>
-			<real>665</real>
+			<real>655</real>
 		</dict>
 		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
 		<dict>
@@ -490,9 +554,9 @@ A customizable git interface for Alfred
 		<key>6AF906CF-57FA-41B4-967E-D06828E92FBA</key>
 		<dict>
 			<key>xpos</key>
-			<real>435</real>
+			<real>445</real>
 			<key>ypos</key>
-			<real>575</real>
+			<real>580</real>
 		</dict>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<dict>
@@ -500,6 +564,13 @@ A customizable git interface for Alfred
 			<real>210</real>
 			<key>ypos</key>
 			<real>370</real>
+		</dict>
+		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
+		<dict>
+			<key>xpos</key>
+			<real>200</real>
+			<key>ypos</key>
+			<real>735</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
