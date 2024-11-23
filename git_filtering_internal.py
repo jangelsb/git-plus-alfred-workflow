@@ -298,7 +298,7 @@ def construct_full_command(action, location):
         matches = re.finditer(r"\[reload(?:~(\d+))?\]", action)
         for match in matches:
             n = int(match.group(1) or 0)  # Default to 0 if n is not provided
-            replacement = f"[reload:{alfred_input.create_current_path(back=n)}]"
+            replacement = f"[reload:{alfred_input.create_current_path(back=n)} ]"
             action = action.replace(match.group(0), replacement)
         return action
 

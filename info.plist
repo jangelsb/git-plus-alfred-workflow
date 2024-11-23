@@ -78,16 +78,6 @@
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>A9F8153D-1EF2-418D-9E9F-34BC7790CD25</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -367,12 +357,12 @@ query = sys.argv[1]
 # Remove the line with [reload:.*]
 cleaned_query = re.sub(r"\[reload:.*\]", "", query, flags=re.MULTILINE).strip()
 
-# Extract "timer status modified"
-status_match = re.search(r"\[reload:(.*)\]", query)
-status = status_match.group(1) if status_match else ""
+# Extract the path 
+path_match = re.search(r"\[reload:(.*)\]", query)
+path = f"{path_match.group(1)}" if path_match else ""
 
 # Print the results separated by ;;;
-sys.stdout.write(f"{cleaned_query};;;{status}")</string>
+sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 				<key>scriptargtype</key>
 				<integer>1</integer>
 				<key>scriptfile</key>
@@ -397,7 +387,7 @@ sys.stdout.write(f"{cleaned_query};;;{status}")</string>
 				<key>outputas</key>
 				<integer>0</integer>
 				<key>trimarguments</key>
-				<true/>
+				<false/>
 				<key>variableprefix</key>
 				<string>split</string>
 			</dict>

@@ -1,91 +1,91 @@
-- title: subcommands
-  subcommands:
-    - title: open in Terminal
-      command: open -a Terminal .
-
-    - title: selection
-      command: |
-        echo [input]
-      values:
-        - one
-        - two
-        - three
-      should_use_values_as_inline_commands: true
-
-    - title: input
-      command: |
-        echo [input]
-
-    - title: level 2
-      subcommands:
-        - title: level 3
-          subcommands:
-            - title: open in Sublime
-              command: echo "st [[parent]]"
-
-        - title: selection
-          command: |
-            echo [input]
-          values:
-            - one
-            - two
-            - three
-
-
-        - title: bbb
-          values_command: |
-            git branch | grep -v '*' # all local branches minus the current one
-          should_use_values_as_inline_commands: true
-          subtitle: local
-          #  icon: fork.png
-          subcommands:
-            - title: checkout
-              icon: fork.png
-              command: |
-                killall Xcode; git stash; git checkout "[parent]"; git pull;
-              mods:
-                - subtitle: Launch Xcode after
-                  mod: cmd
-                  command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
-
-                - subtitle: Launch Sublime after
-                  mod: alt
-                  command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
-
-            - title: delete local branch
-              command: |
-                git branch -d "[parent]"
-              mods:
-                - subtitle: force delete
-                  mod: cmd
-                  command: |
-                    git branch -D "[parent]"
-
-
-            - title: copy branch name
-              command: |
-                echo "[parent]" | xargs echo -n | pbcopy
-
-
-
-
-- title: selection
-  command: |
-    echo [input]
-  values:
-    - one
-    - two
-    - three
-  should_use_values_as_inline_commands: true
-
-- title: selection
-  command: |
-    echo [input]
-  values:
-    - one
-    - two
-    - three
-
+#- title: subcommands
+#  subcommands:
+#    - title: open in Terminal
+#      command: open -a Terminal .
+#
+#    - title: selection
+#      command: |
+#        echo [input]
+#      values:
+#        - one
+#        - two
+#        - three
+#      should_use_values_as_inline_commands: true
+#
+#    - title: input
+#      command: |
+#        echo [input]
+#
+#    - title: level 2
+#      subcommands:
+#        - title: level 3
+#          subcommands:
+#            - title: open in Sublime
+#              command: echo "st [[parent]]"
+#
+#        - title: selection
+#          command: |
+#            echo [input]
+#          values:
+#            - one
+#            - two
+#            - three
+#
+#
+#        - title: bbb
+#          values_command: |
+#            git branch | grep -v '*' # all local branches minus the current one
+#          should_use_values_as_inline_commands: true
+#          subtitle: local
+#          #  icon: fork.png
+#          subcommands:
+#            - title: checkout
+#              icon: fork.png
+#              command: |
+#                killall Xcode; git stash; git checkout "[parent]"; git pull;
+#              mods:
+#                - subtitle: Launch Xcode after
+#                  mod: cmd
+#                  command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+#
+#                - subtitle: Launch Sublime after
+#                  mod: alt
+#                  command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+#
+#            - title: delete local branch
+#              command: |
+#                git branch -d "[parent]"
+#              mods:
+#                - subtitle: force delete
+#                  mod: cmd
+#                  command: |
+#                    git branch -D "[parent]"
+#
+#
+#            - title: copy branch name
+#              command: |
+#                echo "[parent]" | xargs echo -n | pbcopy
+#
+#
+#
+#
+#- title: selection
+#  command: |
+#    echo [input]
+#  values:
+#    - one
+#    - two
+#    - three
+#  should_use_values_as_inline_commands: true
+#
+#- title: selection
+#  command: |
+#    echo [input]
+#  values:
+#    - one
+#    - two
+#    - three
+#
 
 # ------------------------------------------------------------------------------------------
 
@@ -104,6 +104,66 @@
       echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
     fi
   subcommands:
+    - title: current branch
+      values_command: |
+        git branch --show-current # just the current branch
+      should_use_values_as_inline_commands: true
+      subtitle: current
+      icon: fork.png
+      subcommands:
+        - title: stash & pull
+          icon: fork.png
+          command: |
+            killall Xcode; git stash; git checkout "[parent]"; git pull;
+          mods:
+            - subtitle: Launch Xcode after
+              mod: cmd
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+
+            - subtitle: Launch Sublime after
+              mod: alt
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+
+        - title: copy diff for branch
+          icon: copy.png
+          command: |
+            branch="[parent]"
+            create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+            parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+            {
+              git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+            } | pbcopy
+          mods:
+            - subtitle: copy for ChatGPT summary
+              mod: cmd
+              command: |
+                branch="[parent]"
+                create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+                parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+                {
+                  echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
+                  echo ''
+                  git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+                } | pbcopy
+
+        - title: copy branch name
+          icon: copy.png
+          command: |
+            echo "[parent]" | xargs echo -n | pbcopy
+
+
+
+    - title: commit
+      icon: pencil.png
+      command: |
+       git commit -m "[input]"
+      mods:
+        - subtitle: and push
+          mod: cmd
+          command: |
+            branch=$(git branch --show-current);
+            git commit -m "[input]"
+            git push -u origin $branch
     - title: staged
       subtitle_command: |
         staged=$(git diff --cached --name-only | wc -l | xargs)
@@ -162,9 +222,9 @@
   command: |
    git cherry-pick [input]
 
-- title: diff
-  command: |
-   git diff --compact-summary
+#- title: diff
+#  command: |
+#   git diff --compact-summary
 
 - title: commit
   icon: pencil.png
