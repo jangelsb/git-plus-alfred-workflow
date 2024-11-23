@@ -370,7 +370,7 @@
     create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
     parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
     {
-      git log --reverse --pretty=format:"%s%n%b" "${parent_branch}..${branch}"
+      git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
     } | pbcopy
   mods:
     - subtitle: copy for ChatGPT summary
@@ -382,7 +382,7 @@
         {
           echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
           echo ''
-          git log --reverse --pretty=format:"%s%n%b" "${parent_branch}..${branch}"
+          git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
         } | pbcopy
 
 - title: tags
@@ -394,22 +394,18 @@
       command: |
         git checkout "[parent]"
 
-    - title: copy diff from tag
+    - title: copy diff since tag
       icon: copy.png
       command: |
-        branch="$(git branch --show-current)"
-        {
-          git log --reverse --pretty=format:"%s%n%b" "[parent]..${branch}"
-        } | pbcopy
+        git log --reverse --pretty=format:"%B" "[parent]..HEAD" | pbcopy
       mods:
         - subtitle: copy for ChatGPT summary
           mod: cmd
           command: |
-            branch="$(git branch --show-current)"
             {
               echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
               echo ''
-              git log --reverse --pretty=format:"%s%n%b" "[parent]..${branch}"
+              git log --reverse --pretty=format:"%B" "[parent]..HEAD"
             } | pbcopy
 
     - title: delete tag
