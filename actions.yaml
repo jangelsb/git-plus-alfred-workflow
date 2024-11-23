@@ -108,7 +108,8 @@
       subtitle_command: |
         staged=$(git diff --cached --name-only | wc -l | xargs)
         echo "$staged file(s)"
-      command: echo [input]
+      command: |
+        git reset '[input]'
       values_command: |
         git diff --cached --name-only
 
@@ -116,7 +117,8 @@
       subtitle_command: |
         modified=$(git diff --name-only | wc -l | xargs)
         echo "$modified file(s)"
-      command: echo [input]
+      command: |
+        git add '[input]'
       values_command: |
         git diff --name-only # git status --short
 
