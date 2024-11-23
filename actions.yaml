@@ -275,6 +275,28 @@
               echo "on $master; doing nothing"
             fi
 
+        - title: copy diff for branch
+          icon: copy.png
+          command: |
+            branch="[parent]"
+            create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+            parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+            {
+              git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+            } | pbcopy
+          mods:
+            - subtitle: copy for ChatGPT summary
+              mod: cmd
+              command: |
+                branch="[parent]"
+                create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+                parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+                {
+                  echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
+                  echo ''
+                  git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+                } | pbcopy
+
         - title: copy branch name
           icon: copy.png
           command: |
@@ -324,7 +346,6 @@
               command: |
                 git branch -D "[parent]"
 
-
         - title: copy branch name
           icon: copy.png
           command: |
@@ -362,28 +383,6 @@
           icon: copy.png
           command: |
             echo "[parent]" | xargs echo -n | pbcopy 
-
-- title: copy diff for current branch
-  icon: copy.png
-  command: |
-    branch="$(git branch --show-current)"
-    create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
-    parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
-    {
-      git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
-    } | pbcopy
-  mods:
-    - subtitle: copy for ChatGPT summary
-      mod: cmd
-      command: |
-        branch="$(git branch --show-current)"
-        create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
-        parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
-        {
-          echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
-          echo ''
-          git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
-        } | pbcopy
 
 - title: tags
   icon: tag.png
