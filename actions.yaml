@@ -109,8 +109,13 @@
         staged=$(git diff --cached --name-only | wc -l | xargs)
         echo "$staged file(s)"
       command: |
+        staged=$(git diff --name-only | wc -l | xargs)
         git reset '[input]'
-        [reload]
+        if [ "$staged" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
       values_command: |
         git diff --cached --name-only
 
@@ -119,8 +124,13 @@
         modified=$(git diff --name-only | wc -l | xargs)
         echo "$modified file(s)"
       command: |
+        modified=$(git diff --name-only | wc -l | xargs)
         git add '[input]'
-        [reload]
+        if [ "$modified" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
       values_command: |
         git diff --name-only # git status --short
 
