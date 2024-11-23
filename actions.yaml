@@ -110,6 +110,7 @@
         echo "$staged file(s)"
       command: |
         git reset '[input]'
+        [reload]
       values_command: |
         git diff --cached --name-only
 
@@ -119,6 +120,7 @@
         echo "$modified file(s)"
       command: |
         git add '[input]'
+        [reload]
       values_command: |
         git diff --name-only # git status --short
 

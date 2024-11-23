@@ -8,6 +8,31 @@
 	<string>Tools</string>
 	<key>connections</key>
 	<dict>
+		<key>05E25903-A30D-425C-A9D1-A4304B182249</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>A9F8153D-1EF2-418D-9E9F-34BC7790CD25</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>0BA9ED6F-B709-49B6-A448-5F5634D7019F</key>
 		<array>
 			<dict>
@@ -21,11 +46,63 @@
 				<false/>
 			</dict>
 		</array>
+		<key>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>05E25903-A30D-425C-A9D1-A4304B182249</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>20EE05A3-8AD6-4A9E-B23F-E3C3874E8593</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>CC2552BD-9769-4B08-8A3B-C96EAF7E7E85</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>22AA9BE8-E9EF-4C3F-AAE4-5DCC50E5EEFE</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>555BFC35-7D96-47DD-8BE0-73E8B5768E50</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>5AA4C88E-F48A-4EA7-BCE7-7BE5EDD286A4</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>555BFC35-7D96-47DD-8BE0-73E8B5768E50</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -107,6 +184,18 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>20EE05A3-8AD6-4A9E-B23F-E3C3874E8593</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>6B4A70B8-5DD0-4F2E-9193-F5FDF977E3F7</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -118,11 +207,37 @@
 				<false/>
 			</dict>
 		</array>
+		<key>A9F8153D-1EF2-418D-9E9F-34BC7790CD25</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2B6F959B-E985-412D-A7EC-D2D084773017</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
 				<string>2B6F959B-E985-412D-A7EC-D2D084773017</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>CC2552BD-9769-4B08-8A3B-C96EAF7E7E85</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>5AA4C88E-F48A-4EA7-BCE7-7BE5EDD286A4</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -289,6 +404,20 @@ sys.stdout.write(path)</string>
 						<key>matchmode</key>
 						<integer>4</integer>
 						<key>matchstring</key>
+						<string>\[reload:</string>
+						<key>outputlabel</key>
+						<string>command+reload</string>
+						<key>uid</key>
+						<string>6B4A70B8-5DD0-4F2E-9193-F5FDF977E3F7</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
 						<string>^(?!cd).+</string>
 						<key>outputlabel</key>
 						<string>not a command</string>
@@ -297,7 +426,7 @@ sys.stdout.write(path)</string>
 					</dict>
 				</array>
 				<key>elselabel</key>
-				<string>else</string>
+				<string>command</string>
 				<key>hideelse</key>
 				<false/>
 			</dict>
@@ -364,6 +493,55 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:path}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>1</integer>
+						<key>matchstring</key>
+						<string></string>
+						<key>outputlabel</key>
+						<string>has path</string>
+						<key>uid</key>
+						<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>05E25903-A30D-425C-A9D1-A4304B182249</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{var:path}</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>A9F8153D-1EF2-418D-9E9F-34BC7790CD25</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>unstackview</key>
 				<false/>
 			</dict>
@@ -413,6 +591,103 @@ python3 location_arg_parser.py "$1"</string>
 			<string>C679AB43-6F01-45E7-968D-B70DD4FF5218</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>import sys
+import re
+
+query = sys.argv[1]
+
+
+# Remove the line with [reload:.*]
+cleaned_query = re.sub(r"\[reload:.*\]", "", query, flags=re.MULTILINE).strip()
+
+# Extract "timer status modified"
+status_match = re.search(r"\[reload:(.*)\]", query)
+status = status_match.group(1) if status_match else ""
+
+# Print the results separated by ;;;
+sys.stdout.write(f"{cleaned_query};;;{status}")</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>9</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>20EE05A3-8AD6-4A9E-B23F-E3C3874E8593</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>delimiter</key>
+				<string>;;;</string>
+				<key>discardemptyarguments</key>
+				<false/>
+				<key>outputas</key>
+				<integer>0</integer>
+				<key>trimarguments</key>
+				<true/>
+				<key>variableprefix</key>
+				<string>split</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.split</string>
+			<key>uid</key>
+			<string>CC2552BD-9769-4B08-8A3B-C96EAF7E7E85</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{var:command}</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>555BFC35-7D96-47DD-8BE0-73E8B5768E50</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>{query}</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>command</key>
+					<string>{var:split1}</string>
+					<key>path</key>
+					<string>{var:split2}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>5AA4C88E-F48A-4EA7-BCE7-7BE5EDD286A4</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -500,8 +775,17 @@ A customizable git interface for Alfred
 * Update default values, made the git status do a complex bash command to be more helpful</string>
 	<key>uidata</key>
 	<dict>
+		<key>05E25903-A30D-425C-A9D1-A4304B182249</key>
+		<dict>
+			<key>xpos</key>
+			<real>855</real>
+			<key>ypos</key>
+			<real>485</real>
+		</dict>
 		<key>0BA9ED6F-B709-49B6-A448-5F5634D7019F</key>
 		<dict>
+			<key>note</key>
+			<string>run command</string>
 			<key>xpos</key>
 			<real>435</real>
 			<key>ypos</key>
@@ -521,6 +805,15 @@ A customizable git interface for Alfred
 			<key>ypos</key>
 			<real>235</real>
 		</dict>
+		<key>20EE05A3-8AD6-4A9E-B23F-E3C3874E8593</key>
+		<dict>
+			<key>note</key>
+			<string>parse command &amp; path to reload</string>
+			<key>xpos</key>
+			<real>785</real>
+			<key>ypos</key>
+			<real>800</real>
+		</dict>
 		<key>22AA9BE8-E9EF-4C3F-AAE4-5DCC50E5EEFE</key>
 		<dict>
 			<key>note</key>
@@ -533,16 +826,32 @@ A customizable git interface for Alfred
 		<key>23C1F948-18A5-486D-8658-BFFDFD5D3F47</key>
 		<dict>
 			<key>xpos</key>
-			<real>475</real>
+			<real>485</real>
 			<key>ypos</key>
-			<real>795</real>
+			<real>880</real>
 		</dict>
 		<key>2B6F959B-E985-412D-A7EC-D2D084773017</key>
 		<dict>
+			<key>note</key>
+			<string>navigate to path in alfred</string>
 			<key>xpos</key>
-			<real>445</real>
+			<real>635</real>
 			<key>ypos</key>
-			<real>655</real>
+			<real>695</real>
+		</dict>
+		<key>555BFC35-7D96-47DD-8BE0-73E8B5768E50</key>
+		<dict>
+			<key>xpos</key>
+			<real>1155</real>
+			<key>ypos</key>
+			<real>830</real>
+		</dict>
+		<key>5AA4C88E-F48A-4EA7-BCE7-7BE5EDD286A4</key>
+		<dict>
+			<key>xpos</key>
+			<real>1085</real>
+			<key>ypos</key>
+			<real>830</real>
 		</dict>
 		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
 		<dict>
@@ -554,23 +863,39 @@ A customizable git interface for Alfred
 		<key>6AF906CF-57FA-41B4-967E-D06828E92FBA</key>
 		<dict>
 			<key>xpos</key>
-			<real>445</real>
+			<real>370</real>
 			<key>ypos</key>
-			<real>580</real>
+			<real>675</real>
 		</dict>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<dict>
 			<key>xpos</key>
-			<real>210</real>
+			<real>80</real>
 			<key>ypos</key>
-			<real>370</real>
+			<real>425</real>
+		</dict>
+		<key>A9F8153D-1EF2-418D-9E9F-34BC7790CD25</key>
+		<dict>
+			<key>xpos</key>
+			<real>1025</real>
+			<key>ypos</key>
+			<real>550</real>
 		</dict>
 		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
 		<dict>
+			<key>note</key>
+			<string>if is a location, convert back to location title, then navigate to that in alfred</string>
 			<key>xpos</key>
 			<real>200</real>
 			<key>ypos</key>
 			<real>735</real>
+		</dict>
+		<key>CC2552BD-9769-4B08-8A3B-C96EAF7E7E85</key>
+		<dict>
+			<key>xpos</key>
+			<real>1005</real>
+			<key>ypos</key>
+			<real>830</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>

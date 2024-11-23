@@ -140,8 +140,11 @@ class TokenizationResult:
         if output.endswith(next_path):
             return output + suffix
 
-        if output:
+        if output and next_path:
             return f"{output} {next_path}" + suffix
+
+        if output:
+            return f"{output}" + suffix
 
         return next_path + suffix
 
@@ -286,6 +289,8 @@ def process_action(action, param, title, secondaryAction=None):
     return action
 
 def construct_full_command(action, location):
+    reload_keyword = "[reload]"
+    action = action.replace(reload_keyword, f"[reload:{alfred_input.create_path('').strip()}]")
     return f"cd {location.directory}; {action}"
 
 def create_result_item_common(title, cmd, location, param=None):
