@@ -373,22 +373,15 @@
           command: |
             git rebase "[parent]"
 
-#        - title: rebase --onto
-#          icon: rebase.png
-#          subcommands:
-#            - title: start hash
-#              command: |
-#                git rebase --onto "[parent~3]" "[input]"
-#              values_command: |
-#                git log --pretty=format:"%H"
-
-#        - title: rebase --onto
-#          icon: rebase.png
-#          subtitle: 'rebases just the current branch from its parent to this branch'
-#          command: |
-#            branch=$(git branch --show-current)
-#            parent_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
-#            git rebase --onto "[parent]" "$parent_commit"
+        - title: rebase --onto
+          icon: rebase.png
+          subtitle: 'needs a start hash'
+          subcommands:
+            - title: start hash
+              command: |
+                git rebase --onto "[parent~3]" "[input]"
+              values_command: |
+                git log --pretty=format:"%H"
 
         - title: rebase --onto (all branches)
           icon: rebase.png
