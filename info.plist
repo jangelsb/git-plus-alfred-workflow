@@ -888,7 +888,12 @@ A customizable git interface for Alfred
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string></string>
+				<string>- title: Repo 1
+  path: $repo_path1
+
+- title: Repo 2
+  path: "/path/to/repo2"
+  actions_path: /path/to/actions.yaml</string>
 				<key>required</key>
 				<true/>
 				<key>trim</key>
