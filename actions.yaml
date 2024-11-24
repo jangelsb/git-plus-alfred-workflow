@@ -370,17 +370,74 @@
 
         - title: rebase
           icon: rebase.png
+          subtitle: 'normal rebase, replays all commits from common ancestor to this branch'
           command: |
             git rebase "[parent]"
 
-        - title: rebase --onto
+#        - title: rebase --onto
+#          icon: rebase.png
+#          subcommands:
+#            - title: start hash
+#              command: |
+#                git rebase --onto "[parent~3]" "[input]"
+#              values_command: |
+#                git log --pretty=format:"%H"
+
+#        - title: rebase --onto
+#          icon: rebase.png
+#          subtitle: 'rebases just the current branch from its parent to this branch'
+#          command: |
+#            branch=$(git branch --show-current)
+#            parent_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+#            git rebase --onto "[parent]" "$parent_commit"
+
+        - title: rebase --onto (all branches)
           icon: rebase.png
-          subcommands:
-            - title: start hash
-              command: |
-                echo git rebase --onto "[parent~3]" "[input]"
-              values_command: |
-                git log --pretty=format:"%H" 
+          subtitle: 'if possible, will rebase the entire branch, along with all parent branches, until this branch is reached.'
+          command: |
+            branch=$(git branch --show-current)
+            target_branch="[parent]"
+            branch_history=()
+            
+            while [[ "$branch" != "$target_branch" ]]; do
+              create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | tail -n 1 | awk '{print $1}')
+              
+              if [[ -z "$create_commit" ]]; then
+                # echo "No creation commit found."
+                break
+              fi
+            
+              parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | tail -n 1)
+              
+              if [[ -z "$parent_branch" ]]; then
+                # echo "No parent branch found."
+                break
+              fi
+            
+              branch_history+=("$branch:$parent_branch:$create_commit")
+              branch=$parent_branch
+            done
+            
+            if [[ "$branch" == "$target_branch" ]]; then
+              # echo "Target branch '$target_branch' matched."
+            
+              git stash 
+              
+              for idx in {${#branch_history[@]}..1}; do
+                entry="${branch_history[idx]}"
+                # echo "Entry: $entry"  # Debugging line
+                
+                IFS=':' read -r branch_name parent_branch commit_hash <<< "$entry"
+                # echo "Branch: $branch_name, Parent: $parent_branch, Commit: $commit_hash"
+                
+                if [[ -n "$branch_name" && -n "$parent_branch" && -n "$commit_hash" ]]; then
+                  git checkout "$branch_name"
+                  git rebase --onto "$parent_branch" "$commit_hash"
+                fi
+              done
+            else
+              echo "Doing nothing: target branch '$target_branch' not reached."
+            fi
 
         - title: delete local branch
           icon: trash.png
