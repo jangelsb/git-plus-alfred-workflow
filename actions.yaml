@@ -370,7 +370,6 @@
 
         - title: rebase
           icon: rebase.png
-          subtitle: 'normal rebase, replays all commits from common ancestor to this branch'
           command: |
             git rebase "[parent]"
 
