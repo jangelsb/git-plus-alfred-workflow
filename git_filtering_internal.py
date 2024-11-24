@@ -422,8 +422,15 @@ def generate_locations_from_yaml(yaml_string):
 
         return Location(title=title, directory=path, actions_path=actions_path)
 
-    yaml_data = yaml.safe_load(yaml_string)
-    return [location_entry_processor(entry) for entry in yaml_data]
+    try:
+        yaml_data = yaml.safe_load(yaml_string)
+        return [location_entry_processor(entry) for entry in yaml_data]
+    except yaml.YAMLError as e:
+        # print(f"YAML error: {e}")
+        return []
+    except Exception as e:
+        # print(f"An error occurred: {e}")
+        return []
 
 def create_modifiers_from_string(modifier_string):
     def modifier_entry_processor(entry):
@@ -433,8 +440,15 @@ def create_modifiers_from_string(modifier_string):
         except ValueError:
             raise ValueError("Mod key is missing or invalid")
 
-    yaml_data = yaml.safe_load(modifier_string)
-    return [modifier_entry_processor(entry) for entry in yaml_data]
+    try:
+        yaml_data = yaml.safe_load(modifier_string)
+        return [modifier_entry_processor(entry) for entry in yaml_data]
+    except yaml.YAMLError as e:
+        # print(f"YAML error: {e}")
+        return []
+    except Exception as e:
+        # print(f"An error occurred: {e}")
+        return []
 
 def create_commands_from_yaml(yaml_data):
     def process_modifiers(mods):
@@ -613,10 +627,11 @@ def main():
         yaml_text = """
 - title: Repo 1
   path: \\$env_var
+  
 - title: Repo 2
   path: /path/to/repo
-        """
-        output['items'] += [ResultItem(f"Invalid repo yaml", arg=f"pbcopy <<EOF{yaml_text}", subtitle=f"Press enter to copy a template", valid=True).to_dict()]
+"""
+        output['items'] += [ResultItem(f"Invalid repo yaml", arg=f"cd ~; pbcopy <<EOF{yaml_text}", subtitle=f"Press enter to copy a template", valid=True).to_dict()]
 
     elif not alfred_input.location:
         filtered_locations = [loc for loc in locations if alfred_input.unfinished_query in loc.title.lower()]
