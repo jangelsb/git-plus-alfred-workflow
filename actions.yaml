@@ -164,6 +164,7 @@
             branch=$(git branch --show-current);
             git commit -m "[input]"
             git push -u origin $branch
+        
     - title: staged
       subtitle_command: |
         staged=$(git diff --cached --name-only | wc -l | xargs)
@@ -221,50 +222,6 @@
   icon: pick.png
   command: |
    git cherry-pick [input]
-
-#- title: diff
-#  command: |
-#   git diff --compact-summary
-
-- title: commit
-  icon: pencil.png
-  command: |
-   git commit -m "[input]"
-  mods:
-    - subtitle: and push
-      mod: cmd
-      command: |
-        branch=$(git branch --show-current);
-        git commit -m "[input]"
-        git push -u origin $branch
-
-- title: add all & commit
-  icon: pencil.png
-  command: |
-    git add .
-    git commit -m "[input]"
-  mods:
-    - subtitle: and push
-      mod: cmd
-      command: |
-        branch=$(git branch --show-current);
-        git add .
-        git commit -m "[input]"
-        git push -u origin $branch
-
-- title: add modified & commit
-  icon: pencil.png
-  command: |
-    git add -u
-    git commit -m "[input]"
-  mods:
-    - subtitle: and push
-      mod: cmd
-      command: |
-        branch=$(git branch --show-current);
-        git add -u
-        git commit -m "[input]"
-        git push -u origin $branch
 
 - title: open in Terminal
   icon: open.png
