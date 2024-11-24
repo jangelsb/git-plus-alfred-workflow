@@ -45,27 +45,27 @@ Each command is defined with the following structure:
 
 ### **Icons**
 
-| **Icon File Name**    | **Preview**                          | **Description**                 |
-|------------------------|--------------------------------------|----------------------------------|
-| `info.png`            | ![info.png](./icons/info.png)        | Represents information or details. |
-| `down.small.png`      | ![down.small.png](./icons/down.small.png) | Indicates a small downward action. |
-| `icon.png`            | ![icon.png](./icons/icon.png)        | The default icon for commands.  |
-| `action.png`          | ![action.png](./icons/action.png)    | Represents an actionable item.  |
-| `rebase.png`          | ![rebase.png](./icons/rebase.png)    | Used for Git rebase actions.    |
-| `tag.png`             | ![tag.png](./icons/tag.png)          | Represents Git tags or labels.  |
-| `down.big.png`        | ![down.big.png](./icons/down.big.png)| Indicates a large downward action. |
-| `create.png`          | ![create.png](./icons/create.png)    | Represents creation of new items. |
-| `pick.png`            | ![pick.png](./icons/pick.png)        | Represents selection or picking. |
-| `list.png`            | ![list.png](./icons/list.png)        | Represents a list or multiple items. |
-| `search.png`          | ![search.png](./icons/search.png)    | Represents a search or lookup action. |
-| `folder.png`          | ![folder.png](./icons/folder.png)    | Represents a folder or directory. |
-| `globe.png`           | ![globe.png](./icons/globe.png)      | Represents internet or global scope. |
-| `pencil.png`          | ![pencil.png](./icons/pencil.png)    | Represents editing or writing.  |
-| `open.png`            | ![open.png](./icons/open.png)        | Represents opening a file or folder. |
-| `trash.png`           | ![trash.png](./icons/trash.png)      | Represents deletion or removal. |
-| `up.big.png`          | ![up.big.png](./icons/up.big.png)    | Indicates a large upward action. |
-| `fork.png`            | ![fork.png](./icons/fork.png)        | Represents branching or forking. |
-| `copy.png`            | ![copy.png](./icons/copy.png)        | Represents copying or duplication. |
+| **Icon File Name**    | **Preview**                                                                 | **Description**                 |
+|------------------------|---------------------------------------------------------------------------|----------------------------------|
+| `info.png`            | <img src="./icons/info.png" width="64" alt="info.png">                     | Represents information or details. |
+| `down.small.png`      | <img src="./icons/down.small.png" width="64" alt="down.small.png">          | Indicates a small downward action. |
+| `icon.png`            | <img src="./icons/icon.png" width="64" alt="icon.png">                     | The default icon for commands.  |
+| `action.png`          | <img src="./icons/action.png" width="64" alt="action.png">                 | Represents an actionable item.  |
+| `rebase.png`          | <img src="./icons/rebase.png" width="64" alt="rebase.png">                 | Used for Git rebase actions.    |
+| `tag.png`             | <img src="./icons/tag.png" width="64" alt="tag.png">                       | Represents Git tags or labels.  |
+| `down.big.png`        | <img src="./icons/down.big.png" width="64" alt="down.big.png">             | Indicates a large downward action. |
+| `create.png`          | <img src="./icons/create.png" width="64" alt="create.png">                 | Represents creation of new items. |
+| `pick.png`            | <img src="./icons/pick.png" width="64" alt="pick.png">                     | Represents selection or picking. |
+| `list.png`            | <img src="./icons/list.png" width="64" alt="list.png">                     | Represents a list or multiple items. |
+| `search.png`          | <img src="./icons/search.png" width="64" alt="search.png">                 | Represents a search or lookup action. |
+| `folder.png`          | <img src="./icons/folder.png" width="64" alt="folder.png">                 | Represents a folder or directory. |
+| `globe.png`           | <img src="./icons/globe.png" width="64" alt="globe.png">                   | Represents internet or global scope. |
+| `pencil.png`          | <img src="./icons/pencil.png" width="64" alt="pencil.png">                 | Represents editing or writing.  |
+| `open.png`            | <img src="./icons/open.png" width="64" alt="open.png">                     | Represents opening a file or folder. |
+| `trash.png`           | <img src="./icons/trash.png" width="64" alt="trash.png">                   | Represents deletion or removal. |
+| `up.big.png`          | <img src="./icons/up.big.png" width="64" alt="up.big.png">                 | Indicates a large upward action. |
+| `fork.png`            | <img src="./icons/fork.png" width="64" alt="fork.png">                     | Represents branching or forking. |
+| `copy.png`            | <img src="./icons/copy.png" width="64" alt="copy.png">                     | Represents copying or duplication. |
 
 
 ---
