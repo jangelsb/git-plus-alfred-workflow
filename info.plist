@@ -380,6 +380,23 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argument</key>
+				<string>{var:output}</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>555BFC35-7D96-47DD-8BE0-73E8B5768E50</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>delimiter</key>
 				<string>;;;</string>
 				<key>discardemptyarguments</key>
@@ -395,23 +412,6 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 			<string>alfred.workflow.utility.split</string>
 			<key>uid</key>
 			<string>CC2552BD-9769-4B08-8A3B-C96EAF7E7E85</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string>{var:output}</string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>555BFC35-7D96-47DD-8BE0-73E8B5768E50</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -903,8 +903,10 @@ example (note the two spaces indentation):
 
 - title: Repo 1
   path: $repo_path1
+
 - title: Repo 2
   path: "/path/to/repo2"
+  actions_path: /path/to/actions.yaml
 
 NOTE: if you set a “bash profile”, you can use enviroment variables for your paths, e.g, $env_var</string>
 			<key>label</key>
@@ -939,16 +941,16 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>actions.yaml</string>
+				<string></string>
 				<key>filtermode</key>
 				<integer>2</integer>
 				<key>placeholder</key>
 				<string>actions.yaml</string>
 				<key>required</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>description</key>
-			<string>Use default for default values</string>
+			<string>Use `actions.yaml` for default values</string>
 			<key>label</key>
 			<string>default actions</string>
 			<key>type</key>
@@ -981,7 +983,429 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string></string>
+				<string>- title: status
+  icon: info.png
+  subtitle_command: |
+    branch=$(git branch --show-current)
+    modified=$(git diff --name-only | wc -l | xargs)
+    untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+    staged=$(git diff --cached --name-only | wc -l | xargs)
+    
+    if [ "$modified" -eq 0 ] &amp;&amp; [ "$untracked" -eq 0 ] &amp;&amp; [ "$staged" -eq 0 ]
+    then 
+      echo "branch: ${branch}; clean"
+    else 
+      echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
+    fi
+  subcommands:
+    - title: current branch
+      values_command: |
+        git branch --show-current # just the current branch
+      should_use_values_as_inline_commands: true
+      subtitle: current
+      icon: fork.png
+      subcommands:
+        - title: stash &amp; pull
+          icon: fork.png
+          command: |
+            git stash; git checkout "[parent]"; git pull;
+          mods:
+            - subtitle: Launch Xcode after
+              mod: cmd
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+
+            - subtitle: Launch Sublime after
+              mod: alt
+              command: git stash; git checkout "[parent]"; git pull; st .
+
+        - title: copy diff for branch
+          icon: copy.png
+          command: |
+            branch="[parent]"
+            create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+            parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+            {
+              git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+            } | pbcopy
+          mods:
+            - subtitle: copy for ChatGPT summary
+              mod: cmd
+              command: |
+                branch="[parent]"
+                create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+                parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+                {
+                  echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
+                  echo ''
+                  git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+                } | pbcopy
+
+        - title: copy branch name
+          icon: copy.png
+          command: |
+            echo "[parent]" | xargs echo -n | pbcopy
+
+
+
+    - title: commit
+      icon: pencil.png
+      command: |
+       git commit -m "[input]"
+      mods:
+        - subtitle: and push
+          mod: cmd
+          command: |
+            branch=$(git branch --show-current);
+            git commit -m "[input]"
+            git push -u origin $branch
+
+    - title: staged
+      subtitle_command: |
+        staged=$(git diff --cached --name-only | wc -l | xargs)
+        echo "$staged file(s)"
+      command: |
+        staged=$(git diff --cached --name-only | wc -l | xargs)
+        git reset '[input]'
+        if [ "$staged" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
+      values_command: |
+        git diff --cached --name-only
+
+    - title: modified
+      subtitle_command: |
+        modified=$(git diff --name-only | wc -l | xargs)
+        echo "$modified file(s)"
+      command: |
+        modified=$(git diff --name-only | wc -l | xargs)
+        git add '[input]'
+        if [ "$modified" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
+      values_command: |
+        git diff --name-only # git status --short
+
+    - title: untracked
+      subtitle_command: |
+        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+        echo "$untracked file(s)"
+      command: |
+        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+        git add '[input]'
+        if [ "$untracked" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
+      values_command: |
+        git ls-files --others --exclude-standard 
+
+- title: pull
+  icon: down.big.png
+  command: |
+    git stash; git pull;
+  mods:
+  - subtitle: Launch Xcode after
+    mod: cmd
+    command: killall Xcode; git stash; git pull; xed .
+
+  - subtitle: Launch Sublime after
+    mod: alt
+    command: git stash; git pull; st .
+
+- title: fetch
+  icon: down.small.png
+  command: |
+    git fetch -p
+
+- title: create
+  icon: create.png
+  command: |
+    git checkout -b "[input_snake_case]"
+
+- title: cherry-pick
+  icon: pick.png
+  command: |
+   git cherry-pick [input]
+
+- title: open in Terminal
+  icon: open.png
+  command: |
+    open -a Terminal .
+
+- title: open in Xcode
+  icon: open.png
+  command: |
+    xed .
+
+- title: open in Sublime (st)
+  icon: open.png
+  command: |
+    st .
+
+- title: open in Finder
+  icon: open.png
+  command: |
+    open .
+
+- title: View in Alfred
+  icon: open.png
+  command: |
+    [view in alfred]
+
+
+- title: push
+  icon: up.big.png
+  command: |
+    branch=$(git branch --show-current);
+    git push -u origin $branch
+  mods:
+    - subtitle: force push
+      mod: cmd
+      command: |
+        branch=$(git branch --show-current);
+        git push -uf origin $branch
+
+
+- title: find
+  icon: search.png
+  command: |
+    st "[input]"
+  values_command: |
+    find . -type f
+
+
+- title: b
+  icon: fork.png
+  subcommands:
+    - title: current branch
+      values_command: |
+        git branch --show-current # just the current branch
+      should_use_values_as_inline_commands: true
+      subtitle: current
+      icon: fork.png
+      subcommands:
+        - title: checkout
+          icon: fork.png
+          command: |
+            git stash; git checkout "[parent]"; git pull;
+          mods:
+            - subtitle: Launch Xcode after
+              mod: cmd
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+
+            - subtitle: Launch Sublime after
+              mod: alt
+              command: git stash; git checkout "[parent]"; git pull; st .
+
+        - title: checkout 'main branch' &amp; delete this branch
+          icon: trash.png
+          command: |
+            # if on 'main branch', does nothing
+            master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
+            branch="[parent]"
+            if [ "$branch" != "$master" ]; then
+              git stash; git checkout "$master"; git pull;
+              git branch -D "[parent]"
+            else 
+              echo "on $master; doing nothing"
+            fi
+
+        - title: copy diff for branch
+          icon: copy.png
+          command: |
+            branch="[parent]"
+            create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+            parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+            {
+              git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+            } | pbcopy
+          mods:
+            - subtitle: copy for ChatGPT summary
+              mod: cmd
+              command: |
+                branch="[parent]"
+                create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+                parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+                {
+                  echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
+                  echo ''
+                  git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+                } | pbcopy
+
+        - title: copy branch name
+          icon: copy.png
+          command: |
+            echo "[parent]" | xargs echo -n | pbcopy
+
+
+    - title: local branches
+      values_command: |
+        git branch | grep -v '*' # all local branches minus the current one
+      should_use_values_as_inline_commands: true
+      icon: fork.png
+      subcommands:
+        - title: checkout
+          icon: fork.png
+          command: |
+            git stash; git checkout "[parent]"; git pull;
+          mods:
+            - subtitle: Launch Xcode after
+              mod: cmd
+              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+
+            - subtitle: Launch Sublime after
+              mod: alt
+              command: git stash; git checkout "[parent]"; git pull; st .
+
+        - title: rebase
+          icon: rebase.png
+          command: |
+            git rebase "[parent]"
+
+        - title: rebase --onto
+          icon: rebase.png
+          subtitle: 'needs a start hash'
+          subcommands:
+            - title: start hash
+              command: |
+                git rebase --onto "[parent~3]" "[input]"
+              values_command: |
+                git log --pretty=format:"%H"
+
+        - title: rebase --onto (all branches)
+          icon: rebase.png
+          subtitle: 'if possible, will rebase the entire branch, along with all parent branches, until this branch is reached.'
+          command: |
+            branch=$(git branch --show-current)
+            target_branch="[parent]"
+            branch_history=()
+            
+            while [[ "$branch" != "$target_branch" ]]; do
+              create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | tail -n 1 | awk '{print $1}')
+              
+              if [[ -z "$create_commit" ]]; then
+                # echo "No creation commit found."
+                break
+              fi
+            
+              parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | tail -n 1)
+              
+              if [[ -z "$parent_branch" ]]; then
+                # echo "No parent branch found."
+                break
+              fi
+            
+              branch_history+=("$branch:$parent_branch:$create_commit")
+              branch=$parent_branch
+            done
+            
+            if [[ "$branch" == "$target_branch" ]]; then
+              # echo "Target branch '$target_branch' matched."
+            
+              git stash 
+              
+              for idx in {${#branch_history[@]}..1}; do
+                entry="${branch_history[idx]}"
+                # echo "Entry: $entry"  # Debugging line
+                
+                IFS=':' read -r branch_name parent_branch commit_hash &lt;&lt;&lt; "$entry"
+                # echo "Branch: $branch_name, Parent: $parent_branch, Commit: $commit_hash"
+                
+                if [[ -n "$branch_name" &amp;&amp; -n "$parent_branch" &amp;&amp; -n "$commit_hash" ]]; then
+                  git checkout "$branch_name"
+                  git rebase --onto "$parent_branch" "$commit_hash"
+                fi
+              done
+            else
+              echo "Doing nothing: target branch '$target_branch' not reached."
+            fi
+
+        - title: delete local branch
+          icon: trash.png
+          command: |
+            git branch -d "[parent]"
+          mods:
+            - subtitle: force delete
+              mod: cmd
+              command: |
+                git branch -D "[parent]"
+
+        - title: copy branch name
+          icon: copy.png
+          command: |
+            echo "[parent]" | xargs echo -n | pbcopy
+
+
+    - title: remote branches
+      values_command: |
+        git branch -r
+      should_use_values_as_inline_commands: true
+      icon: globe.png
+
+      subcommands:
+        - title: checkout
+          icon: fork.png
+          command: |
+            git stash; git checkout -t "[parent]"; git pull;
+          mods:
+            - subtitle: Launch Xcode after
+              mod: cmd
+              command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; xed .
+
+            - subtitle: Launch Sublime after
+              mod: alt
+              command: git stash; git checkout -t "[parent]"; git pull; st .
+
+        - title: delete remote branch
+          icon: trash.png
+          command: |
+            branch="[parent]"
+            git push origin --delete ${branch#origin/}
+
+
+        - title: copy branch name
+          icon: copy.png
+          command: |
+            echo "[parent]" | xargs echo -n | pbcopy 
+
+- title: tags
+  icon: tag.png
+  values_command: git tag | sort -r
+  subcommands:
+    - title: checkout
+      icon: fork.png
+      command: |
+        git checkout "[parent]"
+
+    - title: copy diff since tag
+      icon: copy.png
+      command: |
+        git log --reverse --pretty=format:"%B" "[parent]..HEAD" | pbcopy
+      mods:
+        - subtitle: copy for ChatGPT summary
+          mod: cmd
+          command: |
+            {
+              echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
+              echo ''
+              git log --reverse --pretty=format:"%B" "[parent]..HEAD"
+            } | pbcopy
+
+    - title: delete tag
+      icon: trash.png
+      command: |
+        git tag -d "[parent]"
+      mods:
+        - subtitle: and delete remote tag
+          mod: cmd
+          command: |
+            git tag -d "[parent]"
+            git push origin --delete "[parent]"</string>
 				<key>required</key>
 				<false/>
 				<key>trim</key>
@@ -999,7 +1423,11 @@ example:
 
 - title: open in Xcode
   command: |
-    xed .</string>
+    xed .
+
+this is the config yaml file. it defaults to the same commands in `actions.yaml`. 
+
+I recommend cutting these commands out putting them in your own yaml file and refercing that above. Then you can easily edit your commands and keep them during upgrades. and if you ever want to see the latest commands you can restore this to it's default value or check `actions.yaml`</string>
 			<key>label</key>
 			<string>additional actions</string>
 			<key>type</key>
