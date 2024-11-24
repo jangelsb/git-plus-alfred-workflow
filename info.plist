@@ -1414,22 +1414,16 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 				<integer>9</integer>
 			</dict>
 			<key>description</key>
-			<string>a simple yaml file to create additional commands to run
+			<string>This is the full YAML config. It has the same commands in `actions.yaml`
 
-example:
-- title: open in Terminal
-  command: |
-    open -a Terminal .
+RECOMMENDATION:
+* cut these commands and put them in your own YAML file
+* put a space here (or any text) to remove these actions
+* reference your YAML file above
 
-- title: open in Xcode
-  command: |
-    xed .
-
-this is the config yaml file. it defaults to the same commands in `actions.yaml`. 
-
-I recommend cutting these commands out putting them in your own yaml file and refercing that above. Then you can easily edit your commands and keep them during upgrades. and if you ever want to see the latest commands you can restore this to it's default value or check `actions.yaml`</string>
+Then you can easily edit your commands and keep them during upgrades, and if you ever want to see the latest commands, you can restore this to its default value (clear all text &amp; save) or check `actions.yaml`.</string>
 			<key>label</key>
-			<string>additional actions</string>
+			<string>YAML config</string>
 			<key>type</key>
 			<string>textarea</string>
 			<key>variable</key>
