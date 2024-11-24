@@ -306,7 +306,7 @@ def construct_full_command(action, location):
         return action
 
     action = replace_reload_action(action)
-    return f"cd {location.directory}; {action}"
+    return f"cd {location.directory};\n{action}"
 
 def create_result_item_common(title, cmd, location, param=None):
     action = process_action(action=cmd.action, param=param, title=title, secondaryAction=cmd.secondaryAction)
