@@ -1,7 +1,7 @@
 - title: pull
   icon: down.big.png
   command: |
-    killall Xcode; git stash; git pull;
+    git stash; git pull;
   mods:
   - subtitle: Launch Xcode after
     mod: cmd
@@ -9,7 +9,7 @@
 
   - subtitle: Launch Sublime after
     mod: alt
-    command: killall Xcode; git stash; git pull; st .
+    command: git stash; git pull; st .
 
 - title: fetch
   icon: down.small.png
@@ -92,7 +92,7 @@
         - title: checkout
           icon: fork.png
           command: |
-            killall Xcode; git stash; git checkout "[parent]"; git pull;
+            git stash; git checkout "[parent]"; git pull;
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
@@ -100,7 +100,7 @@
 
             - subtitle: Launch Sublime after
               mod: alt
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+              command: git stash; git checkout "[parent]"; git pull; st .
 
         - title: checkout 'main branch' & delete this branch
           icon: trash.png
@@ -109,7 +109,7 @@
             master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
             branch="[parent]"
             if [ "$branch" != "$master" ]; then
-              killall Xcode; git stash; git checkout "$master"; git pull;
+              git stash; git checkout "$master"; git pull;
               git branch -D "[parent]"
             else 
               echo "on $master; doing nothing"
@@ -152,7 +152,7 @@
         - title: checkout
           icon: fork.png
           command: |
-            killall Xcode; git stash; git checkout "[parent]"; git pull;
+            git stash; git checkout "[parent]"; git pull;
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
@@ -160,7 +160,7 @@
 
             - subtitle: Launch Sublime after
               mod: alt
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+              command: git stash; git checkout "[parent]"; git pull; st .
 
         - title: rebase
           icon: rebase.png
@@ -251,7 +251,7 @@
         - title: checkout
           icon: fork.png
           command: |
-            killall Xcode; git stash; git checkout -t "[parent]"; git pull;
+            git stash; git checkout -t "[parent]"; git pull;
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
@@ -259,7 +259,7 @@
 
             - subtitle: Launch Sublime after
               mod: alt
-              command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; st .
+              command: git stash; git checkout -t "[parent]"; git pull; st .
 
         - title: delete remote branch
           icon: trash.png
@@ -303,7 +303,7 @@
         - title: stash & pull
           icon: fork.png
           command: |
-            killall Xcode; git stash; git checkout "[parent]"; git pull;
+            git stash; git checkout "[parent]"; git pull;
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
@@ -311,7 +311,7 @@
 
             - subtitle: Launch Sublime after
               mod: alt
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; st .
+              command: git stash; git checkout "[parent]"; git pull; st .
 
         - title: copy diff for branch
           icon: copy.png

@@ -73,7 +73,7 @@ Each command is defined with the following structure:
 
 ### **Simple Commands**
 
-#### **1. Print Input to Console**
+#### **Print Input**
 ```yaml
 - title: print
   subtitle: Echo user input
@@ -84,7 +84,7 @@ Each command is defined with the following structure:
 
 ---
 
-#### **2. Create a New Git Branch**
+#### **Create a New Git Branch**
 ```yaml
 - title: create-branch
   subtitle: Create a new Git branch
@@ -97,40 +97,34 @@ Each command is defined with the following structure:
 
 ### **Intermediate Commands**
 
-#### **1. Count Modified Git Files**
+#### **Echo Selection**
 ```yaml
-- title: modified-files
-  subtitle_command: |
-    modified=$(git diff --name-only | wc -l | xargs)
-    echo "$modified file(s) modified"
-  command: |
-    modified=$(git diff --name-only | wc -l | xargs)
-    if [ "$modified" -gt 0 ]; then
-        echo "[reload]"
-    else
-        echo "No changes to reload"
-    fi
+- title: selection
+ command: |
+   echo [input]
+ values:
+   - one
+   - two
+   - three
 ```
-- **Description**: Counts the number of modified files in the current Git repository and reloads the workflow if any changes are found.
+- **Description**: Lists out some values and echos the selected value back.
 
 ---
 
-#### **2. Switch Git Branch**
+#### **Switch Git Branch**
 ```yaml
 - title: switch-branch
-  subtitle: Switch to a branch
   values_command: git branch --format='%(refname:short)'
   command: |
     git checkout "[input]"
-    echo "[reload~1]"
 ```
-- **Description**: Lists all branches, switches to the selected branch, and reloads the parent workflow.
+- **Description**: Lists all branches, switches to the selected branch.
 
 ---
 
 ### **Advanced Commands**
 
-#### **1. Nested Subcommands with Parent Context**
+#### ** TODO Nested Subcommands with Parent Context**
 ```yaml
 - title: git-operations
   subtitle: Perform Git operations
@@ -153,7 +147,7 @@ Each command is defined with the following structure:
 
 ---
 
-#### **2. Interactive Git Stash Management**
+#### **2. TODO  Interactive Git Stash Management**
 ```yaml
 - title: stash-operations
   subtitle: Manage Git stashes
@@ -169,7 +163,7 @@ Each command is defined with the following structure:
 
 ---
 
-#### **3. Dynamic Reload Based on Command State**
+#### **Dynamic Reload Based on Command State**
 ```yaml
 - title: add-modified-files
   subtitle: Stage modified files
@@ -185,13 +179,13 @@ Each command is defined with the following structure:
 ```
 - **Description**: 
   - Adds a selected modified file to the staging area.
-  - Reloads based on whether multiple files are staged or just one.
+  - Reloads the workflow - if we just staged the last item, reload a command back otherwise refresh the current list.
 
 ---
 
 ### **Modifiers (`mods`)**
 
-#### **Example with Modifiers**
+#### ** TODO Example with Modifiers**
 ```yaml
 - title: git-status
   subtitle: View Git status
