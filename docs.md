@@ -28,8 +28,8 @@ Each command is defined with the following structure:
 | `subtitle`     | (Optional) A short description of the command.                                            |
 | `icon`         | (Optional) Path to an image for the command icon in Alfred.                   |
 | `command`      | The shell command to execute. Supports dynamic placeholders.                  |
-| `values`       | (Optional) A list of items to be used that provides dynamic values or subcommands.           |
-| `values_command` | (Optional) A command that provides dynamic values or subcommands.           |
+| `values` | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with [input] in the command replaced by the selected value. If subcommands are present, the `command` will be ignored and the selected value can be referenced using [parent]. |
+| `values_command` | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
 | `mods`         | (Optional) Modifier-specific actions (e.g., `cmd`, `alt`).                    |
 
 ### **Dynamic Placeholders**
@@ -216,11 +216,11 @@ Each command is defined with the following structure:
 1. **Use `[reload]` Wisely**:
    - Reloads ensure the workflow stays up-to-date but can add overhead if overused.
 
-2. **Leverage `values_command`**:
-   - Use it for dynamically populating lists (e.g., Git branches, files, etc.).
+2. **Leverage `values` and `values_command`**:
+   - Use it for populating lists (e.g., build script commands, Git branches, files, etc.).
 
 3. **Optimize Hierarchical References**:
-   - Utilize `[parent~n]` to build meaningful nested workflows.
+   - Utilize `[parent~n]` to reference previous command titles in your bash command.
 
 4. **Combine with Scripts**:
    - Offload complex logic to standalone scripts and call them within `command`.
