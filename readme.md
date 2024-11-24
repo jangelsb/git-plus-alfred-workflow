@@ -1,4 +1,4 @@
-# gitx
+# git+ for Alfred
 
 A customizable git interface for Alfred
 
