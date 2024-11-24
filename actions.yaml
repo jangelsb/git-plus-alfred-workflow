@@ -164,13 +164,13 @@
             branch=$(git branch --show-current);
             git commit -m "[input]"
             git push -u origin $branch
-        
+
     - title: staged
       subtitle_command: |
         staged=$(git diff --cached --name-only | wc -l | xargs)
         echo "$staged file(s)"
       command: |
-        staged=$(git diff --name-only | wc -l | xargs)
+        staged=$(git diff --cached --name-only | wc -l | xargs)
         git reset '[input]'
         if [ "$staged" -eq 1 ]; then
             echo "[reload~1]"
@@ -199,14 +199,29 @@
       subtitle_command: |
         untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
         echo "$untracked file(s)"
-      command: echo [input]
+      command: |
+        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+        git add '[input]'
+        if [ "$untracked" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
       values_command: |
         git ls-files --others --exclude-standard 
 
 - title: pull
   icon: down.big.png
   command: |
-    git pull
+    killall Xcode; git stash; git pull;
+  mods:
+  - subtitle: Launch Xcode after
+    mod: cmd
+    command: killall Xcode; git stash; git pull; xed .
+
+  - subtitle: Launch Sublime after
+    mod: alt
+    command: killall Xcode; git stash; git pull; st .
 
 - title: fetch
   icon: down.small.png
