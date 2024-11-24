@@ -55,7 +55,7 @@ class Text:
         }
 
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None, quicklookurl=None):
         self.uid = uid if uid else title
         self.title = title
         self.arg = arg
@@ -66,6 +66,7 @@ class ResultItem:
         self.text = text
         self.icon_path = icon_path
         self.type = type
+        self.quicklookurl = quicklookurl
 
     def to_dict(self):
         item_dict = {
@@ -75,7 +76,8 @@ class ResultItem:
             "subtitle": self.subtitle,
             "autocomplete": f" {self.autocomplete}",
             "valid": self.valid,
-            "type": self.type if self.type else "default"
+            "type": self.type if self.type else "default",
+            "quicklookurl": self.quicklookurl
         }
         if self.mods:
             item_dict["mods"] = {mod.key.value: mod.to_dict()[mod.key.value] for mod in self.mods if mod.key is not None}
@@ -94,7 +96,7 @@ class Location:
         self.actions_path = actions_path
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None):
         self.title = title
         self.action = action
         self.secondaryAction = secondaryAction
@@ -108,6 +110,7 @@ class Command:
         self.should_use_values_as_inline_commands = should_use_values_as_inline_commands
         self.subtitle_command = subtitle_command
         self.subcommands = subcommands if subcommands else []
+        self.quicklookurl = quicklookurl
 
     def __repr__(self):
         return f"{self.title}"
@@ -330,7 +333,8 @@ def create_result_item_common(title, cmd, location, param=None):
         location=location,
         valid=True,
         mods=modifier_list,
-        icon_path=cmd.icon_path
+        icon_path=cmd.icon_path,
+        quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None
     )
 
 def create_result_item_for_command(cmd, location):
@@ -459,6 +463,7 @@ def create_commands_from_yaml(yaml_data):
         subtitle_command = entry.get('subtitle_command', None)
         should_use_values_as_inline_commands = entry.get('should_use_values_as_inline_commands', False)
         icon = entry.get('icon', None)
+        quicklookurl = entry.get('quicklookurl', None)
 
 
         command_type = CommandType.SINGLE_ACTION
@@ -492,7 +497,8 @@ def create_commands_from_yaml(yaml_data):
             values_icon=values_icon,
             subtitle=subtitle,
             subtitle_command=subtitle_command,
-            should_use_values_as_inline_commands=should_use_values_as_inline_commands
+            should_use_values_as_inline_commands=should_use_values_as_inline_commands,
+            quicklookurl=quicklookurl
         )
 
     return [command_entry_processor(entry) for entry in yaml_data]
