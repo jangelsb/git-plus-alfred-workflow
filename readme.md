@@ -1,6 +1,6 @@
 # git+ for Alfred
 
-**A highly customizable Git interface for Alfred, allowing you to create personalized commands and menus to streamline your workflow.**
+A highly customizable Git interface for Alfred, allowing you to create personalized commands and menus to streamline your workflow.
 
 For detailed documentation, see [docs.md](docs.md).
 
@@ -44,8 +44,7 @@ All commands in this workflow are defined in a YAML configuration file. See [act
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 
 
-### Step 2: Customize and Enjoy
-
+### Step 2 (Optional)
 1. **Use the default configuration:** The included [actions.yaml](actions.yaml) contains a set of pre-defined commands.  
 
 2. **Create a personalized config file:**
@@ -54,8 +53,8 @@ All commands in this workflow are defined in a YAML configuration file. See [act
    - Periodically check [actions.yaml](actions.yaml) for new features or updates.
 
 3. **Add your own commands:**
-   - Modify the inline YAML file or include additional YAML files in your configuration.
-   - Define repository-specific YAML files for commands unique to certain repos.
+   - Modify the inline YAML or include an additional YAML file in your configuration.
+   - Define repository-specific YAML files for commands unique to certain repos, see `actions_path` in Step 1.
 
 ---
 
@@ -82,9 +81,9 @@ For more information, see [docs.md](docs.md).
 
 ## 🛠️ Installation
 
-1. Download the workflow and import it into Alfred.  
-2. Configure the paths in the workflow settings.  
-3. Have fun.
+1. Download [the latest workflow](https://github.com/jangelsb/git-plus-alfred-workflow/releases) and import it into Alfred.  
+2. Configure the paths in the workflow settings.
+3. Enjoy & God bless 
 
 ---
 

@@ -675,14 +675,11 @@ python3 location_arg_parser.py "$1"</string>
 		</dict>
 	</array>
 	<key>readme</key>
-	<string># gitx
+	<string># git+ for Alfred
 
-A customizable git interface for Alfred
+## Installation
 
-## Usage
-
-### Repos Example
-
+### Step 1: Set up your repos
 ```yaml
 - title: Repo 1
   path: $repo_path1
@@ -692,47 +689,21 @@ A customizable git interface for Alfred
   actions_path: /path/to/actions.yaml
 
 ```
+**NOTE**
+* `actions_path` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
+* If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 
-# Default Actions and Customization Guide
+### Step 2 (Optional)
+1. **Use the default configuration:** The included [actions.yaml](actions.yaml) contains a set of pre-defined commands.  
 
----
+2. **Create a personalized config file:**
+   - Copy the [actions.yaml](actions.yaml) file to a directory on your computer.
+   - Reference your copy in the workflow configuration to prevent it from being overwritten during updates.
+   - Periodically check [actions.yaml](actions.yaml) for new features or updates.
 
-### **Default Actions**
-
-This repository contains pre-defined default actions designed to demonstrate the workflow's capabilities and provide a starting point for your custom commands. 
-
-#### **How to Use**
-1. **Copy the Default Actions**  
-   Review and copy the default actions provided in the configuration file (`config.yaml`).  
-   Use them as-is or modify them to suit your needs.
-
-2. **Reference Your Own File**  
-   Point the workflow to your custom configuration file to fully tailor the behavior and integrate it with your workflow.
-
----
-
-### **Creating Your Own Commands**
-
-Comprehensive documentation on creating custom commands, understanding the structure, and leveraging advanced features is available here:  
-**[Documentation on Creating Custom Commands](./docs/command-documentation.md)**  
-
-This guide includes:
-- Setting up commands with dynamic inputs.
-- Defining hierarchical structures.
-- Using dynamic placeholders like `[input]`, `[parent]`, and `[reload]`.
-- Visual customization with icons and subtitles.
-- Modifier keys for additional actions.
-
----
-
-### **Get Started**
-- **Step 1**: Copy the example commands.
-- **Step 2**: Edit the YAML to match your requirements.
-- **Step 3**: Point the workflow to your updated file.
-
-Need help? Check out the [examples](./examples/example-config.yaml) for inspiration!
-
-
+3. **Add your own commands:**
+   - Modify the inline YAML or include an additional YAML file in your configuration.
+   - Define repository-specific YAML files for commands unique to certain repos, see `actions_path` in Step 1.
 
 ### Search your repos
 ![](images/filter_projects.jpg)
