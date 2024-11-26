@@ -737,16 +737,41 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 ## 📝 Version History
 
 #### v2024.7 (WIP)
-* Updated Alfred to stack the `view in alfred` command so you can press escape and get back to gitx
-* Fixed issues in some cases with checkout and push if the branch name was really long
-* Fixed an issue where modifiers were not getting their commands setup correctly
-* Fixed issue with the pop command
-* Updated the default additional commands with some sweet commands
-* Add support for inline commands
-* Add support for subtitle actions
-* Add support for subcommands
-* Add support for searching the subtitle as well
-* Update the actions yaml to have icons and to split the branches into 3 different categories: current, local, remote
+**This is a big one!**
+
+**General Updates:**
+* The workflow is now officially called `git+`, and the bundle ID has changed.
+* Created comprehensive documentation: [View docs](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md).
+* Updated readmes both in the repository and within the workflow, along with new screenshots.
+* Added shiny new icons
+
+**Command Enhancements:**
+* Consolidated all commands into the `actions.yaml` so all commands are defined in one place.
+* Updated Alfred to stack the `view in alfred` command, allowing you to press escape and return to `git+`.
+* Added support for **inline commands** using `should_use_values_as_inline_commands`.
+* Introduced **subtitle actions**, enabling commands to display dynamic info.
+* Added support for **subcommands**, with examples included in the default configuration.
+* Enabled **subtitle searching**, you can now filter by title or subtitle!
+* Introduced drag-and-drop support, repo folders are now treated as actual folders. This is great for dragging a Swift package into Xcode for example!
+* Added the ability to reload the workflow with `[reload]` or `[reload~n]` commands.
+
+**Git-Specific Features:**
+* Enhanced the **status command** to display:
+  * **Staged**, **modified**, and **untracked** files directly in Alfred.
+* Added **Git tag management**, including:
+  * Viewing tags.
+  * Copying diffs from tags.
+  * Deleting local and remote tags.
+* Introduced new **rebase** and **rebase --onto** commands for streamlined branch handling.
+* Introduced preliminary support for **Quick Look URLs** with `quicklookurl`.
+
+**Bug Fixes:**
+* Fixed issues with:
+  * Checkout and push commands when branch names were very long.
+  * Modifiers not properly setting up their commands.
+  * The `pop` command in default actions.
+* Resolved edge cases in **tokenization logic** to better handle complex commands.
+* Cleaned up YAML parsing to gracefully handle errors and reduce duplication.
 
 
 #### v2024.6
@@ -1027,8 +1052,10 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>2024.7.WIP6</string>
+	<string>2024.7</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
