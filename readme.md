@@ -77,7 +77,7 @@ Here’s a quick example of what a YAML config might look like:
     git checkout -b "[input_snake_case]"
 ```
 
-For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md).
+For more information, see the full documentation: [docs.md](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md).
 
 ---
 
@@ -87,8 +87,3 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 2. Configure the paths in the workflow settings
 3. Enjoy & God bless 
 
----
-
-## 📃 Documentation
-
-See [docs.md](docs.md) for full documentation, including advanced features and examples.
