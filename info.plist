@@ -677,9 +677,11 @@ python3 location_arg_parser.py "$1"</string>
 	<key>readme</key>
 	<string># git+ for Alfred
 
+For more info check out the repo: https://github.com/jangelsb/git-plus-alfred-workflow
+
 ## Installation
 
-### Step 1: Set up your repos
+### Step 1: Set up your `repo list`
 ```yaml
 - title: Repo 1
   path: $repo_path1
@@ -693,37 +695,25 @@ python3 location_arg_parser.py "$1"</string>
 * `actions_path` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 
-### Step 2 (Optional)
-1. **Use the default configuration:** The included [actions.yaml](actions.yaml) contains a set of pre-defined commands.  
 
-2. **Create a personalized config file:**
-   - Copy the [actions.yaml](actions.yaml) file to a directory on your computer.
-   - Reference your copy in the workflow configuration to prevent it from being overwritten during updates.
-   - Periodically check [actions.yaml](actions.yaml) for new features or updates.
+### Step 2 (optional)
 
-3. **Add your own commands:**
-   - Modify the inline YAML or include an additional YAML file in your configuration.
-   - Define repository-specific YAML files for commands unique to certain repos, see `actions_path` in Step 1.
+- Use the default settings
+  
+- or **make it your own**
+  - Copy [actions.yaml](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/actions.yaml) to your computer
+  - Update your workflow to use this file
+  - Customize it 😎
+  
+### Step 3 (optional)
+- **Add custom commands:** 
+  - Change the inline YAML or add another YAML file in your setup
+  - Create specific YAML files for certain repositories using `actions_path` from Step 1
+  - For full documentation on commands, check out: https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md
 
-### Search your repos
-![](images/filter_projects.jpg)
-
-### Run commands on your repos
-![](images/commands.jpg)
-
-### Check out branches
-* you can ⌘c to copy to the branch name!
-* you can also make checkout modifiers so that when you hold command ⌘ or alt ⌥ a different command is run 
-![](images/checkout_branch.jpg)
-
-### Create branches
-![](images/create_branch.jpg)
-
-### Create your own commands
-![](images/custom_commands.jpg)
+---
 
 ## Version History
-
 
 #### v2024.7 (WIP)
 * Updated Alfred to stack the `view in alfred` command so you can press escape and get back to gitx
@@ -921,9 +911,9 @@ python3 location_arg_parser.py "$1"</string>
 				<integer>9</integer>
 			</dict>
 			<key>description</key>
-			<string>list out all your repos as a yaml array.  Use the example to right as starting point 👉)
+			<string>list out all your repos as a yaml array.  See example 👉
 
-NOTE: if you set a “bash profile”, you can use enviroment variables for your paths, e.g, $env_var</string>
+NOTE: if you set a “bash profile”, you can use enviroment variables in your paths, e.g, $env_var</string>
 			<key>label</key>
 			<string>repo list</string>
 			<key>type</key>
@@ -965,10 +955,7 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 				<true/>
 			</dict>
 			<key>description</key>
-			<string>A path to a yaml config for actions. Use your own to fully customize. 
-
-RECOMMENDATION:
-copy the default actions and tweak them (link to the right 👉)</string>
+			<string>A path to a yaml config for actions. Use your own to fully customize.</string>
 			<key>label</key>
 			<string>YAML config</string>
 			<key>type</key>

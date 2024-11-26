@@ -2,7 +2,7 @@
 
 A highly customizable Git interface for Alfred, allowing you to create personalized commands and menus to streamline your workflow.
 
-For detailed documentation, see [docs.md](docs.md).
+For detailed documentation on the commands, see [docs.md](docs.md).
 
 ---
 
