@@ -358,7 +358,7 @@
       icon: up.big.png
       subtitle: 'Amend previous commit & force push'
       command: |
-        git commit --amend
+        git commit --amend -C HEAD
         git push --force
 
     - title: easy commit & push
