@@ -637,9 +637,9 @@ def main():
         filtered_locations = [loc for loc in locations if alfred_input.unfinished_query in loc.title.lower()]
         output['items'] += [create_result_item_for_location(loc).to_dict() for loc in filtered_locations]
 
-        output['items'] += [
-            ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
-                       autocomplete=' ').to_dict()]
+        # output['items'] += [
+        #     ResultItem(f"> debug info", arg=' ', subtitle=f"{alfred_input}; ends in space: {ends_with_space}",
+        #                autocomplete=' ').to_dict()]
     
     else:
         change_directory(alfred_input.location)
