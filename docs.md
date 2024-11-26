@@ -4,22 +4,15 @@
 
 ## **Overview**
 
-This workflow allows you to execute complex Bash/Zsh commands, dynamically reference inputs and contexts, and create hierarchical command structures. It is highly customizable, supports dynamic reloading, and provides seamless integration with Git and other command-line utilities.
-
-### **Core Features**
-- **Shell Command Execution**: Supports Bash/Zsh commands directly in the YAML configuration.
-- **Dynamic Placeholders**:
-  - `[input]` and `[input_snake_case]` for user input.
-  - `[parent]` and `[parent~n]` to reference parent commands in the hierarchy.
-- **Reloading**: Refresh workflows dynamically using `[reload]` and `[reload~n]`.
-- **Visual Customization**: Optional icons and subtitles for better UI experiences.
-- **Nested Commands**: Build complex workflows with subcommands where you can reference parent commands in your bash commands.
+This config file allows you to execute complex Bash/Zsh commands, dynamically reference inputs and contexts, and create hierarchical command structures. It is highly customizable, supports dynamic reloading, and provides seamless integration with Git and other command-line utilities.
 
 ---
 
-## **Structure of a Command**
+For a list of the default, hand crafted commands, see [actions.yaml](actions.yaml)
 
-Each command is defined with the following structure:
+---
+
+## **Command Structure**
 
 ### **Command fields**
 | **Field**      | **Type**  | **Description**                                                                 |
@@ -92,148 +85,177 @@ Each command is defined with the following structure:
 
 ### **Simple Commands**
 
-#### **Print Input**
+#### **Git Fetch**
 ```yaml
-- title: print
-  subtitle: Echo user input
-  command: echo "You entered: [input]"
+- title: fetch
+  command: |
+    git fetch -p
 ```
-- **Description**: Echoes the user-provided input to the console.
-- **Usage**: Type input in Alfred and execute the command.
+- **Description**: Updates all branches and prunes remote-tracking branches no longer on the remote.
 
 ---
 
 #### **Create a New Git Branch**
 ```yaml
-- title: create-branch
-  subtitle: Create a new Git branch
+- title: create
   command: |
     git checkout -b "[input_snake_case]"
 ```
-- **Description**: Creates a new Git branch using the user-provided input, formatted as `snake_case`.
+- **Description**: Creates a new Git branch named after user input, formatted in `snake_case`.
 
 ---
 
 ### **Intermediate Commands**
 
-#### **Echo Selection**
+#### **Git Pull**
 ```yaml
-- title: selection
- command: |
-   echo [input]
- values:
-   - one
-   - two
-   - three
+- title: pull
+  command: |
+    git stash; git pull;
+  mods:
+    - subtitle: Launch Xcode after
+      mod: cmd
+      command: |
+        killall Xcode; git stash; git pull; xed .
+
+    - subtitle: Launch Sublime after
+      mod: alt
+      command: |
+        git stash; git pull; st .
 ```
-- **Description**: Lists out some values and echos the selected value back.
+- **Description**:
+  - Pulls the latest changes from the repository.
+  - Optional `cmd` and `alt` modifiers launch Xcode or Sublime after the pull operation.
 
 ---
 
 #### **Switch Git Branch**
 ```yaml
-- title: switch-branch
-  values_command: git branch --format='%(refname:short)'
-  command: |
-    git checkout "[input]"
+- title: local branches
+  values_command: |
+    git branch | grep -v '*'
+  should_use_values_as_inline_commands: true
+  subcommands:
+    - title: checkout
+      command: |
+        git stash; git checkout "[parent]"; git pull;
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
 ```
-- **Description**: Lists all branches, switches to the selected branch.
+- **Description**:
+  - Lists all local branches, in line, and shows subcommands that action on the branch. Here there is one command to check out the branch
+  - Optional `cmd` modifier launches Xcode after switching.
+
+---
+
+#### **Push Current Branch**
+```yaml
+- title: push
+  command: |
+    branch=$(git branch --show-current);
+    git push -u origin $branch
+  mods:
+    - subtitle: Force push
+      mod: cmd
+      command: |
+        branch=$(git branch --show-current);
+        git push -uf origin $branch
+```
+- **Description**:
+  - Pushes the current branch to the remote.
+  - Optional `cmd` modifier forces the push.
 
 ---
 
 ### **Advanced Commands**
 
-#### ** TODO Nested Subcommands with Parent Context**
+#### **Tag Management**
 ```yaml
-- title: git-operations
-  subtitle: Perform Git operations
-  values_command: |
-    echo "commit"
-    echo "push"
-    echo "pull"
-  command: echo "Selected: [input]"
+- title: tags
+  icon: tag.png
+  values_command: git tag | sort -r
+  subcommands:
+    - title: checkout
+      icon: fork.png
+      command: |
+        git checkout "[parent]"
 
-- title: commit
-  parent: git-operations
-  command: |
-    git commit -m "[parent~1]: [input]"
-    echo "Committed changes with message: [input]"
-    echo "[reload]"
-```
-- **Description**:
-  - The main `git-operations` command provides options (`commit`, `push`, `pull`).
-  - Selecting `commit` allows the user to add a commit message, referencing the parent context for clarity.
-
----
-
-#### **2. TODO  Interactive Git Stash Management**
-```yaml
-- title: stash-operations
-  subtitle: Manage Git stashes
-  values_command: git stash list --pretty=format:"%s"
-  command: |
-    git stash pop "$(git stash list --pretty=format:'%H' | sed -n [input])"
-    echo "Popped stash: [input]"
-    echo "[reload]"
-```
-- **Description**:
-  - Dynamically lists all Git stashes.
-  - Pops the selected stash and reloads the workflow.
-
----
-
-#### **Dynamic Reload Based on Command State**
-```yaml
-- title: add-modified-files
-  subtitle: Stage modified files
-  command: |
-    modified=$(git diff --name-only | wc -l | xargs)
-    git add "[input]"
-    if [ "$modified" -eq 1 ]; then
-        echo "[reload~1]"
-    else
-        echo "[reload]"
-    fi
-  values_command: git diff --name-only
+    - title: delete tag
+      icon: trash.png
+      command: |
+        git tag -d "[parent]"
+      mods:
+        - subtitle: and delete remote tag
+          mod: cmd
+          command: |
+            git tag -d "[parent]"
+            git push origin --delete "[parent]"
 ```
 - **Description**: 
-  - Adds a selected modified file to the staging area.
-  - Reloads the workflow - if we just staged the last item, reload a command back otherwise refresh the current list.
+  - Creates a command called `tags`
+  - Lists out all git tags in reverse order, by default
+  - Each tag has a subcommand: `checkout` and `delete tag`
 
 ---
 
-### **Modifiers (`mods`)**
-
-#### ** TODO Example with Modifiers**
+#### **Interactive Staging**
 ```yaml
-- title: git-status
-  subtitle: View Git status
-  command: git status
-  mods:
-    cmd:
-      subtitle: Open file in editor
-      command: code "[input]"
-    alt:
-      subtitle: Discard changes
-      command: git checkout -- "[input]"
+- title: status
+  icon: info.png
+  subcommands:
+    - title: staged
+      subtitle_command: |
+        staged=$(git diff --cached --name-only | wc -l | xargs)
+        echo "$staged file(s)"
+      command: |
+        staged=$(git diff --cached --name-only | wc -l | xargs)
+        git reset '[input]'
+        if [ "$staged" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
+      values_command: |
+        git diff --cached --name-only
+
+
+    - title: modified
+      subtitle_command: |
+        modified=$(git diff --name-only | wc -l | xargs)
+        echo "$modified file(s)"
+      command: |
+        modified=$(git diff --name-only | wc -l | xargs)
+        git add '[input]'
+        if [ "$modified" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
+      values_command: |
+        git diff --name-only # git status --short
+
+
+    - title: untracked
+      subtitle_command: |
+        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+        echo "$untracked file(s)"
+      command: |
+        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+        git add '[input]'
+        if [ "$untracked" -eq 1 ]; then
+            echo "[reload~1]"
+        else
+            echo "[reload]"
+        fi
+      values_command: |
+        git ls-files --others --exclude-standard 
 ```
-- **Description**:
-  - Default action: View Git status.
-  - `cmd` modifier: Open the file in VS Code.
-  - `alt` modifier: Discard changes in the selected file.
+- **Description**: 
+  - Creates a command called `status` that has three subcommands, each with their own dyanmic subtitle
+  - Each subcommand shows a list of files
+  - If you action one of these commands, because it echoes "[reload]", it will not close Alfred but refresh the script at this location or `~1` back
+  - Automatically adjusts the reload behavior based on remaining files, so we stage/unstage the last file, it will reload one command back.
 
 ---
-
-## **Best Practices**
-
-1. **Use `[reload]` Wisely**:
-   - Reloads ensure the workflow stays up-to-date but can add overhead if overused.
-
-2. **Leverage `values` and `values_command`**:
-   - Use it for populating lists (e.g., build script commands, Git branches, files, etc.).
-
-3. **Optimize Hierarchical References**:
-   - Utilize `[parent~n]` to reference previous command titles in your bash command.
-
-4. **Combine with Scripts**:
-   - Offload complex logic to standalone scripts and call them within `command`.
