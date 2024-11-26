@@ -28,7 +28,7 @@ Each command is defined with the following structure:
 | `subtitle`     | String    | (Optional) A short description of the command.                                 |
 | `icon`         | String    | (Optional) Path to an image for the command icon in Alfred.                    |
 | `command`      | String    | The shell command to execute. Supports dynamic placeholders.                   |
-| `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.\n\nIf subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
+| `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.<br><br>If subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
 | `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
 | `should_use_values_as_inline_commands` | Bool | (Optional) Treats each value as its own command, at the current level and not at a sublevel. Only affects this command if there are `values` or `values_command`. |
 | `mods`         | Array of Mods     | (Optional) A list of mod objects, see table below.                            |
