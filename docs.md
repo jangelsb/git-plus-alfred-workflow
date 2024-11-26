@@ -12,8 +12,8 @@ This workflow allows you to execute complex Bash/Zsh commands, dynamically refer
   - `[input]` and `[input_snake_case]` for user input.
   - `[parent]` and `[parent~n]` to reference parent commands in the hierarchy.
 - **Reloading**: Refresh workflows dynamically using `[reload]` and `[reload~n]`.
-- **Visual Customization**: Optional icons and subtitles for better UI experience.
-- **Nested Commands**: Build complex workflows with subcommands referencing parent contexts.
+- **Visual Customization**: Optional icons and subtitles for better UI experiences.
+- **Nested Commands**: Build complex workflows with subcommands where you can reference parent commands in your bash commands.
 
 ---
 
@@ -26,13 +26,13 @@ Each command is defined with the following structure:
 |-----------------|-----------|---------------------------------------------------------------------------------|
 | `title`        | String    | The name of the command as displayed in Alfred.                                |
 | `subtitle`     | String    | (Optional) A short description of the command.                                 |
-| `icon`         | String    | (Optional) Path to an image for the command icon in Alfred.                    |
+| `icon`         | String    | (Optional) A path to an image. For built in options, see [Icons](#icons).      |
 | `command`      | String    | The shell command to execute. Supports dynamic placeholders.                   |
 | `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.<br><br>If subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
 | `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
 | `should_use_values_as_inline_commands` | Bool | (Optional) Treats each value as its own command, at the current level and not at a sublevel. Only affects this command if there are `values` or `values_command`. |
-| `mods`         | Array of Mods     | (Optional) A list of mod objects, see table below.                            |
-| `subcommands`  | Array of Commands    | (Optional) A list of complete commands (this table).                    |
+| `mods`         | Array     | (Optional) A list of mod objects, see [Mod fields](#mod-fields).            |
+| `subcommands`  | Array     | (Optional) A list of commands ([this table](#command-fields)).                    |
 
 ### **Mod fields**
 | **Field**      | **Type**  | **Description**                                                                 |
