@@ -1,25 +1,25 @@
 # git+ for Alfred
 
-A customizable git interface for Alfred
+A highly customizable git interface for Alfred, where you can create your own commands and menus.
+
+For the full documentation, see [docs.md](docs.md)
 
 ## Usage
 
-### Fully configurable
-![](images/config.jpg)
+Every command in this workflow is defined here, see [actions.yml](actions.yml)
+
 
 ### Search your repos
-![](images/filter_projects.jpg)
+![](images/filter_projects.png)
 
 ### Run commands on your repos
-![](images/commands.jpg)
+![](images/commands.png)
 
 ### Check out branches
-* you can ⌘c to copy to the branch name!
-* you can also make checkout modifiers so that when you hold command ⌘ or alt ⌥ a different command is run 
-![](images/checkout_branch.jpg)
+![](images/checkout_branch.png)
 
 ### Create branches
-![](images/create_branch.jpg)
+![](images/create_branch.png)
 
 ### Create your own commands
-![](images/custom_commands.jpg)
+![](images/custom_commands.png)
