@@ -27,10 +27,12 @@ Each command is defined with the following structure:
 | `title`        | String    | The name of the command as displayed in Alfred.                                |
 | `subtitle`     | String    | (Optional) A short description of the command.                                 |
 | `icon`         | String    | (Optional) A path to an image. For built in options, see [Icons](#icons).      |
-| `command`      | String    | The shell command to execute. Supports dynamic placeholders.                   |
+| `command`      | String    | The shell command to execute. Supports [dynamic placeholders](#dynamic-placeholders).                   |
+| `subtitle_command` | String  | Runs this bash command in python and displays the output as the subtitle. This does not get passed down to subcommands or values (as it can get very slow). Supports [dynamic placeholders](#dynamic-placeholders).                   |
 | `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.<br><br>If subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
 | `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
 | `should_use_values_as_inline_commands` | Bool | (Optional) Treats each value as its own command, at the current level and not at a sublevel. Only affects this command if there are `values` or `values_command`. |
+| `quicklookurl` | String | (Optional) This can be a URL to a file or website and when you press shift, Alfred will show a preview. |
 | `mods`         | Array     | (Optional) A list of mod objects, see [Mod fields](#mod-fields).            |
 | `subcommands`  | Array     | (Optional) A list of commands ([this table](#command-fields)).                    |
 
@@ -49,8 +51,15 @@ Each command is defined with the following structure:
 | `[input_snake_case]`| Same as `[input]`, but converted to `snake_case`.                                                   |
 | `[parent]`          | Refers to the immediate parent command.                                                             |
 | `[parent~n]`        | References `n` levels back in the parent hierarchy.                                                 |
-| `[reload]`          | Reloads the workflow at the current context. Must be echoed to take effect.                         |
-| `[reload~n]`        | Reloads the workflow `n` levels back in the hierarchy. Must be echoed to take effect.               |
+| `[title]`           | Title of the command.                                                                                |
+
+
+### **Action Placeholders**
+| **Placeholder**     | **Description**                                                                                     |
+|----------------------|-----------------------------------------------------------------------------------------------------|
+| `[view in alfred]`  | If this is the `command`, the workflow with view the repo in Alfred.                                |
+| `[reload]`          | Reloads the workflow at the current context after the command runs. Must be echoed to take effect.                         |
+| `[reload~n]`        | Reloads the workflow `n` levels back in the hierarchy after the command runs. Must be echoed to take effect.               |
 
 
 ### **Icons**
