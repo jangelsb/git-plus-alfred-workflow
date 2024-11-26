@@ -679,7 +679,7 @@ python3 location_arg_parser.py "$1"</string>
 
 For more info check out the repo: https://github.com/jangelsb/git-plus-alfred-workflow
 
-## Installation
+## 📖 Installation
 
 ### Step 1: Set up your `repo list`
 ```yaml
@@ -701,6 +701,7 @@ For more info check out the repo: https://github.com/jangelsb/git-plus-alfred-wo
 - Use the default settings
   
 - or **make it your own**
+  - All commands in this workflow are defined in a YAML config file
   - Copy [actions.yaml](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/actions.yaml) to your computer
   - Update your workflow to use this file
   - Customize it 😎
@@ -713,7 +714,7 @@ For more info check out the repo: https://github.com/jangelsb/git-plus-alfred-wo
 
 ---
 
-## Version History
+## 📝 Version History
 
 #### v2024.7 (WIP)
 * Updated Alfred to stack the `view in alfred` command so you can press escape and get back to gitx

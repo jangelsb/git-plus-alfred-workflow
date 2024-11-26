@@ -25,11 +25,9 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 
 ---
 
-## 📖 Usage
+## 📖 Installation
 
-All commands in this workflow are defined in a YAML configuration file. See [actions.yaml](actions.yaml) for an example.
-
-### Step 1: Set up your repos
+### Step 1: Set up your `repo list`
 ```yaml
 - title: Repo 1
   path: $repo_path1
@@ -39,28 +37,33 @@ All commands in this workflow are defined in a YAML configuration file. See [act
   actions_path: /path/to/actions.yaml
 
 ```
-#### NOTE
+**NOTE**
 * `actions_path` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 
 
-### Step 2 (Optional)
-1. **Use the default configuration:** The included [actions.yaml](actions.yaml) contains a set of pre-defined commands.  
+### Step 2 (optional)
 
-2. **Create a personalized config file:**
-   - Copy the [actions.yaml](actions.yaml) file to a directory on your computer.
-   - Reference your copy in the workflow configuration to prevent it from being overwritten during updates.
-   - Periodically check [actions.yaml](actions.yaml) for new features or updates.
+- Use the default settings
+  
+- or **make it your own**
+  - All commands in this workflow are defined in a YAML config file
+  - Copy [actions.yaml](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/actions.yaml) to your computer
+  - Update your workflow to use this file
+  - Customize it 😎
+  
+### Step 3 (optional)
+- **Add custom commands:** 
+  - Change the inline YAML or add another YAML file in your setup
+  - Create specific YAML files for certain repositories using `actions_path` from Step 1
+  - For full documentation on commands, check out: https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md
 
-3. **Add your own commands:**
-   - Modify the inline YAML or include an additional YAML file in your configuration.
-   - Define repository-specific YAML files for commands unique to certain repos, see `actions_path` in Step 1.
 
 ---
 
-## 📂 Configuration Example
+## 📂 Config Example
 
-Here’s a quick example of what a YAML configuration might look like:  
+Here’s a quick example of what a YAML config might look like:  
 
 ```yaml
 - title: fetch
@@ -81,8 +84,8 @@ For more information, see [docs.md](docs.md).
 
 ## 🛠️ Installation
 
-1. Download [the latest workflow](https://github.com/jangelsb/git-plus-alfred-workflow/releases) and import it into Alfred.  
-2. Configure the paths in the workflow settings.
+1. Download [the latest workflow](https://github.com/jangelsb/git-plus-alfred-workflow/releases) and import it into Alfred. 
+2. Configure the paths in the workflow settings
 3. Enjoy & God bless 
 
 ---
