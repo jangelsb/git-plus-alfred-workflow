@@ -8,19 +8,19 @@ For detailed documentation, see [docs.md](docs.md).
 
 ## 🚀 Features
 
-- **Search your repositories** with ease.  
+**Search your repos** 
   ![Filter Projects](images/filter_projects.png)
 
-- **Run commands** directly on your repositories.  
+**Run commands in your repos**
   ![Run Commands](images/commands.png)
 
-- **Switch branches** effortlessly.  
+**Switch branches** 
   ![Checkout Branch](images/checkout_branch.png)
 
-- **Create new branches** on the fly.  
+**Create new branches**
   ![Create Branch](images/create_branch.png)
 
-- **Customize your workflow** by defining your own commands.  
+**Customize until your heart's content** 
   ![Custom Commands](images/custom_commands.png)
 
 ---
@@ -73,7 +73,7 @@ For more information, see [docs.md](docs.md).
 
 1. Download the workflow and import it into Alfred.  
 2. Configure the paths in the workflow settings.  
-3. Set your custom `actions.yaml` file path, if needed.
+3. Have fun.
 
 ---
 

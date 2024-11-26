@@ -941,12 +941,7 @@ Need help? Check out the [examples](./examples/example-config.yaml) for inspirat
 			<key>config</key>
 			<dict>
 				<key>default</key>
-				<string>- title: Repo 1
-  path: $repo_path1
-
-- title: Repo 2
-  path: "/path/to/repo2"
-  actions_path: /path/to/actions.yaml</string>
+				<string></string>
 				<key>required</key>
 				<true/>
 				<key>trim</key>
@@ -955,7 +950,7 @@ Need help? Check out the [examples](./examples/example-config.yaml) for inspirat
 				<integer>9</integer>
 			</dict>
 			<key>description</key>
-			<string>list out all your repos as a yaml array. 
+			<string>list out all your repos as a yaml array.  Use the example to right as starting point 👉)
 
 NOTE: if you set a “bash profile”, you can use enviroment variables for your paths, e.g, $env_var</string>
 			<key>label</key>
@@ -1002,13 +997,34 @@ NOTE: if you set a “bash profile”, you can use enviroment variables for your
 			<string>A path to a yaml config for actions. Use your own to fully customize. 
 
 RECOMMENDATION:
-copy the default actions and tweak them (link to the right)</string>
+copy the default actions and tweak them (link to the right 👉)</string>
 			<key>label</key>
 			<string>YAML config</string>
 			<key>type</key>
 			<string>filepicker</string>
 			<key>variable</key>
 			<string>input_actions_path</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string></string>
+				<key>filtermode</key>
+				<integer>2</integer>
+				<key>placeholder</key>
+				<string></string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>A path to another yaml config for actions. This is helpful if you want to use the default actions but just add your own commands.</string>
+			<key>label</key>
+			<string>YAML config 2</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>input_additional_actions_path</string>
 		</dict>
 		<dict>
 			<key>config</key>
