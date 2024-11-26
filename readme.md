@@ -8,20 +8,20 @@ For detailed documentation, see [docs.md](docs.md).
 
 ## 🚀 Features
 
-**Search your repos** 
-  ![Filter Projects](images/filter_projects.png)
+### Search your repos 
+![Filter Projects](images/filter_projects.png)
 
-**Run commands in your repos**
-  ![Run Commands](images/commands.png)
+### Run commands in your repos
+![Run Commands](images/commands.png)
 
-**Switch branches** 
-  ![Checkout Branch](images/checkout_branch.png)
+### Switch branches 
+![Checkout Branch](images/checkout_branch.png)
 
-**Create new branches**
-  ![Create Branch](images/create_branch.png)
+### Create new branches
+![Create Branch](images/create_branch.png)
 
-**Customize until your heart's content** 
-  ![Custom Commands](images/custom_commands.png)
+### Customize until your heart's content 
+![Custom Commands](images/custom_commands.png)
 
 ---
 
@@ -29,9 +29,20 @@ For detailed documentation, see [docs.md](docs.md).
 
 All commands in this workflow are defined in a YAML configuration file. See [actions.yaml](actions.yaml) for an example.
 
-### Step 1: Set up your repository configuration
+### Step 1: Set up your repos
+```yaml
+- title: Repo 1
+  path: $repo_path1
 
-**TBD** (You can add this section later with details on how to configure repos.yaml.)
+- title: Repo 2
+  path: "/path/to/repo2"
+  actions_path: /path/to/actions.yaml
+
+```
+#### NOTE
+* `actions_path` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
+* If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
+
 
 ### Step 2: Customize and Enjoy
 
