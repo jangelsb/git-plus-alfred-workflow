@@ -21,16 +21,26 @@ This workflow allows you to execute complex Bash/Zsh commands, dynamically refer
 
 Each command is defined with the following structure:
 
-### **Basic Fields**
-| **Field**      | **Description**                                                                 |
-|-----------------|---------------------------------------------------------------------------------|
-| `title`        | The name of the command as displayed in Alfred.                                |
-| `subtitle`     | (Optional) A short description of the command.                                            |
-| `icon`         | (Optional) Path to an image for the command icon in Alfred.                   |
-| `command`      | The shell command to execute. Supports dynamic placeholders.                  |
-| `values` | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with [input] in the command replaced by the selected value. If subcommands are present, the `command` will be ignored and the selected value can be referenced using [parent]. |
-| `values_command` | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
-| `mods`         | (Optional) Modifier-specific actions (e.g., `cmd`, `alt`).                    |
+### **Command fields**
+| **Field**      | **Type**  | **Description**                                                                 |
+|-----------------|-----------|---------------------------------------------------------------------------------|
+| `title`        | String    | The name of the command as displayed in Alfred.                                |
+| `subtitle`     | String    | (Optional) A short description of the command.                                 |
+| `icon`         | String    | (Optional) Path to an image for the command icon in Alfred.                    |
+| `command`      | String    | The shell command to execute. Supports dynamic placeholders.                   |
+| `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.\n\nIf subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
+| `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
+| `should_use_values_as_inline_commands` | Bool | (Optional) Treats each value as its own command, at the current level and not at a sublevel. Only affects this command if there are `values` or `values_command`. |
+| `mods`         | Array of Mods     | (Optional) A list of mod objects, see table below.                            |
+| `subcommands`  | Array of Commands    | (Optional) A list of complete commands (this table).                    |
+
+### **Mod fields**
+| **Field**      | **Type**  | **Description**                                                                 |
+|-----------------|-----------|---------------------------------------------------------------------------------|
+| `subtitle`      | String    | The subtitle text to show when the keys are held down.                         |
+| `mod`           | String    | The key to press for a mode. Values: `cmd`, `alt`, `ctrl`, `fn`, `shift`, `cmd+alt`. |
+| `command`       | String    | The shell command to execute. Supports dynamic placeholders.                   |
+
 
 ### **Dynamic Placeholders**
 | **Placeholder**     | **Description**                                                                                     |
@@ -44,7 +54,7 @@ Each command is defined with the following structure:
 
 
 ### **Icons**
-| **Preview**                                                                 | **Icon File Name**    | **Description**                 |
+| **Preview**                                                                 | **Icon Path**    | **Description**                 |
 |-----------------------------------------------------------------------------|------------------------|----------------------------------|
 | <img src="./icons/info.png" width="64" alt="info.png">                      | `info.png`            | Represents information or details. |
 | <img src="./icons/down.small.png" width="64" alt="down.small.png">          | `down.small.png`      | Indicates a small downward action. |
