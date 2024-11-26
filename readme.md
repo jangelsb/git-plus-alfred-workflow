@@ -56,7 +56,6 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 - **Add custom commands:** 
   - Change the inline YAML or add another YAML file in your setup
   - Create specific YAML files for certain repositories using `actions_path` from Step 1
-  - For full documentation on commands, check out: https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md
 
 
 ---
@@ -78,7 +77,7 @@ Here’s a quick example of what a YAML config might look like:
     git checkout -b "[input_snake_case]"
 ```
 
-For more information, see [docs.md](docs.md).
+For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md).
 
 ---
 
