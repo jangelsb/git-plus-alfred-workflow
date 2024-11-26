@@ -354,6 +354,21 @@
             git push -u origin $branch
 
 
+    - title: amend & push
+      icon: up.big.png
+      subtitle: 'Amend previous commit & force push'
+      command: |
+        git commit --amend
+        git push --force
+
+    - title: easy commit & push
+      icon: up.big.png
+      subtitle: 'Commit using the previous commit message & push'
+      command: |
+        git commit --reuse-message=HEAD
+        git push
+
+
     - title: staged
       subtitle_command: |
         staged=$(git diff --cached --name-only | wc -l | xargs)
