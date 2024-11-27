@@ -7,19 +7,18 @@
     mod: cmd
     command: killall Xcode; git stash; git pull; xed .
 
-  - subtitle: Launch Sublime after
-    mod: alt
-    command: git stash; git pull; st .
 
 - title: fetch
   icon: down.small.png
   command: |
     git fetch -p
 
+
 - title: create
   icon: create.png
   command: |
     git checkout -b "[input_snake_case]"
+
 
 - title: cherry-pick
   icon: pick.png
@@ -49,25 +48,24 @@
   command: |
     open -a Terminal .
 
+
 - title: open in Xcode
   icon: open.png
   command: |
     xed .
 
-- title: open in Sublime (st)
-  icon: open.png
-  command: |
-    st .
 
 - title: open in Finder
   icon: open.png
   command: |
     open .
 
+
 - title: View in Alfred
   icon: open.png
   command: |
     [view in alfred]
+
 
 - title: find
   icon: search.png
@@ -75,6 +73,8 @@
     open "[input]"
   values_command: |
     find . -type f
+
+
 
 # --------------------
 # BRANCHES LOGIC
@@ -84,12 +84,12 @@
   subcommands:
     - title: current branch
       values_command: |
-        git branch --show-current # just the current branch
+        git branch --show-current
       should_use_values_as_inline_commands: true
       subtitle: current
       icon: fork.png
       subcommands:
-        - title: checkout
+        - title: stash & pull
           icon: fork.png
           command: |
             git stash; git checkout "[parent]"; git pull;
@@ -97,45 +97,6 @@
             - subtitle: Launch Xcode after
               mod: cmd
               command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
-
-            - subtitle: Launch Sublime after
-              mod: alt
-              command: git stash; git checkout "[parent]"; git pull; st .
-
-        - title: checkout 'main branch' & delete this branch
-          icon: trash.png
-          command: |
-            # if on 'main branch', does nothing
-            master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
-            branch="[parent]"
-            if [ "$branch" != "$master" ]; then
-              git stash; git checkout "$master"; git pull;
-              git branch -D "[parent]"
-            else 
-              echo "on $master; doing nothing"
-            fi
-
-        - title: copy diff for branch
-          icon: copy.png
-          command: |
-            branch="[parent]"
-            create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
-            parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
-            {
-              git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
-            } | pbcopy
-          mods:
-            - subtitle: copy for ChatGPT summary
-              mod: cmd
-              command: |
-                branch="[parent]"
-                create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
-                parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
-                {
-                  echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
-                  echo ''
-                  git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
-                } | pbcopy
 
         - title: copy branch name
           icon: copy.png
@@ -145,7 +106,7 @@
 
     - title: local branches
       values_command: |
-        git branch | grep -v '*' # all local branches minus the current one
+        git branch | grep -v '*' # all local branches except the current one
       should_use_values_as_inline_commands: true
       icon: fork.png
       subcommands:
@@ -158,13 +119,9 @@
               mod: cmd
               command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
 
-            - subtitle: Launch Sublime after
-              mod: alt
-              command: git stash; git checkout "[parent]"; git pull; st .
-
         - title: rebase
           icon: rebase.png
-          command: |
+          command: |            
             git rebase "[parent]"
 
         - title: rebase --onto
@@ -176,54 +133,6 @@
                 git rebase --onto "[parent~3]" "[input]"
               values_command: |
                 git log --pretty=format:"%H"
-
-        - title: rebase --onto (all branches)
-          icon: rebase.png
-          subtitle: 'if possible, will rebase the entire branch, along with all parent branches, until this branch is reached.'
-          command: |
-            branch=$(git branch --show-current)
-            target_branch="[parent]"
-            branch_history=()
-            
-            while [[ "$branch" != "$target_branch" ]]; do
-              create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | tail -n 1 | awk '{print $1}')
-              
-              if [[ -z "$create_commit" ]]; then
-                # echo "No creation commit found."
-                break
-              fi
-            
-              parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | tail -n 1)
-              
-              if [[ -z "$parent_branch" ]]; then
-                # echo "No parent branch found."
-                break
-              fi
-            
-              branch_history+=("$branch:$parent_branch:$create_commit")
-              branch=$parent_branch
-            done
-            
-            if [[ "$branch" == "$target_branch" ]]; then
-              # echo "Target branch '$target_branch' matched."
-            
-              git stash 
-              
-              for idx in {${#branch_history[@]}..1}; do
-                entry="${branch_history[idx]}"
-                # echo "Entry: $entry"  # Debugging line
-                
-                IFS=':' read -r branch_name parent_branch commit_hash <<< "$entry"
-                # echo "Branch: $branch_name, Parent: $parent_branch, Commit: $commit_hash"
-                
-                if [[ -n "$branch_name" && -n "$parent_branch" && -n "$commit_hash" ]]; then
-                  git checkout "$branch_name"
-                  git rebase --onto "$parent_branch" "$commit_hash"
-                fi
-              done
-            else
-              echo "Doing nothing: target branch '$target_branch' not reached."
-            fi
 
         - title: delete local branch
           icon: trash.png
@@ -246,7 +155,6 @@
         git branch -r
       should_use_values_as_inline_commands: true
       icon: globe.png
-
       subcommands:
         - title: checkout
           icon: fork.png
@@ -256,10 +164,6 @@
             - subtitle: Launch Xcode after
               mod: cmd
               command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; xed .
-
-            - subtitle: Launch Sublime after
-              mod: alt
-              command: git stash; git checkout -t "[parent]"; git pull; st .
 
         - title: delete remote branch
           icon: trash.png
@@ -273,6 +177,7 @@
           command: |
             echo "[parent]" | xargs echo -n | pbcopy 
             
+
 
 # --------------------
 # STATUS LOGIC
@@ -308,32 +213,6 @@
             - subtitle: Launch Xcode after
               mod: cmd
               command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
-
-            - subtitle: Launch Sublime after
-              mod: alt
-              command: git stash; git checkout "[parent]"; git pull; st .
-
-        - title: copy diff for branch
-          icon: copy.png
-          command: |
-            branch="[parent]"
-            create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
-            parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
-            {
-              git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
-            } | pbcopy
-          mods:
-            - subtitle: copy for ChatGPT summary
-              mod: cmd
-              command: |
-                branch="[parent]"
-                create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
-                parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
-                {
-                  echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
-                  echo ''
-                  git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
-                } | pbcopy
 
         - title: copy branch name
           icon: copy.png
