@@ -738,43 +738,52 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 
 ## 📝 Version History
 
-#### v2024.7 (WIP)
+#### v2024.7
 **This is a big one!**
 
 **General Updates:**
-* The workflow is now officially called `git+`, and the bundle ID has changed.
-* Created comprehensive documentation: [View docs](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md).
-* Updated readmes both in the repository and within the workflow, along with new screenshots.
-* Added shiny new icons
+* The workflow is now called `git+`, and the bundle ID has changed
+* Created detailed documentation on how commands work: [see docs here](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md)
+* Updated readmes both in the repository and within the workflow, along with new screenshots
+* Added shiny new icons 😎
 
 **Command Enhancements:**
-* Consolidated all commands into the `actions.yaml` so all commands are defined in one place.
-* Updated Alfred to stack the `view in alfred` command, allowing you to press escape and return to `git+`.
-* Added support for **inline commands** using `should_use_values_as_inline_commands`.
-* Introduced **subtitle actions**, enabling commands to display dynamic info.
-* Added support for **subcommands**, with examples included in the default configuration.
+* Consolidated all commands into the `actions.yaml` so all commands are defined in one place
+* Updated Alfred to stack the `[view in alfred]` command, allowing you to press escape and return to `git+`
+* Added support for **inline commands** using `should_use_values_as_inline_commands`
+* Introduced **subtitle actions**, enabling commands to display dynamic info
+* Added support for **subcommands**, with examples included in the default configuration
+* Added support for `[parent]` or `[parent~n]` dynamic placeholders to reference git+ commands in your bash commands -- useful for subcommands
 * Enabled **subtitle searching**, you can now filter by title or subtitle!
 * Introduced drag-and-drop support, repo folders are now treated as actual folders. This is great for dragging a Swift package into Xcode for example!
-* Added the ability to reload the workflow with `[reload]` or `[reload~n]` commands.
+* Added the ability to reload the workflow with `[reload]` or `[reload~n]` commands
+* Introduced preliminary support for **Quick Look URLs** with `quicklookurl`
 
 **Git-Specific Features:**
-* Enhanced the **status command** to display:
-  * **Staged**, **modified**, and **untracked** files directly in Alfred.
+* Created a brand new **status command** to display:
+  * **Staged**, **modified**, and **untracked** files directly in Alfred
+  * Allowing you to interactively stage and unstage files in Alfred
 * Added **Git tag management**, including:
-  * Viewing tags.
-  * Copying diffs from tags.
-  * Deleting local and remote tags.
-* Introduced new **rebase** and **rebase --onto** commands for streamlined branch handling.
-* Introduced preliminary support for **Quick Look URLs** with `quicklookurl`.
+  * Viewing tags
+  * Copying diffs from tags
+  * Deleting local and remote tags
+* Introduced new **rebase** and **rebase --onto** commands
+* Replaced the ⌘+c shortcut for copying a branch name and replaced it with a dedicated command
 
 **Bug Fixes:**
 * Fixed issues with:
-  * Checkout and push commands when branch names were very long.
-  * Modifiers not properly setting up their commands.
-  * The `pop` command in default actions.
-* Resolved edge cases in **tokenization logic** to better handle complex commands.
-* Cleaned up YAML parsing to gracefully handle errors and reduce duplication.
+  * Checkout and push commands when branch names were very long
+  * Modifiers not properly setting up their commands
+  * The `pop` command in default actions
+* Resolved edge cases in **tokenization logic** to better handle complex commands
+* Cleaned up YAML parsing to gracefully handle errors and reduce duplication
 
+###### Tips &amp; Tricks
+* You can drag and drop the folders in the git repo list
+* When press enter on commands, they will be considered "triggered" in Alfred but will auto complete -- which means Alfred will apply smart sorting to them going forward 
+* You can always press → on the keyboard to see the command that will be run
+
+---
 
 #### v2024.6
 * Now really fixed the issue where you couldn't access bash functions that were in your profile, even though it is sourced (the script needed to run as zsh and not bash)
