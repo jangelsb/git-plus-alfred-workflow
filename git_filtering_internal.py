@@ -415,7 +415,7 @@ def generate_locations_from_yaml(yaml_string):
 
         title = entry['title']
         path = process_path(entry['path'])
-        actions_path = entry.get('actions_path', None)
+        actions_path = entry.get('config', None)
 
         if actions_path:
             actions_path = process_path(actions_path)

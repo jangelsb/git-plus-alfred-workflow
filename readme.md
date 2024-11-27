@@ -34,11 +34,11 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 
 - title: Repo 2
   path: "/path/to/repo2"
-  actions_path: /path/to/actions.yaml
+  config: /path/to/actions.yaml
 
 ```
 **NOTE**
-* `actions_path` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
+* `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 
 
@@ -47,15 +47,15 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 - Use the default settings
   
 - or **make it your own**
-  - All commands in this workflow are defined in a YAML config file
+  - All commands in this workflow are defined in a YAML config file: [actions.yaml](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/actions.yaml)
   - Copy [actions.yaml](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/actions.yaml) to your computer
   - Update your workflow to use this file
   - Customize it 😎
   
 ### Step 3 (optional)
 - **Add custom commands:** 
-  - Change the inline YAML or add another YAML file in your setup
-  - Create specific YAML files for certain repositories using `actions_path` from Step 1
+  - Change the inline config or add another config file in your setup
+  - Create specific configs for certain repositories using `config` from Step 1
 
 
 ---
