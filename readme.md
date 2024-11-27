@@ -8,11 +8,11 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 
 ## 🚀 Features
 
-### Search your repos 
-![Filter Projects](images/filter_projects.png)
+### Fully customizable
+![Custom Commands](images/custom_commands.png)
 
-### Run commands in your repos
-![Run Commands](images/commands.png)
+### Supports multiple repos
+![Filter Projects](images/filter_projects.png)
 
 ### Switch branches 
 ![Checkout Branch](images/checkout_branch.png)
@@ -20,8 +20,9 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 ### Create new branches
 ![Create Branch](images/create_branch.png)
 
-### Customize until your heart's content 
-![Custom Commands](images/custom_commands.png)
+### And so much more!
+![Run Commands](images/commands.png)
+
 
 ---
 
