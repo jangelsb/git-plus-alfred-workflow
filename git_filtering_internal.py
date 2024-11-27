@@ -55,7 +55,7 @@ class Text:
         }
 
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None, quicklookurl=None):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None, quicklookurl=None, should_skip_smart_sort=None):
         self.uid = uid if uid else title
         self.title = title
         self.arg = arg
@@ -67,10 +67,11 @@ class ResultItem:
         self.icon_path = icon_path
         self.type = type
         self.quicklookurl = quicklookurl
+        self.should_skip_smart_sort = should_skip_smart_sort
 
     def to_dict(self):
         item_dict = {
-            "uid": self.uid,
+            "uid": self.uid if self.should_skip_smart_sort is None or self.should_skip_smart_sort is False else None,
             "title": self.title,
             "arg": self.arg,
             "subtitle": self.subtitle,
@@ -96,7 +97,7 @@ class Location:
         self.actions_path = actions_path
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_skip_smart_sort=None):
         self.title = title
         self.action = action
         self.secondaryAction = secondaryAction
@@ -111,6 +112,7 @@ class Command:
         self.subtitle_command = subtitle_command
         self.subcommands = subcommands if subcommands else []
         self.quicklookurl = quicklookurl
+        self.should_skip_smart_sort = should_skip_smart_sort
 
     def __repr__(self):
         return f"{self.title}"
@@ -214,7 +216,8 @@ def subtitle_for_command(command, param=None):
         return f"runs `{stripped_action}`"
 
     if command.command_type == CommandType.NO_ACTION:
-        return run_command(command.action).strip()
+        action = process_action(action=command.action, param=param, title=command.title)
+        return run_command(action).strip()
 
     if command.subtitle_command:
         # print(f"😎😎😎----------------------------------------------------------------------------")
@@ -334,7 +337,8 @@ def create_result_item_common(title, cmd, location, param=None):
         valid=True,
         mods=modifier_list,
         icon_path=cmd.icon_path,
-        quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None
+        quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None,
+        should_skip_smart_sort=cmd.should_skip_smart_sort if cmd.should_skip_smart_sort else None
     )
 
 def create_result_item_for_command(cmd, location):
@@ -369,7 +373,8 @@ def create_value_commands(cmd):
     commands = []
     items = []
     if cmd.values_command:
-        items = run_command(cmd.values_command).splitlines()
+        action = process_action(action=cmd.values_command, param=None, title=cmd.title)
+        items = run_command(action).splitlines()
     elif cmd.values:
         items = cmd.values
 
@@ -393,7 +398,8 @@ def create_value_commands(cmd):
             values_icon=cmd.values_icon,
             subtitle_command=None, # cmd.subtitle_command, # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
             subcommands=cmd.subcommands,
-            should_use_values_as_inline_commands=False
+            should_use_values_as_inline_commands=False,
+            should_skip_smart_sort=cmd.should_skip_smart_sort
         ))
     return commands
 
@@ -478,6 +484,7 @@ def create_commands_from_yaml(yaml_data):
         should_use_values_as_inline_commands = entry.get('should_use_values_as_inline_commands', False)
         icon = entry.get('icon', None)
         quicklookurl = entry.get('quicklookurl', None)
+        should_skip_smart_sort = entry.get('should_skip_smart_sort', None)
 
 
         command_type = CommandType.SINGLE_ACTION
@@ -512,7 +519,8 @@ def create_commands_from_yaml(yaml_data):
             subtitle=subtitle,
             subtitle_command=subtitle_command,
             should_use_values_as_inline_commands=should_use_values_as_inline_commands,
-            quicklookurl=quicklookurl
+            quicklookurl=quicklookurl,
+            should_skip_smart_sort=should_skip_smart_sort
         )
 
     return [command_entry_processor(entry) for entry in yaml_data]
@@ -710,7 +718,8 @@ def main():
 
                 elif main_command.values_command:
                     main_command.subtitle_command = None # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
-                    items = run_command(main_command.values_command).splitlines()
+                    action = process_action(action=main_command.values_command, param=None, title=main_command.title)
+                    items = run_command(action).splitlines()
                     # filtered_items = [item for item in items if alfred_input.unfinished_query.lower() in item.lower()]
                     for item in items:
                         result_item = create_result_item_for_command_with_selection(
