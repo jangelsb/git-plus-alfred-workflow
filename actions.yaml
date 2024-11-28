@@ -253,16 +253,20 @@
       subtitle_command: |
         staged=$(git diff --cached --name-only | wc -l | xargs)
         echo "$staged file(s)"
-      command: |
-        staged=$(git diff --cached --name-only | wc -l | xargs)
-        git reset '[input]'
-        if [ "$staged" -eq 1 ]; then
-            echo "[reload~1]"
-        else
-            echo "[reload]"
-        fi
       values_command: |
         git diff --cached --name-only
+
+      mods:
+        - subtitle: unstage file
+          mod: cmd
+          command: |
+            staged=$(git diff --cached --name-only | wc -l | xargs)
+            git reset '[input]'
+            if [ "$staged" -eq 1 ]; then
+                echo "[reload~1]"
+            else
+                echo "[reload]"
+            fi
 
       subcommands:
 
@@ -372,7 +376,7 @@
                 HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '/^@@/d')
 
                 echo "$HUNK"
-                
+
         - title: back
           subtitle: 'go back a level'
           command: |
@@ -380,21 +384,27 @@
           should_skip_smart_sort: true
 
 
+
     - title: modified
       should_skip_smart_sort: true
       subtitle_command: |
         modified=$(git diff --name-only | wc -l | xargs)
         echo "$modified file(s)"
-      command: |
-        modified=$(git diff --name-only | wc -l | xargs)
-        git add '[input]'
-        if [ "$modified" -eq 1 ]; then
-            echo "[reload~1]"
-        else
-            echo "[reload]"
-        fi
+
       values_command: |
         git diff --name-only # git status --short
+
+      mods:
+        - subtitle: stage file
+          mod: cmd
+          command: |
+            modified=$(git diff --name-only | wc -l | xargs)
+            git add '[input]'
+            if [ "$modified" -eq 1 ]; then
+                echo "[reload~1]"
+            else
+                echo "[reload]"
+            fi
 
       subcommands:
 
