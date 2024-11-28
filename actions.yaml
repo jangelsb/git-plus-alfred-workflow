@@ -302,9 +302,11 @@
               should_skip_smart_sort: true
 
             - title: view hunk
+              subtitle: ' '
+              icon: ' '
               values_command: |
                 ACTION="stage"  # "stage" or "unstage"
-                HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@" 
+                HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
                 FILE="[parent~2]"   # File path
                 
                 # Determine the appropriate diff command
@@ -317,8 +319,11 @@
                     exit 1
                 fi
                 
-                # Extract the specific hunk(s), including the context
-                HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/@@/p" | sed '$s/^@@ //')
+                # Extract the specific hunk(s), excluding the header
+                # HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/@@/p" | sed '1d; s/^@@ //')
+                # HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; s/^@@ //')
+                HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; /^@@/d; s/^@@ //')
+
                 echo "$HUNK"
               should_use_values_as_inline_commands: true
               should_skip_smart_sort: true
