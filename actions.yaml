@@ -287,6 +287,7 @@
             - title: unstage hunk
               subtitle: ' '
               icon: pick.png
+              should_skip_smart_sort: true
               command: |
                 ACTION="unstage"  # "stage" or "unstage"
                 HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
@@ -336,11 +337,13 @@
                 rm hunk.patch
                 
                 echo "[reload~1]"
-              should_skip_smart_sort: true
 
             - title: view hunk
               subtitle: ' '
               icon: ' '
+              should_use_values_as_inline_commands: true
+              should_skip_smart_sort: true
+              should_trim_values: false
               values_command: |
                 ACTION="unstage"  # "stage" or "unstage"
                 HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
@@ -356,16 +359,10 @@
                     exit 1
                 fi
                 
-                # Extract the specific hunk(s), excluding the header
-                # HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/@@/p" | sed '1d; s/^@@ //')
-                # HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; s/^@@ //')
-                # HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; /^@@/d; s/^@@ //')
-                HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; /^@@/d')
+                # Extract the hunk
+                HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '/^@@/d')
 
                 echo "$HUNK"
-              should_use_values_as_inline_commands: true
-              should_skip_smart_sort: true
-              should_trim_values: false
 
     - title: modified
       should_skip_smart_sort: true
