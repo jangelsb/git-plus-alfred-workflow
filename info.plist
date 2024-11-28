@@ -738,6 +738,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 
 ## 📝 Version History
 
+#### v2024.8 (WIP)
+* Add support for `should_skip_smart_sort`
+* Add the ability to skip trimming the values `should_trim_values: false`
+* Add the ability to see the hunk diff in Alfred! You can now stage and unstage unhunks or the whole file
+* Added back buttons to the status menu
+* Added a fetch that shows the status of the branch 
+
 #### v2024.7
 **This is a big one!**
 
@@ -1063,8 +1070,10 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>2024.7</string>
+	<string>2024.8(WIP)</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
