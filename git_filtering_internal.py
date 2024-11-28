@@ -88,7 +88,7 @@ class ResultItem:
             item_dict["icon"] = {
                 "path": self.icon_path
             }
-        return item_dict
+        return {k: v for k, v in item_dict.items() if v is not None}
 
 class Location:
     def __init__(self, title, directory, actions_path=None):
@@ -97,7 +97,7 @@ class Location:
         self.actions_path = actions_path
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_skip_smart_sort=None):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_skip_smart_sort=None, should_trim_values=True):
         self.title = title
         self.action = action
         self.secondaryAction = secondaryAction
@@ -113,6 +113,7 @@ class Command:
         self.subcommands = subcommands if subcommands else []
         self.quicklookurl = quicklookurl
         self.should_skip_smart_sort = should_skip_smart_sort
+        self.should_trim_values = should_trim_values
 
     def __repr__(self):
         return f"{self.title}"
@@ -386,7 +387,7 @@ def create_value_commands(cmd):
             command_type = CommandType.SINGLE_ACTION
 
         commands.append(Command(
-            title=f"{item.strip()}",
+            title=f"{item.strip() if cmd.should_trim_values else item}",
             action=action,
             secondaryAction=cmd.secondaryAction,
             subtitle=cmd.subtitle,
@@ -399,7 +400,8 @@ def create_value_commands(cmd):
             subtitle_command=None, # cmd.subtitle_command, # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
             subcommands=cmd.subcommands,
             should_use_values_as_inline_commands=False,
-            should_skip_smart_sort=cmd.should_skip_smart_sort
+            should_skip_smart_sort=cmd.should_skip_smart_sort,
+            should_trim_values = cmd.should_trim_values
         ))
     return commands
 
@@ -485,6 +487,7 @@ def create_commands_from_yaml(yaml_data):
         icon = entry.get('icon', None)
         quicklookurl = entry.get('quicklookurl', None)
         should_skip_smart_sort = entry.get('should_skip_smart_sort', None)
+        should_trim_values = entry.get('should_trim_values', True)
 
 
         command_type = CommandType.SINGLE_ACTION
@@ -520,7 +523,8 @@ def create_commands_from_yaml(yaml_data):
             subtitle_command=subtitle_command,
             should_use_values_as_inline_commands=should_use_values_as_inline_commands,
             quicklookurl=quicklookurl,
-            should_skip_smart_sort=should_skip_smart_sort
+            should_skip_smart_sort=should_skip_smart_sort,
+            should_trim_values=should_trim_values
         )
 
     return [command_entry_processor(entry) for entry in yaml_data]
