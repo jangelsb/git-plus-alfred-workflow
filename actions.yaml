@@ -121,7 +121,7 @@
 
         - title: rebase
           icon: rebase.png
-          command: |            
+          command: |
             git rebase "[parent]"
 
         - title: rebase --onto
@@ -265,11 +265,6 @@
         git diff --cached --name-only
 
       subcommands:
-        - title: back
-          subtitle: 'go back a level'
-          command: |
-            echo "[reload~1]"
-          should_skip_smart_sort: true
 
         - title: list hunks
           subtitle: "view hunk"
@@ -278,12 +273,6 @@
           should_use_values_as_inline_commands: true
           should_skip_smart_sort: true
           subcommands:
-            - title: back
-              subtitle: 'go back a level'
-              command: |
-                echo "[reload~1]"
-              should_skip_smart_sort: true
-
             - title: unstage hunk
               subtitle: ' '
               icon: pick.png
@@ -296,8 +285,10 @@
                 # Determine the appropriate diff command
                 if [[ "$ACTION" == "stage" ]]; then
                     FULL_DIFF=$(git diff "$FILE")
+                    FILE_COUNT=$(git diff --name-only | wc -l | xargs)
                 elif [[ "$ACTION" == "unstage" ]]; then
                     FULL_DIFF=$(git diff --cached "$FILE")
+                    FILE_COUNT=$(git diff --cached --name-only | wc -l | xargs)
                 else
                     echo "Invalid action. Use 'stage' or 'unstage'."
                     exit 1
@@ -325,6 +316,10 @@
                     echo "$FIRST_LINE"
                     echo "$HUNK"
                 } > hunk.patch
+                
+                # Count the number of hunks
+                HUNK_COUNT=$(echo "$FULL_DIFF" | grep -c '^@@')
+                
 
                 # Apply or reverse the patch
                 if [[ "$ACTION" == "stage" ]]; then
@@ -336,7 +331,21 @@
                 # Clean up
                 rm hunk.patch
                 
+                if [[ "$HUNK_COUNT" -eq 1 ]]; then
+                    if [[ "FILE_COUNT" -eq 1 ]]; then
+                      echo "[reload~3]"
+                    else 
+                      echo "[reload~2]"
+                    fi
+                else 
+                  echo "[reload~1]"
+                fi
+
+            - title: back
+              subtitle: 'go back a level'
+              command: |
                 echo "[reload~1]"
+              should_skip_smart_sort: true
 
             - title: view hunk
               subtitle: ' '
@@ -363,6 +372,13 @@
                 HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '/^@@/d')
 
                 echo "$HUNK"
+                
+        - title: back
+          subtitle: 'go back a level'
+          command: |
+            echo "[reload~1]"
+          should_skip_smart_sort: true
+
 
     - title: modified
       should_skip_smart_sort: true
@@ -381,11 +397,6 @@
         git diff --name-only # git status --short
 
       subcommands:
-        - title: back
-          subtitle: 'go back a level'
-          command: |
-            echo "[reload~1]"
-          should_skip_smart_sort: true
 
         - title: list hunks
           subtitle: "view hunk"
@@ -394,12 +405,6 @@
           should_use_values_as_inline_commands: true
           should_skip_smart_sort: true
           subcommands:
-            - title: back
-              subtitle: 'go back a level'
-              command: |
-                echo "[reload~1]"
-              should_skip_smart_sort: true
-
             - title: stage hunk
               subtitle: ' '
               icon: pick.png
@@ -466,13 +471,17 @@
                 else 
                   echo "[reload~1]"
                 fi
-                
-
               should_skip_smart_sort: true
 
             - title: discard hunk
               subtitle: ' '
               icon: trash.png
+              command: |
+                echo "[reload~1]"
+              should_skip_smart_sort: true
+
+            - title: back
+              subtitle: 'go back a level'
               command: |
                 echo "[reload~1]"
               should_skip_smart_sort: true
@@ -496,15 +505,18 @@
                 fi
                 
                 # Extract the specific hunk(s), excluding the header
-                # HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/@@/p" | sed '1d; s/^@@ //')
-                # HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; s/^@@ //')
-                # HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; /^@@/d; s/^@@ //')
                 HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; /^@@/d')
 
                 echo "$HUNK"
               should_use_values_as_inline_commands: true
               should_skip_smart_sort: true
               should_trim_values: false
+
+        - title: back
+          subtitle: 'go back a level'
+          command: |
+            echo "[reload~1]"
+          should_skip_smart_sort: true
 
     - title: untracked
       should_skip_smart_sort: true
