@@ -202,6 +202,7 @@
       values_command: |
         git branch --show-current # just the current branch
       should_use_values_as_inline_commands: true
+      should_skip_smart_sort: true
       subtitle: current
       icon: fork.png
       subcommands:
@@ -219,36 +220,36 @@
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
+#    - title: commit
+#      icon: pencil.png
+#      command: |
+#       git commit -m "[input]"
+#      mods:
+#        - subtitle: and push
+#          mod: cmd
+#          command: |
+#            branch=$(git branch --show-current);
+#            git commit -m "[input]"
+#            git push -u origin $branch
 
-    - title: commit
-      icon: pencil.png
-      command: |
-       git commit -m "[input]"
-      mods:
-        - subtitle: and push
-          mod: cmd
-          command: |
-            branch=$(git branch --show-current);
-            git commit -m "[input]"
-            git push -u origin $branch
 
-
-    - title: amend & push
-      icon: up.big.png
-      subtitle: 'Amend previous commit & force push'
-      command: |
-        git commit --amend -C HEAD
-        git push --force
-
-    - title: easy commit & push
-      icon: up.big.png
-      subtitle: 'Commit using the previous commit message & push'
-      command: |
-        git commit --reuse-message=HEAD
-        git push
+#    - title: amend & push
+#      icon: up.big.png
+#      subtitle: 'Amend previous commit & force push'
+#      command: |
+#        git commit --amend -C HEAD
+#        git push --force
+#
+#    - title: easy commit & push
+#      icon: up.big.png
+#      subtitle: 'Commit using the previous commit message & push'
+#      command: |
+#        git commit --reuse-message=HEAD
+#        git push
 
 
     - title: staged
+      should_skip_smart_sort: true
       subtitle_command: |
         staged=$(git diff --cached --name-only | wc -l | xargs)
         echo "$staged file(s)"
@@ -265,6 +266,7 @@
 
 
     - title: modified
+      should_skip_smart_sort: true
       subtitle_command: |
         modified=$(git diff --name-only | wc -l | xargs)
         echo "$modified file(s)"
@@ -279,8 +281,51 @@
       values_command: |
         git diff --name-only # git status --short
 
+      subcommands:
+        - title: back
+          subtitle: 'go back a level'
+          command: |
+            echo "[reload~1]"
+          should_skip_smart_sort: true
+
+        - title: list hunks
+          subtitle: "view hunk"
+          values_command: |
+            git diff "[parent]" | grep '^@@'
+          should_use_values_as_inline_commands: true
+          should_skip_smart_sort: true
+          subcommands:
+            - title: back
+              subtitle: 'go back a level'
+              command: |
+                echo "[reload~1]"
+              should_skip_smart_sort: true
+
+            - title: view hunk
+              values_command: |
+                ACTION="stage"  # "stage" or "unstage"
+                HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@" 
+                FILE="[parent~2]"   # File path
+                
+                # Determine the appropriate diff command
+                if [ "$ACTION" == "stage" ]; then
+                    FULL_DIFF=$(git diff "$FILE")
+                elif [ "$ACTION" == "unstage" ]; then
+                    FULL_DIFF=$(git diff --cached "$FILE")
+                else
+                    echo "Invalid action. Use 'stage' or 'unstage'."
+                    exit 1
+                fi
+                
+                # Extract the specific hunk(s), including the context
+                HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/@@/p" | sed '$s/^@@ //')
+                echo "$HUNK"
+              should_use_values_as_inline_commands: true
+              should_skip_smart_sort: true
+              should_trim_values: false
 
     - title: untracked
+      should_skip_smart_sort: true
       subtitle_command: |
         untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
         echo "$untracked file(s)"
