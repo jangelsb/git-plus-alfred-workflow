@@ -220,32 +220,52 @@
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
-#    - title: commit
-#      icon: pencil.png
-#      command: |
-#       git commit -m "[input]"
-#      mods:
-#        - subtitle: and push
-#          mod: cmd
-#          command: |
-#            branch=$(git branch --show-current);
-#            git commit -m "[input]"
-#            git push -u origin $branch
+        - title: back
+          subtitle: 'go back a level'
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
 
 
-#    - title: amend & push
-#      icon: up.big.png
-#      subtitle: 'Amend previous commit & force push'
-#      command: |
-#        git commit --amend -C HEAD
-#        git push --force
-#
-#    - title: easy commit & push
-#      icon: up.big.png
-#      subtitle: 'Commit using the previous commit message & push'
-#      command: |
-#        git commit --reuse-message=HEAD
-#        git push
+    - title: fetch
+      icon: down.small.png
+      should_skip_smart_sort: true
+      subtitle_command: |
+        git status | grep 'branch is'
+      command: |
+        git fetch -p
+        echo "[reload]"
+
+
+    - title: commit
+      icon: pencil.png
+      should_skip_smart_sort: true
+      subcommands:
+        - title: message
+          icon: up.big.png
+          command: |
+            git commit -m "[input]"
+          mods:
+            - subtitle: and push
+              mod: cmd
+              command: |
+                branch=$(git branch --show-current);
+                git commit -m "[input]"
+                git push -u origin $branch
+
+        - title: easy commit & push
+          icon: up.big.png
+          subtitle: 'Commit using the previous commit message & push'
+          command: |
+            git commit --reuse-message=HEAD
+            git push
+
+        - title: amend & push
+          icon: up.big.png
+          subtitle: 'Amend previous commit & force push'
+          command: |
+            git commit --amend -C HEAD
+            git push --force
 
 
     - title: staged
