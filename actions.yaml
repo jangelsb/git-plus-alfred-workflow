@@ -411,8 +411,10 @@
                 # Determine the appropriate diff command
                 if [[ "$ACTION" == "stage" ]]; then
                     FULL_DIFF=$(git diff "$FILE")
+                    FILE_COUNT=$(git diff --name-only | wc -l | xargs)
                 elif [[ "$ACTION" == "unstage" ]]; then
                     FULL_DIFF=$(git diff --cached "$FILE")
+                    FILE_COUNT=$(git diff --cached --name-only | wc -l | xargs)
                 else
                     echo "Invalid action. Use 'stage' or 'unstage'."
                     exit 1
@@ -440,6 +442,10 @@
                     echo "$FIRST_LINE"
                     echo "$HUNK"
                 } > hunk.patch
+                
+                # Count the number of hunks
+                HUNK_COUNT=$(echo "$FULL_DIFF" | grep -c '^@@')
+                
 
                 # Apply or reverse the patch
                 if [[ "$ACTION" == "stage" ]]; then
@@ -451,7 +457,17 @@
                 # Clean up
                 rm hunk.patch
                 
-                echo "[reload~1]"
+                if [[ "$HUNK_COUNT" -eq 1 ]]; then
+                    if [[ "FILE_COUNT" -eq 1 ]]; then
+                      echo "[reload~3]"
+                    else 
+                      echo "[reload~2]"
+                    fi
+                else 
+                  echo "[reload~1]"
+                fi
+                
+
               should_skip_smart_sort: true
 
             - title: discard hunk
