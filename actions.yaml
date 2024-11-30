@@ -221,7 +221,7 @@
             echo "[parent]" | xargs echo -n | pbcopy
 
         - title: back
-          subtitle: 'go back a level'
+          subtitle: 'go back a level (bb)'
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
@@ -370,7 +370,7 @@
                     fi
 
                 - title: back
-                  subtitle: 'go back a level'
+                  subtitle: 'go back a level (bb)'
                   should_skip_smart_sort: true
                   command: |
                     echo "[reload~1]"
@@ -402,12 +402,12 @@
                     echo "$HUNK"
 
             - title: back
-              subtitle: 'go back a level'
+              subtitle: 'go back a level (bb)'
               should_skip_smart_sort: true
               command: |
                 echo "[reload~1]"
         - title: back
-          subtitle: 'go back a level'
+          subtitle: 'go back a level (bb)'
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
@@ -522,7 +522,7 @@
                     echo "[reload~1]"
 
                 - title: back
-                  subtitle: 'go back a level'
+                  subtitle: 'go back a level (bb)'
                   should_skip_smart_sort: true
                   command: |
                     echo "[reload~1]"
@@ -555,14 +555,14 @@
                     echo "$HUNK"
 
             - title: back
-              subtitle: 'go back a level'
+              subtitle: 'go back a level (bb)'
               should_skip_smart_sort: true
               command: |
                 echo "[reload~1]"
 
 
         - title: back
-          subtitle: 'go back a level'
+          subtitle: 'go back a level (bb)'
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
