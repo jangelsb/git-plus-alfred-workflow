@@ -1,81 +1,81 @@
+# Helper function to get the full diff for a given action and file
+get_full_diff() {
+    local action="$1"  # "stage" or "unstage"
+    local file="$2"    # File path
 
+    if [[ "$action" == "stage" ]]; then
+        git diff "$file"
+    elif [[ "$action" == "unstage" ]]; then
+        git diff --cached "$file"
+    else
+        echo "Invalid action. Use 'stage' or 'unstage'."
+        return 1
+    fi
+}
+
+
+# Function to get a hunk
 get_hunk() {
     local action="$1"  # "stage" or "unstage"
     local header="$2"  # e.g., "@@ -17,6 +17,7 @@"
     local file="$3"    # File path
 
-    # Determine the appropriate diff command
     local full_diff
-    if [ "$action" == "stage" ]; then
-        full_diff=$(git diff "$file")
-    elif [ "$action" == "unstage" ]; then
-        full_diff=$(git diff --cached "$file")
-    else
-        echo "Invalid action. Use 'stage' or 'unstage'."
-        return 1
-    fi
+    full_diff=$(get_full_diff "$action" "$file") || return 1
 
     # Escape special characters in the header for sed
     local escaped_header
     escaped_header=$(printf '%s\n' "$header" | sed -e 's/[]\/$*.^[]/\\&/g')
 
-    # Extract the hunk between the provided header and the next @@
-    # Return it
+    # Extract the hunk between the provided header and the next @@, Return it
     echo "$(echo "$full_diff" | sed -n "/$escaped_header/,/^@@/p")"
 }
 
+# Function to view a hunk (excluding @@ lines)
 view_hunk() {
-    local action="$1"  # "stage" or "unstage"
-    local header="$2"  # e.g., "@@ -17,6 +17,7 @@"
-    local file="$3"    # File path
+    local action="$1"
+    local header="$2"
+    local file="$3"
 
-    hunk=$(get_hunk "$action" "$header" "$file")
+    local hunk
+    hunk=$(get_hunk "$action" "$header" "$file") || return 1
 
     echo "$(echo "$hunk" | sed '/^@@/d')"
 }
 
-# Example usage
-
-
-# view_hunk "stage" "@@ -520,7 +520,7 @@ fi</string>" "info.plist"
-
-# view_hunk "stage" "@@ -306,68 +306,13 @@" "actions.yaml"
-
-
-
+# Function to process a hunk
 process_hunk() {
-    local action="$1"       # "stage" or "unstage"
-    local header="$2"       # e.g., "@@ -17,6 +17,7 @@"
-    local file="$3"         # File path
+    local action="$1"
+    local header="$2"
+    local file="$3"
 
-    # Determine the appropriate diff command and file count
-    local full_diff file_count
+    # Determine the full diff and file count based on action
+    local full_diff file_count apply_command
     if [[ "$action" == "stage" ]]; then
-        full_diff=$(git diff "$file")
         file_count=$(git diff --name-only | wc -l | xargs)
+        apply_command="git apply --cached"
     elif [[ "$action" == "unstage" ]]; then
-        full_diff=$(git diff --cached "$file")
         file_count=$(git diff --cached --name-only | wc -l | xargs)
+        apply_command="git apply --cached --reverse"
     else
         echo "Invalid action. Use 'stage' or 'unstage'."
         return 1
     fi
 
-    # Extract the diff metadata (diff --git, index, file headers)
+    full_diff=$(get_full_diff "$action" "$file") || return 1
+
+    # Extract the diff header
     local diff_header
     diff_header=$(echo "$full_diff" | sed -n "/^diff --git a\/$file b\/$file/,/^@@/p" | sed '$d' | sed '/^$/d')
 
-    local escaped_header
-    escaped_header=$(printf '%s\n' "$header" | sed -e 's/[]\/$*.^[]/\\&/g')
-
-    # get hunk
-    hunk=$(get_hunk "$action" "$header" "$file")
+    # Escape the header and extract the hunk
+    local hunk
+    hunk=$(get_hunk "$action" "$header" "$file") || return 1
 
     # process the hunk, by removing all lines that start with "@@", except the first line
     #   NR == 1 ||       # Always include the first line (line number 1).
     #   !/^@@/           # For all other lines, include them only if they do NOT start with "@@".
     hunk=$(echo "$hunk" | awk 'NR==1 || !/^@@/')
-
 
     # Create a patch file
     local patch_file="hunk.patch"
@@ -84,31 +84,31 @@ process_hunk() {
         echo "$hunk"
     } > "$patch_file"
 
+    # Apply the patch using the determined command
+    $apply_command "$patch_file"
+
+    # Cleanup
+    rm "$patch_file"
+
     # Count the number of hunks
     local hunk_count
     hunk_count=$(echo "$full_diff" | grep -c '^@@')
 
-    # Apply or reverse the patch
-    if [[ "$action" == "stage" ]]; then
-        git apply --cached "$patch_file"
-    elif [[ "$action" == "unstage" ]]; then
-        git apply --cached --reverse "$patch_file"
-    fi
-
-    rm "$patch_file"
-
-    # Determine reload level
-    if [[ "$hunk_count" -eq 1 ]]; then
-        if [[ "$file_count" -eq 1 ]]; then
-            echo "[reload~3]"
-        else
-            echo "[reload~2]"
-        fi
+    # Determine the reload level
+    if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
+        echo "[reload~3]"
+    elif [[ "$hunk_count" -eq 1 ]]; then
+        echo "[reload~2]"
     else
         echo "[reload~1]"
     fi
 }
 
-# process_hunk "stage" "@@ -520,7 +520,7 @@ fi</string>" "info.plist"
-# process_hunk "stage" "@@ -306,68 +306,13 @@" "actions.yaml"
+
+# index cdb1be8..9ed9e0b 100644
+# --- a/readme.md
+# +++ b/readme.md
+# @@ -14,7 +14,7 @@ For
+view_hunk "stage" "@@ -14,7 +14,7 @@ For" "readme.md"
+
 
