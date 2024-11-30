@@ -29,13 +29,13 @@ view_hunk() {
 
 
 
-view_hunk "stage" "@@ -520,7 +520,7 @@ fi</string>" "info.plist"
+# view_hunk "stage" "@@ -520,7 +520,7 @@ fi</string>" "info.plist"
 
-view_hunk "stage" "@@ -2,6 +2,7 @@" "actions.yaml"
+# view_hunk "stage" "@@ -2,6 +2,7 @@" "actions.yaml"
 
 
 
-process_diff_action() {
+process_hunk() {
     local action="$1"       # "stage" or "unstage"
     local header="$2"       # e.g., "@@ -17,6 +17,7 @@"
     local file="$3"         # File path
@@ -57,9 +57,14 @@ process_diff_action() {
     local diff_header
     diff_header=$(echo "$full_diff" | sed -n "/^diff --git a\/$file b\/$file/,/^@@/p" | sed '$d' | sed '/^$/d')
 
+    local escaped_header
+    escaped_header=$(printf '%s\n' "$header" | sed -e 's/[]\/$*.^[]/\\&/g')
+
     # Extract the hunk
     local extracted_hunk
-    extracted_hunk=$(echo "$full_diff" | sed -n "/$header/,/^@@/p")
+    extracted_hunk=$(echo "$full_diff" | sed -n "/$escaped_header/,/^@@/p")
+
+    # echo "$extracted_hunk"
 
     # Store the first line of the extracted hunk
     local first_line
@@ -67,7 +72,11 @@ process_diff_action() {
 
     # Remove any lines that start with `@@`
     local hunk
-    hunk=$(echo "$extracted_hunk" | sed '/^@@/d')
+    hunk=$(echo "$extracted_hunk" | sed "/^$escaped_header/d")
+
+    # echo ""
+    # echo "$hunk"
+
 
     # Check if the hunk exists
     if [[ -z "$extracted_hunk" ]]; then
@@ -108,3 +117,6 @@ process_diff_action() {
         echo "[reload~1]"
     fi
 }
+
+# process_hunk "stage" "@@ -520,7 +520,7 @@ fi</string>" "info.plist"
+
