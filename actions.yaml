@@ -549,9 +549,9 @@
                         exit 1
                     fi
                     
-                    # Extract the specific hunk(s), excluding the header
-                    HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '1d; /^@@/d')
-
+                    # Extract the hunk
+                    HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '/^@@/d')
+                    
                     echo "$HUNK"
 
             - title: back
