@@ -1,4 +1,5 @@
-view_hunk() {
+
+get_hunk() {
     local action="$1"  # "stage" or "unstage"
     local header="$2"  # e.g., "@@ -17,6 +17,7 @@"
     local file="$3"    # File path
@@ -19,19 +20,26 @@ view_hunk() {
     escaped_header=$(printf '%s\n' "$header" | sed -e 's/[]\/$*.^[]/\\&/g')
 
     # Extract the hunk between the provided header and the next @@
-    local hunk
-    hunk=$(echo "$full_diff" | sed -n "/$escaped_header/,/^@@/p" | sed "/^$escaped_header/d")
+    # Return it
+    echo "$(echo "$full_diff" | sed -n "/$escaped_header/,/^@@/p")"
+}
 
-    echo "$hunk"
+view_hunk() {
+    local action="$1"  # "stage" or "unstage"
+    local header="$2"  # e.g., "@@ -17,6 +17,7 @@"
+    local file="$3"    # File path
+
+    hunk=$(get_hunk "$action" "$header" "$file")
+
+    echo "$(echo "$hunk" | sed '/^@@/d')"
 }
 
 # Example usage
 
 
-
 # view_hunk "stage" "@@ -520,7 +520,7 @@ fi</string>" "info.plist"
 
-# view_hunk "stage" "@@ -2,6 +2,7 @@" "actions.yaml"
+# view_hunk "stage" "@@ -306,68 +306,13 @@" "actions.yaml"
 
 
 
@@ -60,35 +68,19 @@ process_hunk() {
     local escaped_header
     escaped_header=$(printf '%s\n' "$header" | sed -e 's/[]\/$*.^[]/\\&/g')
 
-    # Extract the hunk
-    local extracted_hunk
-    extracted_hunk=$(echo "$full_diff" | sed -n "/$escaped_header/,/^@@/p")
+    # get hunk
+    hunk=$(get_hunk "$action" "$header" "$file")
 
-    # echo "$extracted_hunk"
+    # process the hunk, by removing all lines that start with "@@", except the first line
+    #   NR == 1 ||       # Always include the first line (line number 1).
+    #   !/^@@/           # For all other lines, include them only if they do NOT start with "@@".
+    hunk=$(echo "$hunk" | awk 'NR==1 || !/^@@/')
 
-    # Store the first line of the extracted hunk
-    local first_line
-    first_line=$(echo "$extracted_hunk" | head -n 1)
-
-    # Remove any lines that start with `@@`
-    local hunk
-    hunk=$(echo "$extracted_hunk" | sed "/^$escaped_header/d")
-
-    # echo ""
-    # echo "$hunk"
-
-
-    # Check if the hunk exists
-    if [[ -z "$extracted_hunk" ]]; then
-        echo "Error: No matching hunk found for $header in $file"
-        return 1
-    fi
 
     # Create a patch file
     local patch_file="hunk.patch"
     {
         echo "$diff_header"
-        echo "$first_line"
         echo "$hunk"
     } > "$patch_file"
 
@@ -103,7 +95,6 @@ process_hunk() {
         git apply --cached --reverse "$patch_file"
     fi
 
-    # Clean up
     rm "$patch_file"
 
     # Determine reload level
@@ -119,4 +110,5 @@ process_hunk() {
 }
 
 # process_hunk "stage" "@@ -520,7 +520,7 @@ fi</string>" "info.plist"
+# process_hunk "stage" "@@ -306,68 +306,13 @@" "actions.yaml"
 

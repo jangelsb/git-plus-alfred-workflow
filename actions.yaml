@@ -306,68 +306,13 @@
                   icon: pick.png
                   should_skip_smart_sort: true
                   command: |
+                    source /Users/josh/Developer/alfred/gitx/functions.sh 
+
                     ACTION="unstage"  # "stage" or "unstage"
                     HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
                     FILE="[parent~2]"   # File path
                     
-                    # Determine the appropriate diff command
-                    if [[ "$ACTION" == "stage" ]]; then
-                        FULL_DIFF=$(git diff "$FILE")
-                        FILE_COUNT=$(git diff --name-only | wc -l | xargs)
-                    elif [[ "$ACTION" == "unstage" ]]; then
-                        FULL_DIFF=$(git diff --cached "$FILE")
-                        FILE_COUNT=$(git diff --cached --name-only | wc -l | xargs)
-                    else
-                        echo "Invalid action. Use 'stage' or 'unstage'."
-                        exit 1
-                    fi
-                    
-                    DIFF_HEADER=$(echo "$FULL_DIFF" | sed -n "/^diff --git a\/$FILE b\/$FILE/,/^@@/p" | sed '$d' | sed '/^$/d')
-                    
-                    # Extract the diff metadata (diff --git, index, file headers)
-                    EXTRACTED_HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p")
-
-                    # Store the first line 
-                    FIRST_LINE=$(echo "$EXTRACTED_HUNK" | head -n 1)
-                    
-                    # Remove any lines that start with `@@`
-                    HUNK=$(echo "$EXTRACTED_HUNK" | sed '/^@@/d')
-                                    
-                    # Check if the hunk exists
-                    if [ -z "$EXTRACTED_HUNK" ]; then
-                        echo "Error: No matching hunk found for $HEADER in $FILE"
-                        exit 1
-                    fi
-                    
-                    {
-                        echo "$DIFF_HEADER"
-                        echo "$FIRST_LINE"
-                        echo "$HUNK"
-                    } > hunk.patch
-                    
-                    # Count the number of hunks
-                    HUNK_COUNT=$(echo "$FULL_DIFF" | grep -c '^@@')
-                    
-
-                    # Apply or reverse the patch
-                    if [[ "$ACTION" == "stage" ]]; then
-                        git apply --cached hunk.patch
-                    elif [[ "$ACTION" == "unstage" ]]; then
-                        git apply --cached --reverse hunk.patch
-                    fi
-
-                    # Clean up
-                    rm hunk.patch
-                    
-                    if [[ "$HUNK_COUNT" -eq 1 ]]; then
-                        if [[ "FILE_COUNT" -eq 1 ]]; then
-                          echo "[reload~3]"
-                        else 
-                          echo "[reload~2]"
-                        fi
-                    else 
-                      echo "[reload~1]"
-                    fi
+                    process_hunk "$ACTION" "$HEADER" "$FILE"
 
                 - title: back
                   subtitle: 'go back a level (bb)'
@@ -382,24 +327,13 @@
                   should_skip_smart_sort: true
                   should_trim_values: false
                   values_command: |
+                    source /Users/josh/Developer/alfred/gitx/functions.sh 
+                    
                     ACTION="unstage"  # "stage" or "unstage"
                     HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
                     FILE="[parent~2]"   # File path
                     
-                    # Determine the appropriate diff command
-                    if [ "$ACTION" == "stage" ]; then
-                        FULL_DIFF=$(git diff "$FILE")
-                    elif [ "$ACTION" == "unstage" ]; then
-                        FULL_DIFF=$(git diff --cached "$FILE")
-                    else
-                        echo "Invalid action. Use 'stage' or 'unstage'."
-                        exit 1
-                    fi
-                    
-                    # Extract the hunk
-                    HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '/^@@/d')
-
-                    echo "$HUNK"
+                    view_hunk "$ACTION" "$HEADER" "$FILE"
 
             - title: back
               subtitle: 'go back a level (bb)'
@@ -451,68 +385,13 @@
                   icon: pick.png
                   should_skip_smart_sort: true
                   command: |
+                    source /Users/josh/Developer/alfred/gitx/functions.sh 
+
                     ACTION="stage"  # "stage" or "unstage"
                     HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
                     FILE="[parent~2]"   # File path
                     
-                    # Determine the appropriate diff command
-                    if [[ "$ACTION" == "stage" ]]; then
-                        FULL_DIFF=$(git diff "$FILE")
-                        FILE_COUNT=$(git diff --name-only | wc -l | xargs)
-                    elif [[ "$ACTION" == "unstage" ]]; then
-                        FULL_DIFF=$(git diff --cached "$FILE")
-                        FILE_COUNT=$(git diff --cached --name-only | wc -l | xargs)
-                    else
-                        echo "Invalid action. Use 'stage' or 'unstage'."
-                        exit 1
-                    fi
-                    
-                    DIFF_HEADER=$(echo "$FULL_DIFF" | sed -n "/^diff --git a\/$FILE b\/$FILE/,/^@@/p" | sed '$d' | sed '/^$/d')
-                    
-                    # Extract the diff metadata (diff --git, index, file headers)
-                    EXTRACTED_HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p")
-
-                    # Store the first line 
-                    FIRST_LINE=$(echo "$EXTRACTED_HUNK" | head -n 1)
-                    
-                    # Remove any lines that start with `@@`
-                    HUNK=$(echo "$EXTRACTED_HUNK" | sed '/^@@/d')
-                                    
-                    # Check if the hunk exists
-                    if [ -z "$EXTRACTED_HUNK" ]; then
-                        echo "Error: No matching hunk found for $HEADER in $FILE"
-                        exit 1
-                    fi
-                    
-                    {
-                        echo "$DIFF_HEADER"
-                        echo "$FIRST_LINE"
-                        echo "$HUNK"
-                    } > hunk.patch
-                    
-                    # Count the number of hunks
-                    HUNK_COUNT=$(echo "$FULL_DIFF" | grep -c '^@@')
-                    
-
-                    # Apply or reverse the patch
-                    if [[ "$ACTION" == "stage" ]]; then
-                        git apply --cached hunk.patch
-                    elif [[ "$ACTION" == "unstage" ]]; then
-                        git apply --cached --reverse hunk.patch
-                    fi
-
-                    # Clean up
-                    rm hunk.patch
-                    
-                    if [[ "$HUNK_COUNT" -eq 1 ]]; then
-                        if [[ "FILE_COUNT" -eq 1 ]]; then
-                          echo "[reload~3]"
-                        else 
-                          echo "[reload~2]"
-                        fi
-                    else 
-                      echo "[reload~1]"
-                    fi
+                    process_hunk "$ACTION" "$HEADER" "$FILE"
 
                 - title: discard hunk
                   subtitle: ' '
@@ -535,24 +414,13 @@
                   should_use_values_as_inline_commands: true
                   should_trim_values: false
                   values_command: |
+                    source /Users/josh/Developer/alfred/gitx/functions.sh 
+                    
                     ACTION="stage"  # "stage" or "unstage"
                     HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
                     FILE="[parent~2]"   # File path
                     
-                    # Determine the appropriate diff command
-                    if [ "$ACTION" == "stage" ]; then
-                        FULL_DIFF=$(git diff "$FILE")
-                    elif [ "$ACTION" == "unstage" ]; then
-                        FULL_DIFF=$(git diff --cached "$FILE")
-                    else
-                        echo "Invalid action. Use 'stage' or 'unstage'."
-                        exit 1
-                    fi
-                    
-                    # Extract the hunk
-                    HUNK=$(echo "$FULL_DIFF" | sed -n "/$HEADER/,/^@@/p" | sed '/^@@/d')
-                    
-                    echo "$HUNK"
+                    view_hunk "$ACTION" "$HEADER" "$FILE"
 
             - title: back
               subtitle: 'go back a level (bb)'

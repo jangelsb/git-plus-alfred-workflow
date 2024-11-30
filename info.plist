@@ -507,9 +507,10 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 				<key>script</key>
 				<string>full_command="source $input_var_profile_path; $1"
 
-# eval "$full_command" 2&gt;&amp;1
+# Execute the command and capture the output and error messages
 output=$(eval "$full_command" 2&gt;&amp;1)
 
+# Check if the output is empty
 if [ -z "$output" ]; then
   echo "command succeeded"
 else
