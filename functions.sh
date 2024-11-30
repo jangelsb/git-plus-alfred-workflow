@@ -14,14 +14,22 @@ view_hunk() {
         return 1
     fi
 
-    # Extract the hunk
+    # Escape special characters in the header for sed
+    local escaped_header
+    escaped_header=$(printf '%s\n' "$header" | sed -e 's/[]\/$*.^[]/\\&/g')
+
+    # Extract the hunk between the provided header and the next @@
     local hunk
-    hunk=$(echo "$full_diff" | sed -n "/$header/,/^@@/p" | sed '/^@@/d')
+    hunk=$(echo "$full_diff" | sed -n "/$escaped_header/,/^@@/p" | sed "/^$escaped_header/d")
 
     echo "$hunk"
 }
 
-view_hunk "stage" "@@ -520,7 +520,7 @@" "info.plist"
+# Example usage
+
+
+
+view_hunk "stage" "@@ -520,7 +520,7 @@ fi</string>" "info.plist"
 
 view_hunk "stage" "@@ -2,6 +2,7 @@" "actions.yaml"
 
