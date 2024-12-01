@@ -742,9 +742,11 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 #### v2024.8 (WIP)
 * Add support for `should_skip_smart_sort`
 * Add the ability to skip trimming the values `should_trim_values: false`
-* Add the ability to see the hunk diff in Alfred! You can now stage and unstage unhunks or the whole file
+* Add the ability to see the hunk diff in Alfred! You can now stage, unstage, and discard unhunks
 * Added back buttons to the status menu
-* Added a fetch that shows the status of the branch 
+* Added more subtitle commands to the status menu for a better experience
+* Added a new `functions.sh` bash file that is implicitly imported before each command that is run, so you can offload logic to it for better reusability
+* Cleaned up commands
 
 #### v2024.7
 **This is a big one!**
