@@ -1020,7 +1020,7 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 				<false/>
 			</dict>
 			<key>description</key>
-			<string>Use this to offload logic and make the config simpler. These are implicitly imported before each bash command.</string>
+			<string>Use this to offload logic and make the config simpler. These are implicitly imported before any bash command runs.</string>
 			<key>label</key>
 			<string>bash functions</string>
 			<key>type</key>
