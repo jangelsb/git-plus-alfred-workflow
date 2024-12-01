@@ -1,5 +1,5 @@
 # Helper function to get the full diff for a given action and file
-get_full_diff() {
+_get_full_diff() {
     local action="$1"  # "stage" or "unstage"
     local file="$2"    # File path
 
@@ -14,14 +14,14 @@ get_full_diff() {
 }
 
 
-# Function to get a hunk
-get_hunk() {
-    local action="$1"  # "stage" or "unstage"
-    local header="$2"  # e.g., "@@ -17,6 +17,7 @@"
-    local file="$3"    # File path
+# Helper function to get a hunk
+_get_hunk() {
+    local action="$1"
+    local header="$2"
+    local file="$3"
 
     local full_diff
-    full_diff=$(get_full_diff "$action" "$file") || return 1
+    full_diff=$(_get_full_diff "$action" "$file") || return 1
 
     # Escape special characters in the header for sed
     local escaped_header
@@ -38,7 +38,7 @@ view_hunk() {
     local file="$3"
 
     local hunk
-    hunk=$(get_hunk "$action" "$header" "$file") || return 1
+    hunk=$(_get_hunk "$action" "$header" "$file") || return 1
 
     echo "$(echo "$hunk" | sed '/^@@/d')"
 }
@@ -62,7 +62,7 @@ process_hunk() {
         return 1
     fi
 
-    full_diff=$(get_full_diff "$action" "$file") || return 1
+    full_diff=$(_get_full_diff "$action" "$file") || return 1
 
     # Extract the diff header
     local diff_header
@@ -70,7 +70,7 @@ process_hunk() {
 
     # Escape the header and extract the hunk
     local hunk
-    hunk=$(get_hunk "$action" "$header" "$file") || return 1
+    hunk=$(_get_hunk "$action" "$header" "$file") || return 1
 
     # process the hunk, by removing all lines that start with "@@", except the first line
     #   NR == 1 ||       # Always include the first line (line number 1).
@@ -109,6 +109,6 @@ process_hunk() {
 # --- a/readme.md
 # +++ b/readme.md
 # @@ -14,7 +14,7 @@ For
-view_hunk "stage" "@@ -14,7 +14,7 @@ For" "readme.md"
+# view_hunk "stage" "@@ -14,7 +14,7 @@ For" "readme.md"
 
 
