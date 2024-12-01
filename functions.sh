@@ -1,3 +1,16 @@
+################################################################################
+##############################    git commonds    ##############################
+################################################################################
+
+git_checkout() {
+    git stash; git checkout "$1"; git pull;
+}
+
+
+################################################################################
+##############################     DIFF LOGIC     ##############################
+################################################################################
+
 # Helper function to get the full diff for a given action and file
 _get_full_diff() {
     local action="$1"  # "stage" or "unstage"
@@ -32,6 +45,9 @@ _get_hunk() {
 }
 
 # Function to view a hunk (excluding @@ lines)
+# ACTION="stage"  # "stage" or "unstage"
+# HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
+# FILE="[parent~2]"   # File path
 view_hunk() {
     local action="$1"
     local header="$2"
@@ -43,7 +59,10 @@ view_hunk() {
     echo "$(echo "$hunk" | sed '/^@@/d')"
 }
 
-# Function to process a hunk
+# Function to process a hunk (stage or unstage)
+# ACTION="stage"  # "stage" or "unstage"
+# HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
+# FILE="[parent~2]"   # File path
 process_hunk() {
     local action="$1"
     local header="$2"
@@ -103,12 +122,4 @@ process_hunk() {
         echo "[reload~1]"
     fi
 }
-
-
-# index cdb1be8..9ed9e0b 100644
-# --- a/readme.md
-# +++ b/readme.md
-# @@ -14,7 +14,7 @@ For
-# view_hunk "stage" "@@ -14,7 +14,7 @@ For" "readme.md"
-
 

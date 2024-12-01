@@ -81,6 +81,7 @@
 # --------------------
 - title: b
   icon: fork.png
+  subtitle: view all branches
   subcommands:
     - title: current branch
       values_command: |
@@ -92,11 +93,11 @@
         - title: stash & pull
           icon: fork.png
           command: |
-            git stash; git checkout "[parent]"; git pull;
+            git_checkout "[parent]"
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+              command: killall Xcode; git_checkout "[parent]"; xed .
 
         - title: copy branch name
           icon: copy.png
@@ -113,11 +114,11 @@
         - title: checkout
           icon: fork.png
           command: |
-            git stash; git checkout "[parent]"; git pull;
+            git_checkout "[parent]"
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+              command: killall Xcode; git_checkout "[parent]"; xed .
 
         - title: rebase
           icon: rebase.png
@@ -180,40 +181,49 @@
 
 
 # --------------------
-# STATUS LOGIC
+# STATUS MENU
 # --------------------
 
-- title: status
+- title: s
   icon: info.png
-  subtitle_command: |
-    branch=$(git branch --show-current)
-    modified=$(git diff --name-only | wc -l | xargs)
-    untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
-    staged=$(git diff --cached --name-only | wc -l | xargs)
+  should_skip_smart_sort: true
+  subtitle: 'view the status'
+  # subtitle_command: |
+    # branch=$(git branch --show-current)
+    # modified=$(git diff --name-only | wc -l | xargs)
+    # untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+    # staged=$(git diff --cached --name-only | wc -l | xargs)
     
-    if [ "$modified" -eq 0 ] && [ "$untracked" -eq 0 ] && [ "$staged" -eq 0 ]
-    then 
-      echo "branch: ${branch}; clean"
-    else 
-      echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
-    fi
+    # if [ "$modified" -eq 0 ] && [ "$untracked" -eq 0 ] && [ "$staged" -eq 0 ]
+    # then 
+    #   echo "branch: ${branch}; clean"
+    # else 
+    #   echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
+    # fi
   subcommands:
     - title: current branch
       values_command: |
         git branch --show-current # just the current branch
       should_use_values_as_inline_commands: true
       should_skip_smart_sort: true
-      subtitle: current
+      subtitle_command: |
+        git status | grep 'branch is'
       icon: fork.png
       subcommands:
+        - title: fetch
+          icon: down.small.png
+          command: |
+            git fetch -p
+            echo "[reload~1]"
+
         - title: stash & pull
           icon: fork.png
           command: |
-            git stash; git checkout "[parent]"; git pull;
+            git_checkout "[parent]";
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+              command: killall Xcode; git_checkout "[parent]"; xed .
 
         - title: copy branch name
           icon: copy.png
@@ -225,16 +235,6 @@
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
-
-
-    - title: fetch
-      icon: down.small.png
-      should_skip_smart_sort: true
-      subtitle_command: |
-        git status | grep 'branch is'
-      command: |
-        git fetch -p
-        echo "[reload]"
 
 
     - title: commit
@@ -266,6 +266,12 @@
           command: |
             git commit --amend -C HEAD
             git push --force
+
+        - title: back
+          subtitle: 'go back a level (bb)'
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
 
 
     - title: staged
@@ -306,12 +312,7 @@
                   icon: pick.png
                   should_skip_smart_sort: true
                   command: |
-
-                    ACTION="unstage"  # "stage" or "unstage"
-                    HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
-                    FILE="[parent~2]"   # File path
-                    
-                    process_hunk "$ACTION" "$HEADER" "$FILE"
+                    process_hunk "unstage" "[parent]" "[parent~2]"
 
                 - title: back
                   subtitle: 'go back a level (bb)'
@@ -326,12 +327,7 @@
                   should_skip_smart_sort: true
                   should_trim_values: false
                   values_command: |
-                    
-                    ACTION="unstage"  # "stage" or "unstage"
-                    HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
-                    FILE="[parent~2]"   # File path
-                    
-                    view_hunk "$ACTION" "$HEADER" "$FILE"
+                    view_hunk "unstage" "[parent]" "[parent~2]"
 
             - title: back
               subtitle: 'go back a level (bb)'
@@ -383,12 +379,7 @@
                   icon: pick.png
                   should_skip_smart_sort: true
                   command: |
-
-                    ACTION="stage"  # "stage" or "unstage"
-                    HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
-                    FILE="[parent~2]"   # File path
-                    
-                    process_hunk "$ACTION" "$HEADER" "$FILE"
+                    process_hunk "stage" "[parent]" "[parent~2]"
 
                 - title: discard hunk
                   subtitle: ' '
@@ -411,12 +402,7 @@
                   should_use_values_as_inline_commands: true
                   should_trim_values: false
                   values_command: |
-                    
-                    ACTION="stage"  # "stage" or "unstage"
-                    HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
-                    FILE="[parent~2]"   # File path
-                    
-                    view_hunk "$ACTION" "$HEADER" "$FILE"
+                    view_hunk "stage" "[parent]" "[parent~2]"
 
             - title: back
               subtitle: 'go back a level (bb)'
