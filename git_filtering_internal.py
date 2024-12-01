@@ -169,6 +169,7 @@ class TokenizationResult:
 
 checkout_modifiers_list = []
 alfred_input = TokenizationResult()
+functions_path = None
 
 def tokenize(query, locations, commands, level=1):
     command_objects = []
@@ -206,7 +207,9 @@ def change_directory(location):
 def run_command(command):
     try:
         # result = subprocess.run(["zsh", "-c", command], capture_output=True, text=True, check=True)
-        command = f"source $input_var_functions_path;\n{command}"
+        if functions_path:
+            command = f"source '{functions_path}';\n{command}"
+
         result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
@@ -617,7 +620,12 @@ def main():
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
     ends_with_space = query_input.endswith(" ")
 
-    global alfred_input
+    global alfred_input, functions_path
+
+    functions_path = os.getenv('input_var_functions_path')
+    if functions_path and os.path.sep not in functions_path:
+        functions_path = os.path.join(os.getcwd(), functions_path)
+
     alfred_input = tokenize(query_input, locations, [])
 
     commands = [
