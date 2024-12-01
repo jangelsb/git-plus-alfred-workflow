@@ -119,11 +119,11 @@ process_hunk() {
 
     # Determine the reload level
     if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
-        echo "[reload~3]"
+        return 3
     elif [[ "$hunk_count" -eq 1 ]]; then
-        echo "[reload~2]"
+        return 2
     else
-        echo "[reload~1]"
+        return 1
     fi
 }
 

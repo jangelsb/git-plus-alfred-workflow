@@ -328,6 +328,12 @@
                   command: |
                     process_hunk "unstage" "[parent]" "[parent~2]"
 
+                    case $? in
+                        1) echo "[reload~1]";;
+                        2) echo "[reload~2]";;
+                        3) echo "[reload~3]";;
+                    esac
+
                 - title: back
                   subtitle: 'go back a level (bb)'
                   should_skip_smart_sort: true
@@ -395,12 +401,24 @@
                   command: |
                     process_hunk "stage" "[parent]" "[parent~2]"
 
+                    case $? in
+                        1) echo "[reload~1]";;
+                        2) echo "[reload~2]";;
+                        3) echo "[reload~3]";;
+                    esac
+
                 - title: discard hunk
                   subtitle: ' '
                   icon: trash.png
                   should_skip_smart_sort: true
                   command: |
                     process_hunk "discard" "[parent]" "[parent~2]"
+
+                    case $? in
+                        1) echo "[reload~1]";;
+                        2) echo "[reload~2]";;
+                        3) echo "[reload~3]";;
+                    esac
 
                 - title: back
                   subtitle: 'go back a level (bb)'
