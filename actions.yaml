@@ -306,7 +306,6 @@
                   icon: pick.png
                   should_skip_smart_sort: true
                   command: |
-                    source /Users/josh/Developer/alfred/gitx/functions.sh 
 
                     ACTION="unstage"  # "stage" or "unstage"
                     HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
@@ -327,7 +326,6 @@
                   should_skip_smart_sort: true
                   should_trim_values: false
                   values_command: |
-                    source /Users/josh/Developer/alfred/gitx/functions.sh 
                     
                     ACTION="unstage"  # "stage" or "unstage"
                     HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
@@ -385,7 +383,6 @@
                   icon: pick.png
                   should_skip_smart_sort: true
                   command: |
-                    source /Users/josh/Developer/alfred/gitx/functions.sh 
 
                     ACTION="stage"  # "stage" or "unstage"
                     HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
@@ -414,7 +411,6 @@
                   should_use_values_as_inline_commands: true
                   should_trim_values: false
                   values_command: |
-                    source /Users/josh/Developer/alfred/gitx/functions.sh 
                     
                     ACTION="stage"  # "stage" or "unstage"
                     HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"

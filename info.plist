@@ -505,7 +505,7 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>full_command="source $input_var_profile_path; $1"
+				<string>full_command="source $input_var_profile_path; source $input_var_functions_path; $1"
 
 # Execute the command and capture the output and error messages
 output=$(eval "$full_command" 2&gt;&amp;1)
@@ -1006,6 +1006,27 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<string>filepicker</string>
 			<key>variable</key>
 			<string>input_var_profile_path</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>functions.sh</string>
+				<key>filtermode</key>
+				<integer>2</integer>
+				<key>placeholder</key>
+				<string>functions.sh</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Use this to offload logic and make the config simpler. These are implicitly imported before each bash command.</string>
+			<key>label</key>
+			<string>bash functions</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>input_var_functions_path</string>
 		</dict>
 		<dict>
 			<key>config</key>
