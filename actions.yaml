@@ -253,19 +253,33 @@
                 git commit -m "[input]"
                 git push -u origin $branch
 
-        - title: easy commit & push
+        - title: easy commit
           icon: up.big.png
-          subtitle: 'Commit using the previous commit message & push'
+          subtitle_command: |
+            message=$(git log -1 --skip=1 --pretty=%B | xargs)
+            echo "commit using previous message: $message"
           command: |
             git commit --reuse-message=HEAD
-            git push
+          mods:
+            - subtitle: 'and push'
+              mod: cmd
+              command: |
+                git commit --reuse-message=HEAD
+                git push
 
-        - title: amend & push
+        - title: amend
           icon: up.big.png
-          subtitle: 'Amend previous commit & force push'
+          subtitle_command: |
+            message=$(git log -1 --skip=1 --pretty=%B | xargs)
+            echo "amend previous commit: $message"
           command: |
             git commit --amend -C HEAD
-            git push --force
+          mods:
+            - subtitle: 'and force push'
+              mod: cmd
+              command: |
+                git commit --amend -C HEAD
+                git push --force
 
         - title: back
           subtitle: 'go back a level (bb)'
