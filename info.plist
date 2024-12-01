@@ -139,7 +139,7 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
+				<string>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -189,6 +189,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>2B6F959B-E985-412D-A7EC-D2D084773017</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -616,6 +629,38 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>\[reload:.*]</string>
+						<key>outputlabel</key>
+						<string>will reload</string>
+						<key>uid</key>
+						<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>argument</key>
 				<string>{var:input_keyword} {query}</string>
 				<key>leftcursor</key>
@@ -747,6 +792,7 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 * Added more subtitle commands to the status menu for a better experience
 * Added a new `functions.sh` bash file that is implicitly imported before each command that is run, so you can offload logic to it for better reusability
 * Cleaned up commands
+* NOTE: Reload statements need to be in the yaml and not in a different file
 
 #### v2024.7
 **This is a big one!**
@@ -907,9 +953,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>6AF906CF-57FA-41B4-967E-D06828E92FBA</key>
 		<dict>
 			<key>xpos</key>
-			<real>370</real>
+			<real>560</real>
 			<key>ypos</key>
-			<real>675</real>
+			<real>615</real>
 		</dict>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<dict>
@@ -924,6 +970,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<real>1590</real>
 			<key>ypos</key>
 			<real>575</real>
+		</dict>
+		<key>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</key>
+		<dict>
+			<key>xpos</key>
+			<real>405</real>
+			<key>ypos</key>
+			<real>625</real>
 		</dict>
 		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
 		<dict>
