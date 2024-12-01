@@ -1,4 +1,12 @@
+- title: open in Sublime Text (st)
+  icon: open.png
+  command: |
+    st .
 
+- title: open in Sublime Text (sm)
+  icon: open.png
+  command: |
+    sm .
 # --------------------
 # These are commands that should work but I don't feel are ready for prime time / full roll out yet
 # --------------------
