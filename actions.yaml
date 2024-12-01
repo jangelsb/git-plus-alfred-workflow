@@ -386,7 +386,7 @@
                   icon: trash.png
                   should_skip_smart_sort: true
                   command: |
-                    echo "[reload~1]"
+                    process_hunk "discard" "[parent]" "[parent~2]"
 
                 - title: back
                   subtitle: 'go back a level (bb)'

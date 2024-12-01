@@ -13,19 +13,20 @@ git_checkout() {
 
 # Helper function to get the full diff for a given action and file
 _get_full_diff() {
-    local action="$1"  # "stage" or "unstage"
+    local action="$1"  # "stage", "unstage", or "discard"
     local file="$2"    # File path
 
     if [[ "$action" == "stage" ]]; then
         git diff "$file"
     elif [[ "$action" == "unstage" ]]; then
         git diff --cached "$file"
+    elif [[ "$action" == "discard" ]]; then
+        git diff "$file"
     else
-        echo "Invalid action. Use 'stage' or 'unstage'."
+        echo "Invalid action. Use 'stage', 'unstage', or 'discard'."
         return 1
     fi
 }
-
 
 # Helper function to get a hunk
 _get_hunk() {
@@ -34,7 +35,7 @@ _get_hunk() {
     local file="$3"
 
     local full_diff
-    full_diff=$(_get_full_diff "$action" "$file") || return 1
+    full_diff=$(_get_full_diff "$action" "$file") || (echo 'full_diff failed' && return 1)
 
     # Escape special characters in the header for sed
     local escaped_header
@@ -54,7 +55,7 @@ view_hunk() {
     local file="$3"
 
     local hunk
-    hunk=$(_get_hunk "$action" "$header" "$file") || return 1
+    hunk=$(_get_hunk "$action" "$header" "$file") || (echo 'hunk failed' && return 1)
 
     echo "$(echo "$hunk" | sed '/^@@/d')"
 }
@@ -76,12 +77,15 @@ process_hunk() {
     elif [[ "$action" == "unstage" ]]; then
         file_count=$(git diff --cached --name-only | wc -l | xargs)
         apply_command="git apply --cached --reverse"
+    elif [[ "$action" == "discard" ]]; then
+        file_count=$(git diff --name-only | wc -l | xargs)
+        apply_command="git apply --reverse"
     else
-        echo "Invalid action. Use 'stage' or 'unstage'."
+        echo "Invalid action. Use 'stage', 'unstage', or 'discard'."
         return 1
     fi
 
-    full_diff=$(_get_full_diff "$action" "$file") || return 1
+    full_diff=$(_get_full_diff "$action" "$file") || (echo 'full_diff failed' && return 1)
 
     # Extract the diff header
     local diff_header
@@ -89,7 +93,7 @@ process_hunk() {
 
     # Escape the header and extract the hunk
     local hunk
-    hunk=$(_get_hunk "$action" "$header" "$file") || return 1
+    hunk=$(_get_hunk "$action" "$header" "$file") || (echo 'hunk failed' && return 1)
 
     # process the hunk, by removing all lines that start with "@@", except the first line
     #   NR == 1 ||       # Always include the first line (line number 1).
