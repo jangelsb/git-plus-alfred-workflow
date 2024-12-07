@@ -350,9 +350,10 @@
                   icon: check.png
                   should_skip_smart_sort: true
                   command: |
-                    process_hunk "unstage" "[parent]" "[parent~2]"
+                    process_hunk "unstage" "[parent~2]" "[parent]"
 
                     case $? in
+                        0) echo "[reload]";;
                         1) echo "[reload~1]";;
                         2) echo "[reload~2]";;
                         3) echo "[reload~3]";;
@@ -426,9 +427,10 @@
                   icon: check.png
                   should_skip_smart_sort: true
                   command: |
-                    process_hunk "stage" "[parent]" "[parent~2]"
+                    process_hunk "stage" "[parent~2]" "[parent]"
 
                     case $? in
+                        0) echo "[reload]";;
                         1) echo "[reload~1]";;
                         2) echo "[reload~2]";;
                         3) echo "[reload~3]";;
@@ -439,9 +441,10 @@
                   icon: trash.png
                   should_skip_smart_sort: true
                   command: |
-                    process_hunk "discard" "[parent]" "[parent~2]"
+                    process_hunk "discard" "[parent~2]" "[parent]"
 
                     case $? in
+                        0) echo "[reload]";;
                         1) echo "[reload~1]";;
                         2) echo "[reload~2]";;
                         3) echo "[reload~3]";;

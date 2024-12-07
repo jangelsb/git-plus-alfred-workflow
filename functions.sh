@@ -76,16 +76,12 @@ view_hunk() {
 
 # Function to process a hunk (stage or unstage)
 # ACTION="stage"  # "stage" or "unstage"
-# HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
 # FILE="[parent~2]"   # File path
+# HEADER="[parent]"   # Optional, e.g., "@@ -17,6 +17,7 @@"
 process_hunk() {
     local action="$1"
-    local header="$2"
-    local file="$3"
-
-    echo "[$action]"
-    echo "[$header]"
-    echo "[$file]"
+    local file="$2"
+    local header="$3"
 
     # Determine the full diff and file count based on action
     local full_diff diff_header hunk file_count apply_command
@@ -105,7 +101,14 @@ process_hunk() {
 
     full_diff=$(_get_full_diff "$action" "$file") || (echo 'full_diff failed' && return 1)
     diff_header=$(echo "$full_diff" | head -n 4)
-    hunk=$(_get_hunk "$full_diff" "$header") || (echo 'hunk failed' && return 1)
+
+    local reload_modifier=0
+    if [[ -n "$header" ]]; then
+        hunk=$(_get_hunk "$full_diff" "$header") || { echo 'hunk failed'; return 1; }
+    else
+        hunk=$(_get_first_hunk "$full_diff") || { echo 'hunk failed'; return 1; }
+        reload_modifier=-1
+    fi
 
     # Create a patch file
     local patch_file="hunk.patch"
@@ -126,10 +129,10 @@ process_hunk() {
 
     # Determine the reload level
     if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
-        return 3
+        return $((3 + reload_modifier))
     elif [[ "$hunk_count" -eq 1 ]]; then
-        return 2
+        return $((2 + reload_modifier))
     else
-        return 1
+        return $((1 + reload_modifier))
     fi
 }
