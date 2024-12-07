@@ -25,9 +25,11 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.<br><br>If subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
 | `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
 | `should_use_values_as_inline_commands` | Bool | (Optional) Treats each value as its own command, at the current level and not at a sublevel. Only affects this command if there are `values` or `values_command`. |
+| `should_trim_values` | Bool | (Optional) This only applies to `values` & `values_command`. If this is `false`, the values will not trim the whitespace. The default is `true` (see `view hunk` command to see how to use this to display text inline in Alfred) |
 | `quicklookurl` | String | (Optional) This can be a URL to a file or website and when you press shift, Alfred will show a preview. |
 | `mods`         | Array     | (Optional) A list of mod objects, see [Mod fields](#mod-fields).            |
 | `subcommands`  | Array     | (Optional) A list of commands ([this table](#command-fields)).                    |
+| `should_skip_smart_sort` | Bool | (Optional) Tells Alfred to ignore this command from Alfred's smart search. If every command has this as `true` the commands will keep their order, otherwise they will show up below the items that Alfred prioritizes. This property gets passed down to the `values` & `values_command`. It is useful for showing items always in a specific order (see `status` command for an example of using this in a menu) |
 
 ### **Mod fields**
 | **Field**      | **Type**  | **Description**                                                                 |
