@@ -347,7 +347,7 @@
               subcommands:
                 - title: unstage hunk
                   subtitle: ' '
-                  icon: pick.png
+                  icon: check.png
                   should_skip_smart_sort: true
                   command: |
                     process_hunk "unstage" "[parent]" "[parent~2]"
@@ -423,7 +423,7 @@
               subcommands:
                 - title: stage hunk
                   subtitle: ' '
-                  icon: pick.png
+                  icon: check.png
                   should_skip_smart_sort: true
                   command: |
                     process_hunk "stage" "[parent]" "[parent~2]"
