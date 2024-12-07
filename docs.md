@@ -4,7 +4,7 @@
 
 ## **Overview**
 
-This config file allows you to execute complex Bash/Zsh commands, dynamically reference inputs and contexts, and create hierarchical command structures. It is highly customizable, supports dynamic reloading, and provides seamless integration with Git and other command-line utilities.
+This config file allows you to execute complex Zsh commands, dynamically reference inputs and contexts, and create hierarchical command structures. It is highly customizable, supports dynamic reloading, and provides seamless integration with Git and other command-line utilities.
 
 ---
 
@@ -21,9 +21,9 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | `subtitle`     | String    | (Optional) A short description of the command.<br><br>Use `' '` for an empty subtitle.                                |
 | `icon`         | String    | (Optional) A path to an image. For built in options, see [Icons](#icons).<br><br>Use `' '` for no image.      |
 | `command`      | String    | (Optional) The shell command to execute. Supports [dynamic placeholders](#dynamic-placeholders).                   |
-| `subtitle_command` | String  | (Optional) Runs this bash command in python and displays the output as the subtitle. This does not get passed down to subcommands or values (as it can get very slow). Supports [dynamic placeholders](#dynamic-placeholders).                   |
+| `subtitle_command` | String  | (Optional) Runs this zsh command in python and displays the output as the subtitle. This does not get passed down to subcommands or values (as it can get very slow). Supports [dynamic placeholders](#dynamic-placeholders).                   |
 | `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.<br><br>If subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
-| `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
+| `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this zsh command. Each new line is a different value. |
 | `should_use_values_as_inline_commands` | Bool | (Optional) Treats each value as its own command, at the current level and not at a sublevel. Only affects this command if there are `values` or `values_command`. |
 | `should_trim_values` | Bool | (Optional) This only applies to `values` & `values_command`. If this is `false`, the values will not trim the whitespace. The default is `true` (see `view hunk` command to see how to use this to display text inline in Alfred) |
 | `quicklookurl` | String | (Optional) This can be a URL to a file or website and when you press shift, Alfred will show a preview. |

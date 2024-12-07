@@ -58,6 +58,10 @@ For detailed documentation on the commands, see [docs.md](docs.md).
   - Change the inline config or add another config file in your setup
   - Create specific configs for certain repositories using `config` from Step 1
 
+- **Add custom zsh commands:** 
+  - `functions.sh` is implicilty imported before each command that is run. So you can easily offload common commands for better reusability 
+  - You can copy [functions.sh](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/functions.sh) and tweak it or you can even link to your own file 
+
 
 ---
 
