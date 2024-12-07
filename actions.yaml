@@ -572,16 +572,29 @@
       subtitle_command: |
         untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
         echo "$untracked file(s)"
-      command: |
-        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
-        git add '[input]'
-        if [ "$untracked" -eq 1 ]; then
+
+      subcommands:
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
             echo "[reload~1]"
-        else
-            echo "[reload]"
-        fi
-      values_command: |
-        git ls-files --others --exclude-standard 
+
+        - title: untracked files
+          should_skip_smart_sort: true
+          should_use_values_as_inline_commands: true
+          values_command: |
+            git ls-files --others --exclude-standard
+          subtitle: 'stage file'
+          command: |
+            untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+            git add '[input]'
+            if [ "$untracked" -eq 1 ]; then
+                echo "[reload~1]"
+            else
+                echo "[reload]"
+            fi
 
 
 # --------------------
