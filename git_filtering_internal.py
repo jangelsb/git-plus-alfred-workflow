@@ -206,11 +206,12 @@ def change_directory(location):
 
 def run_command(command):
     try:
-        # result = subprocess.run(["zsh", "-c", command], capture_output=True, text=True, check=True)
+
         if functions_path:
             command = f"source '{functions_path}';\n{command}"
 
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
+        result = subprocess.run(["zsh", "-c", command], capture_output=True, text=True, check=True)
+        # result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
         return f"Error executing {command}: {e.stderr}"

@@ -7,6 +7,16 @@
   icon: open.png
   command: |
     sm .
+
+- title: zsh test
+  subtitle: zsh only command
+  subcommands:
+    - title: inline
+      should_use_values_as_inline_commands: true
+      values_command: |
+        echo **/*.swift(N)
+
+
 # --------------------
 # These are commands that should work but I don't feel are ready for prime time / full roll out yet
 # --------------------
