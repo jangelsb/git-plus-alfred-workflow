@@ -255,7 +255,7 @@
         - title: easy commit
           icon: up.big.png
           subtitle_command: |
-            message=$(git log -1 --skip=1 --pretty=%B | xargs)
+            message=$(git log -1 --skip=0 --pretty=%B | xargs)
             echo "commit using previous message: $message"
           command: |
             git commit --reuse-message=HEAD
@@ -266,10 +266,26 @@
                 git commit --reuse-message=HEAD
                 git push
 
+        - title: easy message
+          icon: up.big.png
+          subtitle_command: |
+            header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+            echo "commit by prepending previous header: $header"
+          command: |
+            header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+            git commit -m "$header"$'\n[input]'
+          mods:
+            - subtitle: 'and push'
+              mod: cmd
+              command: |
+                header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+                git commit -m "$header"$'\n[input]'
+                git push
+
         - title: amend
           icon: up.big.png
           subtitle_command: |
-            message=$(git log -1 --skip=1 --pretty=%B | xargs)
+            message=$(git log -1 --skip=0 --pretty=%B | xargs)
             echo "amend previous commit: $message"
           command: |
             git commit --amend -C HEAD
