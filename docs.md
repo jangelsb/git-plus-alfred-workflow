@@ -74,9 +74,12 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | <img src="./icons/pencil.png" width="64" alt="pencil.png">                  | `pencil.png`          | Represents editing or writing.  |
 | <img src="./icons/open.png" width="64" alt="open.png">                      | `open.png`            | Represents opening a file or folder. |
 | <img src="./icons/trash.png" width="64" alt="trash.png">                    | `trash.png`           | Represents deletion or removal. |
+| <img src="./icons/up.small.png" width="64" alt="up.small.png">              | `up.small.png`    | Indicates a small upward action. |
 | <img src="./icons/up.big.png" width="64" alt="up.big.png">                  | `up.big.png`          | Indicates a large upward action. |
 | <img src="./icons/fork.png" width="64" alt="fork.png">                      | `fork.png`            | Represents branching or forking. |
 | <img src="./icons/copy.png" width="64" alt="copy.png">                      | `copy.png`            | Represents copying or duplication. |
+| <img src="./icons/back.png" width="64" alt="back.png">                      | `back.png`            | Represents going back. |
+| <img src="./icons/check.png" width="64" alt="check.png">                    | `check.png`           | Represents a confirmation. |
 
 
 ---
