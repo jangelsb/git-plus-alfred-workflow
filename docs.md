@@ -42,7 +42,7 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 ### **Dynamic Placeholders**
 | **Placeholder**     | **Description**                                                                                     |
 |----------------------|-----------------------------------------------------------------------------------------------------|
-| `[input]`           | User-provided input at runtime. These characters are escaped automatically: `&#96;`, `&aposs;`, `&quot;` `$`             |
+| `[input]`           | User-provided input at runtime. These characters are escaped automatically: &#96;, &aposs;, &quot; `$`             |
 | `[input_snake_case]`| Same as `[input]`, but converted to `snake_case`.                                                   |
 | `[input_new_lines]`|  Same as `[input]`, but converts ` \ ` (space before and after) to a new line. Very helpful for doing multiline content in Alfred. |
 | `[parent]`          | Refers to the immediate parent command.                                                             |
