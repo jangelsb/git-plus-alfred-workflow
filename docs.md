@@ -18,8 +18,8 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | **Field**      | **Type**  | **Description**                                                                 |
 |-----------------|-----------|---------------------------------------------------------------------------------|
 | `title`        | String    | The name of the command as displayed in Alfred.                                |
-| `subtitle`     | String    | (Optional) A short description of the command.                                 |
-| `icon`         | String    | (Optional) A path to an image. For built in options, see [Icons](#icons).      |
+| `subtitle`     | String    | (Optional) A short description of the command.<br><br>Use `' '` for an empty subtitle.                                |
+| `icon`         | String    | (Optional) A path to an image. For built in options, see [Icons](#icons).<br><br>Use `' '` for no image.      |
 | `command`      | String    | (Optional) The shell command to execute. Supports [dynamic placeholders](#dynamic-placeholders).                   |
 | `subtitle_command` | String  | (Optional) Runs this bash command in python and displays the output as the subtitle. This does not get passed down to subcommands or values (as it can get very slow). Supports [dynamic placeholders](#dynamic-placeholders).                   |
 | `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.<br><br>If subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
