@@ -372,7 +372,7 @@
                   should_skip_smart_sort: true
                   should_trim_values: false
                   values_command: |
-                    view_hunk "unstage" "[parent]" "[parent~2]"
+                    view_hunk "unstage" "[parent~2]" "[parent]"
 
             - title: back
               subtitle: 'go back a level (bb)'
@@ -462,7 +462,7 @@
                   should_use_values_as_inline_commands: true
                   should_trim_values: false
                   values_command: |
-                    view_hunk "stage" "[parent]" "[parent~2]"
+                    view_hunk "stage" "[parent~2]" "[parent]"
 
             - title: back
               subtitle: 'go back a level (bb)'

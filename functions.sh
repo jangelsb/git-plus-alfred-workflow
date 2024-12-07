@@ -27,7 +27,6 @@ _get_full_diff() {
     fi
 }
 
-# Helper function to get a hunk
 _get_first_hunk() {
     local full_diff="$1"
 
@@ -40,6 +39,7 @@ _get_first_hunk() {
   '
 }
 
+# Helper function to get a hunk
 _get_hunk() {
     local full_diff="$1"
     local header="$2"
@@ -52,21 +52,27 @@ _get_hunk() {
 }
 
 # Function to view a hunk (excluding @@ lines)
-# ACTION="stage"  # "stage" or "unstage"
-# HEADER="[parent]"  # e.g., "@@ -17,6 +17,7 @@"
+# ACTION="stage"      # "stage" or "unstage"
 # FILE="[parent~2]"   # File path
+# HEADER="[parent]"   # Optional, e.g., "@@ -17,6 +17,7 @@"
 view_hunk() {
     local action="$1"
-    local header="$2"
-    local file="$3"
+    local file="$2"
+    local header="$3"
 
     local full_diff hunk
-    full_diff=$(_get_full_diff "$action" "$file") || (echo 'full_diff failed' && return 1)
+    full_diff=$(_get_full_diff "$action" "$file") || { echo 'full_diff failed'; return 1; }
 
-    hunk=$(_get_hunk "$full_diff" "$header") || (echo 'hunk failed' && return 1)
+    if [[ -n "$header" ]]; then
+        hunk=$(_get_hunk "$full_diff" "$header") || { echo 'hunk failed'; return 1; }
+    else
+        hunk=$(_get_first_hunk "$full_diff") || { echo 'hunk failed'; return 1; }
+    fi
 
-    echo "$(echo "$hunk" | sed '/^@@/d')"
+    # Remove all lines that start with @@
+    echo "$hunk" | sed '/^@@/d'
 }
+
 
 # Function to process a hunk (stage or unstage)
 # ACTION="stage"  # "stage" or "unstage"
