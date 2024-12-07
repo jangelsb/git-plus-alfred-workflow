@@ -123,6 +123,10 @@
         - title: rebase
           icon: rebase.png
           command: |
+            git stash
+            git checkout "[parent]"
+            git pull
+            git checkout -
             git rebase "[parent]"
 
         - title: rebase --onto
@@ -131,6 +135,10 @@
           subcommands:
             - title: start hash
               command: |
+                git stash
+                git checkout "[parent~3]"
+                git pull
+                git checkout -
                 git rebase --onto "[parent~3]" "[input]"
               values_command: |
                 git log --pretty=format:"%H"
@@ -186,7 +194,6 @@
 
 - title: status
   icon: info.png
-  should_skip_smart_sort: true
   subtitle_command: |
    branch=$(git branch --show-current)
    modified=$(git diff --name-only | wc -l | xargs)
@@ -231,6 +238,7 @@
 
         - title: back
           subtitle: 'go back a level (bb)'
+          icon: back.png
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
@@ -243,7 +251,7 @@
         - title: message
           icon: up.big.png
           command: |
-            git commit -m "[input]"
+            git commit -m $'[input]'
           mods:
             - subtitle: and push
               mod: cmd
@@ -279,7 +287,7 @@
               mod: cmd
               command: |
                 header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
-                git commit -m "$header"$'\n[input]'
+                git commit -m "$header"$'\n'"[input]"
                 git push
 
         - title: amend
@@ -298,6 +306,7 @@
 
         - title: back
           subtitle: 'go back a level (bb)'
+          icon: back.png
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
@@ -351,6 +360,7 @@
 
                 - title: back
                   subtitle: 'go back a level (bb)'
+                  icon: back.png
                   should_skip_smart_sort: true
                   command: |
                     echo "[reload~1]"
@@ -366,11 +376,13 @@
 
             - title: back
               subtitle: 'go back a level (bb)'
+              icon: back.png
               should_skip_smart_sort: true
               command: |
                 echo "[reload~1]"
         - title: back
           subtitle: 'go back a level (bb)'
+          icon: back.png
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
@@ -437,6 +449,7 @@
 
                 - title: back
                   subtitle: 'go back a level (bb)'
+                  icon: back.png
                   should_skip_smart_sort: true
                   command: |
                     echo "[reload~1]"
@@ -453,6 +466,7 @@
 
             - title: back
               subtitle: 'go back a level (bb)'
+              icon: back.png
               should_skip_smart_sort: true
               command: |
                 echo "[reload~1]"
@@ -460,6 +474,7 @@
 
         - title: back
           subtitle: 'go back a level (bb)'
+          icon: back.png
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
