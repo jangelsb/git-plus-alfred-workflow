@@ -251,13 +251,13 @@
         - title: message
           icon: up.big.png
           command: |
-            git commit -m $'[input]'
+            git commit -m "[input_new_lines]"
           mods:
             - subtitle: and push
               mod: cmd
               command: |
                 branch=$(git branch --show-current);
-                git commit -m "[input]"
+                git commit -m "[input_new_lines]"
                 git push -u origin $branch
 
         - title: easy commit
@@ -281,13 +281,13 @@
             echo "commit by prepending previous header: $header"
           command: |
             header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
-            git commit -m "$header"$'\n[input]'
+            git commit -m "$header"$'\n'"[input_new_lines]"
           mods:
             - subtitle: 'and push'
               mod: cmd
               command: |
                 header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
-                git commit -m "$header"$'\n'"[input]"
+                git commit -m "$header"$'\n'"[input_new_lines]"
                 git push
 
         - title: amend

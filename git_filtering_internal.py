@@ -284,6 +284,14 @@ def create_modifier_list(cmd, location, param=None):
     ]
 
 def process_action(action, param, title, secondaryAction=None):
+    def escape_param(param):
+        if param:
+            param = param.replace('`', '\\`')  # Escape back tick
+            param = param.replace('"', '\\"')  # Escape double quotes
+            param = param.replace("'", "\\'")  # Escape single quotes
+            param = param.replace('$', '\\$')  # Escape dollar sign
+        return param
+
     def replace_parent_action(action):
         # Find all occurrences of [parent] or [parent~n]
         matches = re.finditer(r"\[parent(?:~(\d+))?\]", action)
@@ -295,11 +303,13 @@ def process_action(action, param, title, secondaryAction=None):
 
     if secondaryAction:
         value = run_command(secondaryAction).strip()
-        action = action.replace("[input]", value)
+        action = action.replace("[input]", escape_param(value))
         action = replace_parent_action(action)
         action = action.replace("[title]", title.strip())
     else:
         if isinstance(action, str):
+            param = escape_param(param)
+            action = action.replace('[input_new_lines]', param.replace(' \ ', '\n')) if param else action
             action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
             action = action.replace('[input]', param) if param else action
             action = replace_parent_action(action)
@@ -510,7 +520,7 @@ def create_commands_from_yaml(yaml_data):
             if should_use_values_as_inline_commands == False or subcommands:
                 icon = icon if icon else "list.png"
 
-        elif any(inp in action for inp in ['[input]', '[input_snake_case]']):
+        elif any(inp in action for inp in ['[input]', '[input_snake_case]', '[input_new_lines]']):
             command_type = CommandType.NEEDS_PARAM
             icon = icon if icon else "pencil.png"
 
