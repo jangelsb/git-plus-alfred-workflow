@@ -6,7 +6,6 @@ git_checkout() {
     git stash; git checkout "$1"; git pull;
 }
 
-
 ################################################################################
 ##############################     DIFF LOGIC     ##############################
 ################################################################################
@@ -15,6 +14,9 @@ git_checkout() {
 _get_full_diff() {
     local action="$1"  # "stage", "unstage", or "discard"
     local file="$2"    # File path
+
+#    echo "[$action]"
+#    echo "[$header]"
 
     if [[ "$action" == "stage" ]]; then
         git diff "$file"
@@ -69,6 +71,10 @@ process_hunk() {
     local header="$2"
     local file="$3"
 
+#    echo "[$action]"
+#    echo "[$header]"
+#    echo "[$file]"
+
     # Determine the full diff and file count based on action
     local full_diff file_count apply_command
     if [[ "$action" == "stage" ]]; then
@@ -87,18 +93,38 @@ process_hunk() {
 
     full_diff=$(_get_full_diff "$action" "$file") || (echo 'full_diff failed' && return 1)
 
+#    echo "😎 Full Diff"
+#    echo "$full_diff"
+#    echo ""
+#    echo ""
+
     # Extract the diff header
     local diff_header
-    diff_header=$(echo "$full_diff" | sed -n "/^diff --git a\/$file b\/$file/,/^@@/p" | sed '$d' | sed '/^$/d')
+    diff_header=$(echo "$full_diff" | sed -n "/^diff --git a\//,/^@@/p" | sed '$d' | sed '/^$/d')
+
+#    echo "😎 diff_header"
+#    echo "$diff_header"
+#    echo ""
+#    echo ""
 
     # Escape the header and extract the hunk
     local hunk
     hunk=$(_get_hunk "$action" "$header" "$file") || (echo 'hunk failed' && return 1)
 
+#    echo "😎HUNK"
+#    echo "$hunk"
+#    echo ""
+#    echo ""
+
     # process the hunk, by removing all lines that start with "@@", except the first line
     #   NR == 1 ||       # Always include the first line (line number 1).
     #   !/^@@/           # For all other lines, include them only if they do NOT start with "@@".
     hunk=$(echo "$hunk" | awk 'NR==1 || !/^@@/')
+
+#    echo "😎HUNK after process"
+#    echo "$hunk"
+#    echo ""
+#    echo ""
 
     # Create a patch file
     local patch_file="hunk.patch"
@@ -107,8 +133,11 @@ process_hunk() {
         echo "$hunk"
     } > "$patch_file"
 
+    echo "😎PATCH"
+    cat $patch_file
+
     # Apply the patch using the determined command
-    $apply_command "$patch_file"
+    eval "$apply_command \"$patch_file\""
 
     # Cleanup
     rm "$patch_file"
@@ -126,4 +155,3 @@ process_hunk() {
         return 1
     fi
 }
-
