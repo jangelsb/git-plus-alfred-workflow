@@ -44,7 +44,7 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 |----------------------|-----------------------------------------------------------------------------------------------------|
 | `[input]`           | User-provided input at runtime. These characters are escaped automatically: backtick, single quote, double quote, and `$`             |
 | `[input_snake_case]`| Same as `[input]`, but converted to `snake_case`.                                                   |
-| `[input_new_lines]`|  Same as `[input]`, but converts `  \  ` (space before and after) to a new line. Very helpful for doing multiline content in Alfred. |
+| `[input_new_lines]`|  Same as `[input]`, but converts `  \  ` to a new line (there is a space before and after the `\`). This is very helpful for doing multiline text in Alfred. |
 | `[parent]`          | Refers to the immediate parent command.                                                             |
 | `[parent~n]`        | References `n` levels back in the parent hierarchy.                                                 |
 | `[title]`           | Title of the command.                                                                                |
