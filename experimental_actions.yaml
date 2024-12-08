@@ -66,6 +66,29 @@
                       echo ''
                       git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
                     } | pbcopy
+            
+            - title: copy diff for branch (ver 2)
+              icon: copy.png
+              command: |
+                branch="[parent]"
+                #                branch=$(git branch --show-current)
+
+                # List all branches sorted by commit date, excluding the current branch
+                potential_parents=$(git for-each-ref --sort=-committerdate refs/heads/ \
+                  --format='%(refname:short)' | grep -v "$branch")
+                
+                # Automatically pick the first parent or prompt the user
+                parent_branch=$(echo "$potential_parents" | head -n 1)
+
+                echo "Detected parent branch: $parent_branch"
+                echo "If incorrect, choose from the following:"
+                echo "$potential_parents"
+                
+                # Find the merge-base
+                merge_base=$(git merge-base "$branch" "$parent_branch")
+                
+                # Extract commit messages
+                git log --reverse --pretty=format:"%B" "$merge_base..$branch" | pbcopy
 
         - title: local branches
           values_command: |
