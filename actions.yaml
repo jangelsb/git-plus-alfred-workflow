@@ -244,7 +244,7 @@
       should_skip_smart_sort: true
       subcommands:
         - title: message
-          icon: up.big.png
+          icon: pencil.png
           command: |
             git commit -m "[input_new_lines]"
           mods:
@@ -270,7 +270,7 @@
                 git push
 
         - title: easy message
-          icon: up.big.png
+          icon: pencil.png
           subtitle_command: |
             header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
             echo "commit by prepending previous header: $header"
