@@ -200,12 +200,7 @@
    untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
    staged=$(git diff --cached --name-only | wc -l | xargs)
   
-   if [ "$modified" -eq 0 ] && [ "$untracked" -eq 0 ] && [ "$staged" -eq 0 ]
-   then 
-     echo "branch: ${branch}; clean"
-   else 
-     echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
-   fi
+   echo "staged: $staged, modified: $modified, untracked: $untracked -- ${branch}"
   subcommands:
     - title: current branch
       values_command: |
