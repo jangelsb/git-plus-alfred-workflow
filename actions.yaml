@@ -392,6 +392,53 @@
         echo "$modified file(s)"
 
       subcommands:
+
+        - title: all
+          subcommands:
+            - title: stage hunk
+              subtitle: ' '
+              icon: check.png
+              should_skip_smart_sort: true
+              command: |
+                process_hunk "stage"
+
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                    2) echo "[reload~2]";;
+                    3) echo "[reload~3]";;
+                esac
+
+            - title: discard hunk
+              subtitle: ' '
+              icon: trash.png
+              should_skip_smart_sort: true
+              command: |
+                process_hunk "discard"
+
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                    2) echo "[reload~2]";;
+                    3) echo "[reload~3]";;
+                esac
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+
+            - title: view latest hunk
+              icon: ' '
+              subtitle: ' '
+              values_command: |
+                view_hunk "stage"
+              should_use_values_as_inline_commands: true
+              should_skip_smart_sort: true
+              should_trim_values: false
+
         - title: modified files
           should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
@@ -410,51 +457,6 @@
                 fi
 
           subcommands:
-            - title: all
-              subcommands:
-                - title: stage hunk
-                  subtitle: ' '
-                  icon: check.png
-                  should_skip_smart_sort: true
-                  command: |
-                    process_hunk "stage" "[parent~2]"
-
-                    case $? in
-                        0) echo "[reload]";;
-                        1) echo "[reload~1]";;
-                        2) echo "[reload~2]";;
-                        3) echo "[reload~3]";;
-                    esac
-
-                - title: discard hunk
-                  subtitle: ' '
-                  icon: trash.png
-                  should_skip_smart_sort: true
-                  command: |
-                    process_hunk "discard" "[parent~2]"
-
-                    case $? in
-                        0) echo "[reload]";;
-                        1) echo "[reload~1]";;
-                        2) echo "[reload~2]";;
-                        3) echo "[reload~3]";;
-                    esac
-
-                - title: back
-                  subtitle: 'go back a level (bb)'
-                  icon: back.png
-                  should_skip_smart_sort: true
-                  command: |
-                    echo "[reload~1]"
-
-                - title: view latest hunk
-                  icon: ' '
-                  subtitle: ' '
-                  values_command: |
-                    view_hunk "stage" "[parent~2]"
-                  should_use_values_as_inline_commands: true
-                  should_skip_smart_sort: true
-                  should_trim_values: false
 
             - title: list hunks
               subtitle: "view hunk"

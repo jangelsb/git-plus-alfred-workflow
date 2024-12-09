@@ -11,9 +11,29 @@ git_checkout() {
 ################################################################################
 
 # Helper function to get the full diff for a given action and file
+_get_first_file() {
+    local action="$1"  # "stage", "unstage", or "discard"
+
+    if [[ "$action" == "stage" ]]; then
+        git diff --name-only | head -n 1
+    elif [[ "$action" == "unstage" ]]; then
+        git diff --cached --name-only | head -n 1
+    elif [[ "$action" == "discard" ]]; then
+        git diff --name-only | head -n 1
+    else
+        echo "Invalid action. Use 'stage', 'unstage', or 'discard'."
+        return 1
+    fi
+}
+
+# Helper function to get the full diff for a given action and file
 _get_full_diff() {
     local action="$1"  # "stage", "unstage", or "discard"
     local file="$2"    # File path
+
+    if [[ -z "$file" ]]; then
+        file=$(_get_first_file "$action") || { echo 'get first file failed'; return 1; }
+    fi
 
     if [[ "$action" == "stage" ]]; then
         git diff "$file"
@@ -53,7 +73,7 @@ _get_hunk() {
 
 # Function to view a hunk (excluding @@ lines)
 # ACTION="stage"      # "stage" or "unstage"
-# FILE="[parent~2]"   # File path
+# FILE="[parent~2]"   # Optional, File path else uses the first file
 # HEADER="[parent]"   # Optional, e.g., "@@ -17,6 +17,7 @@"
 view_hunk() {
     local action="$1"
@@ -76,8 +96,8 @@ view_hunk() {
 
 # Function to process a hunk (stage or unstage)
 # ACTION="stage"  # "stage" or "unstage"
-# FILE="[parent~2]"   # File path
-# HEADER="[parent]"   # Optional, e.g., "@@ -17,6 +17,7 @@"
+# FILE="[parent~2]"   # Optional, File path else uses the first file
+# HEADER="[parent]"   # Optional, e.g., "@@ -17,6 +17,7 @@" else uses first hunk
 process_hunk() {
     local action="$1"
     local file="$2"
@@ -102,12 +122,10 @@ process_hunk() {
     full_diff=$(_get_full_diff "$action" "$file") || (echo 'full_diff failed' && return 1)
     diff_header=$(echo "$full_diff" | head -n 4)
 
-    local reload_modifier=0
     if [[ -n "$header" ]]; then
         hunk=$(_get_hunk "$full_diff" "$header") || { echo 'hunk failed'; return 1; }
     else
         hunk=$(_get_first_hunk "$full_diff") || { echo 'hunk failed'; return 1; }
-        reload_modifier=-1
     fi
 
     # Create a patch file
@@ -128,11 +146,25 @@ process_hunk() {
     hunk_count=$(echo "$full_diff" | grep -c '^@@')
 
     # Determine the reload level
-    if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
-        return 3 # ((3 + reload_modifier))
-    elif [[ "$hunk_count" -eq 1 ]]; then
-        return 2 #$((2 + reload_modifier))
+    if [[ -n "$header" ]]; then
+
+      if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
+          return 3
+      elif [[ "$hunk_count" -eq 1 ]]; then
+          return 2
+      else
+          return 1
+      fi
+
     else
-        return $((1 + reload_modifier))
+
+      # viewing all hunks, only go back 3, if no more hunks
+      if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
+          return 2
+      else
+          return 0
+      fi
+
     fi
+
 }
