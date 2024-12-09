@@ -104,6 +104,13 @@
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+
 
     - title: local branches
       values_command: |
@@ -158,6 +165,13 @@
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+
 
     - title: remote branches
       values_command: |
@@ -184,10 +198,23 @@
         - title: copy branch name
           icon: copy.png
           command: |
-            echo "[parent]" | xargs echo -n | pbcopy 
+            echo "[parent]" | xargs echo -n | pbcopy
+
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
             
 
 
+    - title: back
+      subtitle: 'go back a level (bb)'
+      icon: back.png
+      should_skip_smart_sort: true
+      command: |
+        echo "[reload~1]"
 # --------------------
 # STATUS MENU
 # --------------------
