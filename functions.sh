@@ -129,9 +129,9 @@ process_hunk() {
 
     # Determine the reload level
     if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
-        return $((3 + reload_modifier))
+        return 3 # ((3 + reload_modifier))
     elif [[ "$hunk_count" -eq 1 ]]; then
-        return $((2 + reload_modifier))
+        return 2 #$((2 + reload_modifier))
     else
         return $((1 + reload_modifier))
     fi
