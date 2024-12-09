@@ -79,12 +79,15 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | <img src="./icons/trash.png" width="64" alt="trash.png">                    | `trash.png`           | Represents deletion or removal. |
 | <img src="./icons/up.small.png" width="64" alt="up.small.png">              | `up.small.png`    | Indicates a small upward action. |
 | <img src="./icons/up.big.png" width="64" alt="up.big.png">                  | `up.big.png`          | Indicates a large upward action. |
+| <img src="./icons/left.big.png" width="64" alt="left.big.png">                  | `left.big.png`          | Indicates a large left action. |
+| <img src="./icons/right.big.png" width="64" alt="right.big.png">                  | `right.big.png`          | Indicates a large right action. |
 | <img src="./icons/fork.png" width="64" alt="fork.png">                      | `fork.png`            | Represents branching or forking. |
 | <img src="./icons/copy.png" width="64" alt="copy.png">                      | `copy.png`            | Represents copying or duplication. |
 | <img src="./icons/back.png" width="64" alt="back.png">                      | `back.png`            | Represents going back. |
+| <img src="./icons/back.line.png" width="64" alt="back.line.png">                      | `back.line.png`            | Represents going back to root. |
 | <img src="./icons/check.png" width="64" alt="check.png">                    | `check.png`           | Represents a confirmation. |
-| <img src="./icons/plus.png" width="64" alt="check.png">                    | `plus.png`           | Represents a additive action. |
-| <img src="./icons/minus.png" width="64" alt="check.png">                    | `minus.png`           | Represents a subtraction action. |
+| <img src="./icons/plus.png" width="64" alt="plus.png">                    | `plus.png`           | Represents a additive action. |
+| <img src="./icons/minus.png" width="64" alt="minus.png">                    | `minus.png`           | Represents a subtraction action. |
 
 
 ---
