@@ -314,6 +314,39 @@
         echo "$staged file(s)"
 
       subcommands:
+        - title: all
+          subcommands:
+            - title: unstage hunk
+              subtitle_command: |
+                _get_first_file "unstage"
+              icon: check.png
+              should_skip_smart_sort: true
+              command: |
+                process_hunk "unstage"
+
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                    2) echo "[reload~2]";;
+                    3) echo "[reload~3]";;
+                esac
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+
+            - title: view latest hunk
+              icon: ' '
+              subtitle: ' '
+              values_command: |
+                view_hunk "unstage"
+              should_use_values_as_inline_commands: true
+              should_skip_smart_sort: true
+              should_trim_values: false
+
         - title: staged files
           should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
