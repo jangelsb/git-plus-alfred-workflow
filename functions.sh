@@ -10,16 +10,32 @@ git_checkout() {
 ##############################     DIFF LOGIC     ##############################
 ################################################################################
 
+# Runs git diff command for `staged`, `modified`, and `untracked` files
+diff_command() {
+    local type="$1"  # "staged", "modified", or "untracked"
+
+    if [[ "$type" == "staged" ]]; then
+        git diff --cached --name-only
+    elif [[ "$type" == "modified" ]]; then
+        git diff --name-only
+    elif [[ "$type" == "untracked" ]]; then
+        git ls-files --others --exclude-standard
+    else
+        echo "Invalid type. Use 'staged', 'modified', or 'untracked'."
+        return 1
+    fi
+}
+
 # Helper function to get the full diff for a given action and file
 _get_first_file() {
     local action="$1"  # "stage", "unstage", or "discard"
 
     if [[ "$action" == "stage" ]]; then
-        git diff --name-only | head -n 1
+        diff_command 'modified' | head -n 1
     elif [[ "$action" == "unstage" ]]; then
-        git diff --cached --name-only | head -n 1
+        diff_command 'staged' | head -n 1
     elif [[ "$action" == "discard" ]]; then
-        git diff --name-only | head -n 1
+        diff_command 'modified' | head -n 1
     else
         echo "Invalid action. Use 'stage', 'unstage', or 'discard'."
         return 1
@@ -106,13 +122,13 @@ process_hunk() {
     # Determine the full diff and file count based on action
     local full_diff diff_header hunk file_count apply_command
     if [[ "$action" == "stage" ]]; then
-        file_count=$(git diff --name-only | wc -l | xargs)
+        file_count=$(diff_command 'modified' | wc -l | xargs)
         apply_command="git apply --cached"
     elif [[ "$action" == "unstage" ]]; then
-        file_count=$(git diff --cached --name-only | wc -l | xargs)
+        file_count=$(diff_command 'staged' | wc -l | xargs)
         apply_command="git apply --cached --reverse"
     elif [[ "$action" == "discard" ]]; then
-        file_count=$(git diff --name-only | wc -l | xargs)
+        file_count=$(diff_command 'modified' | wc -l | xargs)
         apply_command="git apply --reverse"
     else
         echo "Invalid action. Use 'stage', 'unstage', or 'discard'."

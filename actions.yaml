@@ -196,9 +196,9 @@
   icon: info.png
   subtitle_command: |
    branch=$(git branch --show-current)
-   modified=$(git diff --name-only | wc -l | xargs)
-   untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
-   staged=$(git diff --cached --name-only | wc -l | xargs)
+   modified=$(diff_command 'modified' | wc -l | xargs)
+   untracked=$(diff_command 'untracked' | wc -l | xargs)
+   staged=$(diff_command 'staged' | wc -l | xargs)
   
    echo "staged: $staged, modified: $modified, untracked: $untracked -- ${branch}"
   subcommands:
@@ -310,7 +310,7 @@
     - title: staged
       should_skip_smart_sort: true
       subtitle_command: |
-        staged=$(git diff --cached --name-only | wc -l | xargs)
+        staged=$(diff_command 'staged' | wc -l | xargs)
         echo "$staged file(s)"
 
       subcommands:
@@ -351,13 +351,13 @@
           should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: |
-            git diff --cached --name-only
+            diff_command 'staged'
 
           mods:
             - subtitle: unstage file
               mod: cmd
               command: |
-                staged=$(git diff --cached --name-only | wc -l | xargs)
+                staged=$(diff_command 'staged' | wc -l | xargs)
                 git reset '[title]'
                 if [ "$staged" -eq 1 ]; then
                     echo "[reload~1]"
@@ -421,7 +421,7 @@
     - title: modified
       should_skip_smart_sort: true
       subtitle_command: |
-        modified=$(git diff --name-only | wc -l | xargs)
+        modified=$(diff_command 'modified' | wc -l | xargs)
         echo "$modified file(s)"
 
       subcommands:
@@ -477,12 +477,12 @@
           should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: |
-            git diff --name-only # git status --short
+            diff_command 'modified' # git status --short
           mods:
             - subtitle: stage file
               mod: cmd
               command: |
-                modified=$(git diff --name-only | wc -l | xargs)
+                modified=$(diff_command 'modified' | wc -l | xargs)
                 git add '[title]'
                 if [ "$modified" -eq 1 ]; then
                     echo "[reload~1]"
