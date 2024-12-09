@@ -258,6 +258,13 @@
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
+        - title: copy latest commit
+          icon: copy.png
+          subtitle_command: |
+             git rev-parse HEAD | xargs echo -n
+          command: |
+            git rev-parse HEAD | xargs echo -n | pbcopy
+
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
