@@ -184,3 +184,32 @@ process_hunk() {
     fi
 
 }
+
+# Function to process a file (stage or unstage)
+# ACTION="stage"      # "stage" or "unstage" or "untracked"
+# FILE="[parent~2]"   # File path else uses the first file
+git_process_file() {
+    local action="$1"
+    local file="$2"
+
+    local file_count
+    if [[ "$action" == "stage" ]]; then
+        file_count=$(diff_command 'modified' | wc -l | xargs)
+        git add "$file"
+    elif [[ "$action" == "unstage" ]]; then
+        file_count=$(diff_command 'staged' | wc -l | xargs)
+        git reset "$file"
+    elif [[ "$action" == "untracked" ]]; then
+        file_count=$(diff_command 'untracked' | wc -l | xargs)
+        git add "$file"
+    else
+        echo "Invalid action. Use 'stage' or 'unstage''."
+        return 1
+    fi
+
+    if [ "$file_count" -eq 1 ]; then
+        return 1
+    else
+        return 0
+    fi
+}

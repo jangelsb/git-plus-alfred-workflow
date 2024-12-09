@@ -357,13 +357,12 @@
             - subtitle: unstage file
               mod: cmd
               command: |
-                staged=$(diff_command 'staged' | wc -l | xargs)
-                git reset '[title]'
-                if [ "$staged" -eq 1 ]; then
-                    echo "[reload~1]"
-                else
-                    echo "[reload]"
-                fi
+                git_process_file "unstage" "[title]"
+                
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                esac
 
           subcommands:
             - title: list hunks
@@ -482,13 +481,12 @@
             - subtitle: stage file
               mod: cmd
               command: |
-                modified=$(diff_command 'modified' | wc -l | xargs)
-                git add '[title]'
-                if [ "$modified" -eq 1 ]; then
-                    echo "[reload~1]"
-                else
-                    echo "[reload]"
-                fi
+                git_process_file "stage" "[title]"
+                
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                esac
 
           subcommands:
 
@@ -580,13 +578,12 @@
             git ls-files --others --exclude-standard
           subtitle: 'stage file'
           command: |
-            untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
-            git add '[input]'
-            if [ "$untracked" -eq 1 ]; then
-                echo "[reload~1]"
-            else
-                echo "[reload]"
-            fi
+            git_process_file "untracked" "[title]"
+            
+            case $? in
+                0) echo "[reload]";;
+                1) echo "[reload~1]";;
+            esac
 
 
 # --------------------
