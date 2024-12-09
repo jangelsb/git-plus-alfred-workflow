@@ -396,7 +396,8 @@
         - title: all
           subcommands:
             - title: stage hunk
-              subtitle: ' '
+              subtitle_command: |
+                _get_first_file "stage"
               icon: check.png
               should_skip_smart_sort: true
               command: |
