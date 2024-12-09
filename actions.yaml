@@ -341,6 +341,16 @@
             echo "[reload~1]"
 
 
+    - title: history
+      should_skip_smart_sort: true
+      subcommands:
+        - title: view
+          should_use_values_as_inline_commands: true
+          should_skip_smart_sort: true
+          should_trim_values: false
+          values_command: |
+            git log -n 50 --oneline --graph
+
     - title: staged
       should_skip_smart_sort: true
       subtitle_command: |
