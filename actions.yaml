@@ -421,8 +421,6 @@
                     echo "[reload~1]"
 
                 - title: view hunk
-                  subtitle: ' '
-                  icon: ' '
                   should_use_values_as_inline_commands: true
                   should_skip_smart_sort: true
                   should_trim_values: false

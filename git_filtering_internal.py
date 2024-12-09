@@ -337,7 +337,7 @@ def create_result_item_common(title, cmd, location, param=None):
     modifier_list = create_modifier_list(cmd, location, param)
 
     switcher = {
-        CommandType.NO_ACTION: False,
+        CommandType.NO_ACTION: True,
         CommandType.INLINE: False,
         CommandType.SINGLE_ACTION: True,
         CommandType.NEEDS_PARAM: bool(param),
@@ -353,7 +353,8 @@ def create_result_item_common(title, cmd, location, param=None):
         arg=full_command if valid else alfred_input.create_path(title), # TODO: might want to clean this up with the other place `alfred_input.create_path(title)` is called
         subtitle=subtitle,
         location=location,
-        valid=True,
+        valid=False if cmd.command_type == CommandType.NO_ACTION else True,
+        autocomplete= alfred_input.create_current_path() if cmd.command_type == CommandType.NO_ACTION else None,
         mods=modifier_list,
         icon_path=cmd.icon_path,
         quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None,
@@ -526,6 +527,11 @@ def create_commands_from_yaml(yaml_data):
 
         elif subcommands:
             icon = icon if icon else "list.png"
+
+        if not action and not subcommands:
+            icon = icon if icon else "pick.png"
+            subtitle = subtitle if subtitle else " "
+            command_type = CommandType.NO_ACTION
 
         return Command(
             title=entry['title'],
