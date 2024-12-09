@@ -341,7 +341,8 @@
         echo "$staged file(s)"
 
       subcommands:
-        - title: all
+        - title: 'latest'
+          subtitle: 'process each one, one by one'
           subcommands:
             - title: unstage hunk
               subtitle_command: |
@@ -366,8 +367,6 @@
                 echo "[reload~1]"
 
             - title: view latest hunk
-              icon: ' '
-              subtitle: ' '
               values_command: |
                 view_hunk "unstage"
               should_use_values_as_inline_commands: true
@@ -450,7 +449,8 @@
 
       subcommands:
 
-        - title: all
+        - title: 'latest'
+          subtitle: 'process each one, one by one'
           subcommands:
             - title: stage hunk
               subtitle_command: |
@@ -489,8 +489,6 @@
                 echo "[reload~1]"
 
             - title: view latest hunk
-              icon: ' '
-              subtitle: ' '
               values_command: |
                 view_hunk "stage"
               should_use_values_as_inline_commands: true
@@ -559,8 +557,6 @@
                   
 
                 - title: view hunk
-                  subtitle: ' '
-                  icon: ' '
                   should_skip_smart_sort: true
                   should_use_values_as_inline_commands: true
                   should_trim_values: false

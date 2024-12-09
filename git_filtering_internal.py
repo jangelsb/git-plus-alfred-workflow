@@ -529,7 +529,7 @@ def create_commands_from_yaml(yaml_data):
             icon = icon if icon else "list.png"
 
         if not action and not subcommands:
-            icon = icon if icon else "pick.png"
+            icon = icon if icon else " "
             subtitle = subtitle if subtitle else " "
             command_type = CommandType.NO_ACTION
 
