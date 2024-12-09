@@ -83,6 +83,8 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | <img src="./icons/copy.png" width="64" alt="copy.png">                      | `copy.png`            | Represents copying or duplication. |
 | <img src="./icons/back.png" width="64" alt="back.png">                      | `back.png`            | Represents going back. |
 | <img src="./icons/check.png" width="64" alt="check.png">                    | `check.png`           | Represents a confirmation. |
+| <img src="./icons/plus.png" width="64" alt="check.png">                    | `plus.png`           | Represents a additive action. |
+| <img src="./icons/minus.png" width="64" alt="check.png">                    | `minus.png`           | Represents a subtraction action. |
 
 
 ---
