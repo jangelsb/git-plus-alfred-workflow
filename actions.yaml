@@ -79,135 +79,101 @@
 # --------------------
 # BRANCHES LOGIC
 # --------------------
-- title: branch
+- title: local branches
+  values_command: |
+    git branch | grep -v '*' # all local branches except the current one
+  should_use_values_as_inline_commands: true
   icon: fork.png
-  subtitle: view all branches
   subcommands:
-    - title: current branch
-      values_command: |
-        git branch --show-current
-      should_use_values_as_inline_commands: true
-      subtitle: current
+    - title: checkout
       icon: fork.png
+      command: |
+        git_checkout "[parent]"
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: killall Xcode; git_checkout "[parent]"; xed .
+
+    - title: rebase
+      icon: rebase.png
+      command: |
+        git stash
+        git checkout "[parent]"
+        git pull
+        git checkout -
+        git rebase "[parent]"
+
+    - title: rebase --onto
+      icon: rebase.png
+      subtitle: 'needs a start hash'
       subcommands:
-        - title: stash & pull
-          icon: fork.png
-          command: |
-            git_checkout "[parent]"
-          mods:
-            - subtitle: Launch Xcode after
-              mod: cmd
-              command: killall Xcode; git_checkout "[parent]"; xed .
-
-        - title: copy branch name
-          icon: copy.png
-          command: |
-            echo "[parent]" | xargs echo -n | pbcopy
-
-        - title: back
-          subtitle: 'go back a level (bb)'
-          icon: back.png
-          should_skip_smart_sort: true
-          command: |
-            echo "[reload~1]"
-
-
-    - title: local branches
-      values_command: |
-        git branch | grep -v '*' # all local branches except the current one
-      should_use_values_as_inline_commands: true
-      icon: fork.png
-      subcommands:
-        - title: checkout
-          icon: fork.png
-          command: |
-            git_checkout "[parent]"
-          mods:
-            - subtitle: Launch Xcode after
-              mod: cmd
-              command: killall Xcode; git_checkout "[parent]"; xed .
-
-        - title: rebase
-          icon: rebase.png
+        - title: start hash
+          should_use_values_as_inline_commands: true
           command: |
             git stash
-            git checkout "[parent]"
+            git checkout "[parent~2]"
             git pull
             git checkout -
-            git rebase "[parent]"
-
-        - title: rebase --onto
-          icon: rebase.png
-          subtitle: 'needs a start hash'
-          subcommands:
-            - title: start hash
-              command: |
-                git stash
-                git checkout "[parent~3]"
-                git pull
-                git checkout -
-                git rebase --onto "[parent~3]" "[input]"
-              values_command: |
-                git log --pretty=format:"%H"
-
-        - title: delete local branch
-          icon: trash.png
-          command: |
-            git branch -d "[parent]"
-          mods:
-            - subtitle: force delete
-              mod: cmd
-              command: |
-                git branch -D "[parent]"
-
-        - title: copy branch name
-          icon: copy.png
-          command: |
-            echo "[parent]" | xargs echo -n | pbcopy
+            git rebase --onto "[parent~2]" "[input]"
+          values_command: |
+            git log --pretty=format:"%H"
 
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
           should_skip_smart_sort: true
           command: |
-            echo "[reload~1]"
+            echo "[reload~2]"
 
-
-    - title: remote branches
-      values_command: |
-        git branch -r
-      should_use_values_as_inline_commands: true
-      icon: globe.png
-      subcommands:
-        - title: checkout
-          icon: fork.png
+    - title: delete local branch
+      icon: trash.png
+      command: |
+        git branch -d "[parent]"
+      mods:
+        - subtitle: force delete
+          mod: cmd
           command: |
-            git stash; git checkout -t "[parent]"; git pull;
-          mods:
-            - subtitle: Launch Xcode after
-              mod: cmd
-              command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; xed .
+            git branch -D "[parent]"
 
-        - title: delete remote branch
-          icon: trash.png
-          command: |
-            branch="[parent]"
-            git push origin --delete ${branch#origin/}
+    - title: copy branch name
+      icon: copy.png
+      command: |
+        echo "[parent]" | xargs echo -n | pbcopy
+
+    - title: back
+      subtitle: 'go back a level (bb)'
+      icon: back.png
+      should_skip_smart_sort: true
+      command: |
+        echo "[reload~1]"
 
 
-        - title: copy branch name
-          icon: copy.png
-          command: |
-            echo "[parent]" | xargs echo -n | pbcopy
+- title: remote branches
+  values_command: |
+    git branch -r
+  should_use_values_as_inline_commands: true
+  icon: globe.png
+  subcommands:
+    - title: checkout
+      icon: fork.png
+      command: |
+        git stash; git checkout -t "[parent]"; git pull;
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; xed .
 
-        - title: back
-          subtitle: 'go back a level (bb)'
-          icon: back.png
-          should_skip_smart_sort: true
-          command: |
-            echo "[reload~1]"
-            
+    - title: delete remote branch
+      icon: trash.png
+      command: |
+        branch="[parent]"
+        git push origin --delete ${branch#origin/}
 
+
+    - title: copy branch name
+      icon: copy.png
+      command: |
+        echo "[parent]" | xargs echo -n | pbcopy
 
     - title: back
       subtitle: 'go back a level (bb)'
