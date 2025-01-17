@@ -39,7 +39,7 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 
 ```
 **NOTE**
-* `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
+* `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 
 
@@ -57,6 +57,10 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 - **Add custom commands:** 
   - Change the inline config or add another config file in your setup
   - Create specific configs for certain repositories using `config` from Step 1
+
+- **Add custom zsh commands:** 
+  - `functions.sh` is implicilty imported before each command that is run. So you can easily offload common commands for better reusability 
+  - You can copy [functions.sh](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/functions.sh) and tweak it or you can even link to your own file 
 
 
 ---

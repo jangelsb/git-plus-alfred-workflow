@@ -1,102 +1,249 @@
+- title: open in Sublime Text (st)
+  icon: open.png
+  command: |
+    st .
+
+- title: open in Sublime Text (sm)
+  icon: open.png
+  command: |
+    sm .
+
+- title: zsh test
+  subtitle: zsh only command
+  subcommands:
+    - title: inline
+      should_use_values_as_inline_commands: true
+      values_command: |
+        echo **/*.swift(N)
+
 
 # --------------------
 # These are commands that should work but I don't feel are ready for prime time / full roll out yet
 # --------------------
-- title: exp
+- title: experimental
   icon: info.png
   subcommands:
-    - title: current branch
-      values_command: |
-        git branch --show-current # just the current branch
-      should_use_values_as_inline_commands: true
-      subtitle: current
-      icon: fork.png
+    - title: branches
       subcommands:
-        - title: checkout 'main branch' & delete this branch
-          icon: trash.png
-          command: |
-            # if on 'main branch', does nothing
-            master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
-            branch="[parent]"
-            if [ "$branch" != "$master" ]; then
-              git stash; git checkout "$master"; git pull;
-              git branch -D "[parent]"
-            else 
-              echo "on $master; doing nothing"
-            fi
+        - title: current branch
+          values_command: |
+            git branch --show-current # just the current branch
+          should_use_values_as_inline_commands: true
+          subtitle: current
+          icon: fork.png
+          subcommands:
+            - title: checkout 'main branch' & delete this branch
+              icon: trash.png
+              command: |
+                # if on 'main branch', does nothing
+                master=$(git remote show origin | grep 'HEAD branch' | awk '{print $NF}')
+                branch="[parent]"
+                if [ "$branch" != "$master" ]; then
+                  git stash; git checkout "$master"; git pull;
+                  git branch -D "[parent]"
+                else 
+                  echo "on $master; doing nothing"
+                fi
 
-        - title: copy diff for branch
-          icon: copy.png
-          command: |
-            branch="[parent]"
-            create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
-            parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
-            {
-              git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
-            } | pbcopy
-          mods:
-            - subtitle: copy for ChatGPT summary
-              mod: cmd
+            - title: copy diff for branch
+              icon: copy.png
               command: |
                 branch="[parent]"
                 create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
                 parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
                 {
-                  echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
-                  echo ''
                   git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
                 } | pbcopy
+              mods:
+                - subtitle: copy for ChatGPT summary
+                  mod: cmd
+                  command: |
+                    branch="[parent]"
+                    create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | head -n 1 | awk '{print $1}')
+                    parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | head -n 1)
+                    {
+                      echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
+                      echo ''
+                      git log --reverse --pretty=format:"%B" "${parent_branch}..${branch}"
+                    } | pbcopy
+            
+            - title: copy diff for branch (ver 2)
+              icon: copy.png
+              command: |
+                branch="[parent]"
+                #                branch=$(git branch --show-current)
 
-    - title: local branches
-      values_command: |
-        git branch | grep -v '*' # all local branches minus the current one
-      should_use_values_as_inline_commands: true
-      icon: fork.png
-      subcommands:
-        - title: rebase --onto (all branches)
-          icon: rebase.png
-          subtitle: 'if possible, will rebase the entire branch, along with all parent branches, until this branch is reached.'
-          command: |
-            branch=$(git branch --show-current)
-            target_branch="[parent]"
-            branch_history=()
-            
-            while [[ "$branch" != "$target_branch" ]]; do
-              create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | tail -n 1 | awk '{print $1}')
-              
-              if [[ -z "$create_commit" ]]; then
-                # echo "No creation commit found."
-                break
-              fi
-            
-              parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | tail -n 1)
-              
-              if [[ -z "$parent_branch" ]]; then
-                # echo "No parent branch found."
-                break
-              fi
-            
-              branch_history+=("$branch:$parent_branch:$create_commit")
-              branch=$parent_branch
-            done
-            
-            if [[ "$branch" == "$target_branch" ]]; then
-              # echo "Target branch '$target_branch' matched."
-            
-              git stash 
-              
-              for idx in {${#branch_history[@]}..1}; do
-                entry="${branch_history[idx]}"
-                # echo "Entry: $entry"  # Debugging line
+                # List all branches sorted by commit date, excluding the current branch
+                potential_parents=$(git for-each-ref --sort=-committerdate refs/heads/ \
+                  --format='%(refname:short)' | grep -v "$branch")
                 
-                IFS=':' read -r branch_name parent_branch commit_hash <<< "$entry"
-                # echo "Branch: $branch_name, Parent: $parent_branch, Commit: $commit_hash"
+                # Automatically pick the first parent or prompt the user
+                parent_branch=$(echo "$potential_parents" | head -n 1)
+
+                echo "Detected parent branch: $parent_branch"
+                echo "If incorrect, choose from the following:"
+                echo "$potential_parents"
                 
-                if [[ -n "$branch_name" && -n "$parent_branch" && -n "$commit_hash" ]]; then
-                  git checkout "$branch_name"
-                  git rebase --onto "$parent_branch" "$commit_hash"
+                # Find the merge-base
+                merge_base=$(git merge-base "$branch" "$parent_branch")
+                
+                # Extract commit messages
+                git log --reverse --pretty=format:"%B" "$merge_base..$branch" | pbcopy
+
+        - title: local branches
+          values_command: |
+            git branch | grep -v '*' # all local branches minus the current one
+          should_use_values_as_inline_commands: true
+          icon: fork.png
+          subcommands:
+            - title: rebase --onto (all branches)
+              icon: rebase.png
+              subtitle: 'if possible, will rebase the entire branch, along with all parent branches, until this branch is reached.'
+              command: |
+                branch=$(git branch --show-current)
+                target_branch="[parent]"
+                branch_history=()
+
+                while [[ "$branch" != "$target_branch" ]]; do
+                  create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | tail -n 1 | awk '{print $1}')
+
+                  if [[ -z "$create_commit" ]]; then
+                    # echo "No creation commit found."
+                    break
+                  fi
+
+                  parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | awk '{$1=$1};1' | tail -n 1)
+
+                  if [[ -z "$parent_branch" ]]; then
+                    # echo "No parent branch found."
+                    break
+                  fi
+
+                  branch_history+=("$branch:$parent_branch:$create_commit")
+                  branch=$parent_branch
+                done
+
+                if [[ "$branch" == "$target_branch" ]]; then
+                  # echo "Target branch '$target_branch' matched."
+
+                  git stash 
+
+                  for idx in {${#branch_history[@]}..1}; do
+                    entry="${branch_history[idx]}"
+                    # echo "Entry: $entry"  # Debugging line
+
+                    IFS=':' read -r branch_name parent_branch commit_hash <<< "$entry"
+                    # echo "Branch: $branch_name, Parent: $parent_branch, Commit: $commit_hash"
+
+                    if [[ -n "$branch_name" && -n "$parent_branch" && -n "$commit_hash" ]]; then
+                      git checkout "$branch_name"
+                      git rebase --onto "$parent_branch" "$commit_hash"
+                    fi
+                  done
+                else
+                  echo "Doing nothing: target branch '$target_branch' not reached."
                 fi
-              done
-            else
-              echo "Doing nothing: target branch '$target_branch' not reached."
-            fi
+    
+    
+
+    # --------------------
+# STATUS MENU
+# --------------------
+
+    - title: status
+      icon: info.png
+      subtitle_command: |
+       branch=$(git branch --show-current)
+       modified=$(git diff --name-only | wc -l | xargs)
+       untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+       staged=$(git diff --cached --name-only | wc -l | xargs)
+      
+       if [ "$modified" -eq 0 ] && [ "$untracked" -eq 0 ] && [ "$staged" -eq 0 ]
+       then 
+         echo "branch: ${branch}; clean"
+       else 
+         echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
+       fi
+      subcommands:
+        - title: modified
+          should_skip_smart_sort: true
+          subtitle_command: |
+            modified=$(git diff --name-only | wc -l | xargs)
+            echo "$modified file(s)"
+
+          subcommands:
+            - title: modified files
+              should_skip_smart_sort: true
+              should_use_values_as_inline_commands: true
+              values_command: |
+                git diff --name-only # git status --short
+              mods:
+                - subtitle: stage file
+                  mod: cmd
+                  command: |
+                    modified=$(git diff --name-only | wc -l | xargs)
+                    git add '[title]'
+                    if [ "$modified" -eq 1 ]; then
+                        echo "[reload~1]"
+                    else
+                        echo "[reload]"
+                    fi
+
+              subcommands:
+
+                - title: stage hunk
+                  subtitle: ' '
+                  icon: check.png
+                  should_skip_smart_sort: true
+                  command: |
+                    process_hunk "stage" "[parent]"
+    
+                    case $? in
+                        0) echo "[reload]";;
+                        1) echo "[reload~1]";;
+                        2) echo "[reload~2]";;
+                        3) echo "[reload~3]";;
+                    esac
+
+                - title: discard hunk
+                  subtitle: ' '
+                  icon: trash.png
+                  should_skip_smart_sort: true
+                  command: |
+                    process_hunk "discard" "[parent]"
+    
+                    case $? in
+                        0) echo "[reload]";;
+                        1) echo "[reload~1]";;
+                        2) echo "[reload~2]";;
+                        3) echo "[reload~3]";;
+                    esac
+
+                - title: back
+                  subtitle: 'go back a level (bb)'
+                  icon: back.png
+                  should_skip_smart_sort: true
+                  command: |
+                    echo "[reload~1]"
+
+                - title: view latest hunk
+                  icon: ' '
+                  subtitle: ' '
+                  values_command: |
+                    view_hunk "stage" "[parent]"
+                  should_use_values_as_inline_commands: true
+                  should_skip_smart_sort: true
+                  should_trim_values: false
+
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+    
+            
+    
+    
+    

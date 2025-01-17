@@ -90,6 +90,8 @@ class ResultItem:
             }
         return {k: v for k, v in item_dict.items() if v is not None}
 
+        # josh was here
+
 class Location:
     def __init__(self, title, directory, actions_path=None):
         self.title = title
@@ -167,6 +169,7 @@ class TokenizationResult:
 
 checkout_modifiers_list = []
 alfred_input = TokenizationResult()
+functions_path = None
 
 def tokenize(query, locations, commands, level=1):
     command_objects = []
@@ -203,7 +206,12 @@ def change_directory(location):
 
 def run_command(command):
     try:
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
+
+        if functions_path:
+            command = f"source '{functions_path}';\n{command}"
+
+        result = subprocess.run(["zsh", "-c", command], capture_output=True, text=True, check=True)
+        # result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
         return f"Error executing {command}: {e.stderr}"
@@ -276,6 +284,14 @@ def create_modifier_list(cmd, location, param=None):
     ]
 
 def process_action(action, param, title, secondaryAction=None):
+    def escape_param(param):
+        if param:
+            param = param.replace('`', '\\`')  # Escape back tick
+            param = param.replace('"', '\\"')  # Escape double quotes
+            param = param.replace("'", "\\'")  # Escape single quotes
+            param = param.replace('$', '\\$')  # Escape dollar sign
+        return param
+
     def replace_parent_action(action):
         # Find all occurrences of [parent] or [parent~n]
         matches = re.finditer(r"\[parent(?:~(\d+))?\]", action)
@@ -287,11 +303,13 @@ def process_action(action, param, title, secondaryAction=None):
 
     if secondaryAction:
         value = run_command(secondaryAction).strip()
-        action = action.replace("[input]", value)
+        action = action.replace("[input]", escape_param(value))
         action = replace_parent_action(action)
         action = action.replace("[title]", title.strip())
     else:
         if isinstance(action, str):
+            param = escape_param(param)
+            action = action.replace('[input_new_lines]', param.replace(' \ ', '\n')) if param else action
             action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
             action = action.replace('[input]', param) if param else action
             action = replace_parent_action(action)
@@ -319,7 +337,7 @@ def create_result_item_common(title, cmd, location, param=None):
     modifier_list = create_modifier_list(cmd, location, param)
 
     switcher = {
-        CommandType.NO_ACTION: False,
+        CommandType.NO_ACTION: True,
         CommandType.INLINE: False,
         CommandType.SINGLE_ACTION: True,
         CommandType.NEEDS_PARAM: bool(param),
@@ -335,7 +353,8 @@ def create_result_item_common(title, cmd, location, param=None):
         arg=full_command if valid else alfred_input.create_path(title), # TODO: might want to clean this up with the other place `alfred_input.create_path(title)` is called
         subtitle=subtitle,
         location=location,
-        valid=True,
+        valid=False if cmd.command_type == CommandType.NO_ACTION else True,
+        autocomplete= alfred_input.create_current_path() if cmd.command_type == CommandType.NO_ACTION else None,
         mods=modifier_list,
         icon_path=cmd.icon_path,
         quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None,
@@ -397,7 +416,7 @@ def create_value_commands(cmd):
             values=None,
             values_command=None,
             values_icon=cmd.values_icon,
-            subtitle_command=None, # cmd.subtitle_command, # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
+            subtitle_command=cmd.subtitle_command, # TODO: UPDATE - need this in some cases like current branch None, # cmd.subtitle_command, # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
             subcommands=cmd.subcommands,
             should_use_values_as_inline_commands=False,
             should_skip_smart_sort=cmd.should_skip_smart_sort,
@@ -502,12 +521,17 @@ def create_commands_from_yaml(yaml_data):
             if should_use_values_as_inline_commands == False or subcommands:
                 icon = icon if icon else "list.png"
 
-        elif any(inp in action for inp in ['[input]', '[input_snake_case]']):
+        elif any(inp in action for inp in ['[input]', '[input_snake_case]', '[input_new_lines]']):
             command_type = CommandType.NEEDS_PARAM
             icon = icon if icon else "pencil.png"
 
         elif subcommands:
             icon = icon if icon else "list.png"
+
+        if not action and not subcommands:
+            icon = icon if icon else " "
+            subtitle = subtitle if subtitle else " "
+            command_type = CommandType.NO_ACTION
 
         return Command(
             title=entry['title'],
@@ -613,7 +637,12 @@ def main():
     query_input = sys.argv[1] if len(sys.argv) > 1 else ""
     ends_with_space = query_input.endswith(" ")
 
-    global alfred_input
+    global alfred_input, functions_path
+
+    functions_path = os.getenv('input_var_functions_path')
+    if functions_path and os.path.sep not in functions_path:
+        functions_path = os.path.join(os.getcwd(), functions_path)
+
     alfred_input = tokenize(query_input, locations, [])
 
     commands = [
@@ -654,14 +683,16 @@ def main():
         #                autocomplete=' ').to_dict()]
     
     else:
+
+        # load location actions before changing directories
+        if alfred_input.location.actions_path:
+            commands.extend(create_commands_from_config(alfred_input.location.actions_path))
+
         change_directory(alfred_input.location)
 
         # initial row of inline values
         for cmd in commands:
             commands.extend(create_inline_commands(cmd))
-
-        if alfred_input.location.actions_path:
-            commands.extend(create_commands_from_config(alfred_input.location.actions_path))
 
         process_commands_recursively(query_input=query_input, locations=locations, commands=commands)
         num_cmds = len(alfred_input.commands)

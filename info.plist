@@ -139,7 +139,7 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
+				<string>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -189,6 +189,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>2B6F959B-E985-412D-A7EC-D2D084773017</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -505,11 +518,12 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 				<key>escaping</key>
 				<integer>102</integer>
 				<key>script</key>
-				<string>full_command="source $input_var_profile_path; $1"
+				<string>full_command="source $input_var_profile_path; source $input_var_functions_path; $1"
 
-# eval "$full_command" 2&gt;&amp;1
+# Execute the command and capture the output and error messages
 output=$(eval "$full_command" 2&gt;&amp;1)
 
+# Check if the output is empty
 if [ -z "$output" ]; then
   echo "command succeeded"
 else
@@ -615,6 +629,38 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>\[reload:.*]</string>
+						<key>outputlabel</key>
+						<string>will reload</string>
+						<key>uid</key>
+						<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>else</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>argument</key>
 				<string>{var:input_keyword} {query}</string>
 				<key>leftcursor</key>
@@ -692,7 +738,7 @@ For more info check out the repo: https://github.com/jangelsb/git-plus-alfred-wo
 
 ```
 **NOTE**
-* `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
+* `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 
 
@@ -711,6 +757,9 @@ For more info check out the repo: https://github.com/jangelsb/git-plus-alfred-wo
   - Change the inline config or add another config file in your setup
   - Create specific configs for certain repositories using `config` from Step 1
 
+- **Add custom zsh commands:** 
+  - `functions.sh` is implicilty imported before each command that is run. So you can easily offload common commands for better reusability 
+  - You can copy [functions.sh](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/functions.sh) and tweak it or you can even link to your own file 
 
 
 ---
@@ -738,75 +787,108 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 
 ## 📝 Version History
 
+#### v2025.1
+
+####### **Tips &amp; Tricks**
+- With `should_skip_smart_sort: true` and `should_trim_values: false` you can do a lot of power tasks in `git+`. Here is a couple of ideas
+  - You can run a script in debug mode to see if the output (in Alfred!) is as you expect and then run another command to actually do it
+  - You can view hunks in Alfred before you stage / discard a hunk (checkout the new `status` menu)
+  - Sky is the limit 😊 - all you gotta do is run a zsh and it will show each line as a separate item in Alfred!
+- Reload statements need to be echoed and they need to be in the yaml and not in a different file 
+
+####### **Features**
+- Added support for `should_skip_smart_sort`:  (Optional) Tells Alfred to ignore this command from Alfred's smart search. If every command has this as `true` the commands will keep their order, otherwise they will show up below the items that Alfred prioritizes. This property gets passed down to the `values` &amp; `values_command`. It is useful for showing items always in a specific order (see `status` command for an example of using this in a menu)
+- Added support for `should_trim_values`:  (Optional) This only applies to `values` &amp; `values_command`. If this is `false`, the values will not trim the whitespace. The default is `true` (see `view hunk` command to see how to use this to display text inline in Alfred)
+- Added support for `[input_new_lines]`:  Same as `[input]`, but converts `  \  ` to a new line (there is a space before and after the `\`). This is very helpful for doing multiline text in Alfred.
+- Added a new `functions.sh` bash file that is implicitly imported before each command that is run, so you can offload logic to it for better reusability
+- Added the ability to:
+  - View hunk diffs directly in Alfred
+  - Stage, unstage, and dischard hunks
+  - Use command modifier to stage / unstage entire files
+- Added back buttons for better navigation
+- Introduced icons for "back," "back.line", "check," "left.big", "minus", "plus", "right.big", "x", "up.small"
+
+####### **Improvements**
+- All commands are now ran in Zsh 
+- Revamped the `status` menu to be a lot nicer! 🚀
+- Renamed commands for better clarity (e.g., `s -&gt; status`)
+- Updated rebase commands to checkout and pull the branch before rebasing
+
+####### **Miscellaneous**
+- Updated all inputs to escape: backtick, single quote, double quote, and `$`
+- Moved experimental actions to a dedicated `experimental_actions.yaml`
+- Updated documentation on the above features as well as using `' '` for the subtitle and icon for blank values
+
+
 #### v2024.7
 **This is a big one!**
 
-**General Updates:**
-* The workflow is now called `git+`, and the bundle ID has changed
-* Created detailed documentation on how commands work: [see docs here](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md)
-* Updated readmes both in the repository and within the workflow, along with new screenshots
-* Added shiny new icons 😎
+####### **Tips &amp; Tricks**
+- You can drag and drop the folders in the git repo list
+- When press enter on commands, they will be considered "triggered" in Alfred but will auto complete -- which means Alfred will apply smart sorting to them going forward 
+- You can always press → on the keyboard to see the command that will be run
 
-**Command Enhancements:**
-* Consolidated all commands into the `actions.yaml` so all commands are defined in one place
-* Updated Alfred to stack the `[view in alfred]` command, allowing you to press escape and return to `git+`
-* Added support for **inline commands** using `should_use_values_as_inline_commands`
-* Introduced **subtitle actions**, enabling commands to display dynamic info
-* Added support for **subcommands**, with examples included in the default configuration
-* Added support for `[parent]` or `[parent~n]` dynamic placeholders to reference git+ commands in your bash commands -- useful for subcommands
-* Enabled **subtitle searching**, you can now filter by title or subtitle!
-* Introduced drag-and-drop support, repo folders are now treated as actual folders. This is great for dragging a Swift package into Xcode for example!
-* Added the ability to reload the workflow with `[reload]` or `[reload~n]` commands
-* Introduced preliminary support for **Quick Look URLs** with `quicklookurl`
+####### **General Updates**
+- The workflow is now called `git+`, and the bundle ID has changed
+- Created detailed documentation on how commands work: [see docs here](https://github.com/jangelsb/git-plus-alfred-workflow/blob/main/docs.md)
+- Updated readmes both in the repository and within the workflow, along with new screenshots
+- Added shiny new icons 😎
 
-**Git-Specific Features:**
-* Created a brand new **status command** to display:
-  * **Staged**, **modified**, and **untracked** files directly in Alfred
-  * Allowing you to interactively stage and unstage files in Alfred
-* Added **Git tag management**, including:
-  * Viewing tags
-  * Copying diffs from tags
-  * Deleting local and remote tags
-* Introduced new **rebase** and **rebase --onto** commands
-* Replaced the ⌘+c shortcut for copying a branch name and replaced it with a dedicated command
+####### **Command Enhancements**
+- Consolidated all commands into the `actions.yaml` so all commands are defined in one place
+- Updated Alfred to stack the `[view in alfred]` command, allowing you to press escape and return to `git+`
+- Added support for **inline commands** using `should_use_values_as_inline_commands`
+- Introduced **subtitle actions**, enabling commands to display dynamic info
+- Added support for **subcommands**, with examples included in the default configuration
+- Added support for `[parent]` or `[parent~n]` dynamic placeholders to reference git+ commands in your bash commands -- useful for subcommands
+- Enabled **subtitle searching**, you can now filter by title or subtitle!
+- Introduced drag-and-drop support, repo folders are now treated as actual folders. This is great for dragging a Swift package into Xcode for example!
+- Added the ability to reload the workflow with `[reload]` or `[reload~n]` commands
+- Introduced preliminary support for **Quick Look URLs** with `quicklookurl`
 
-**Bug Fixes:**
-* Fixed issues with:
-  * Checkout and push commands when branch names were very long
-  * Modifiers not properly setting up their commands
-  * The `pop` command in default actions
-* Resolved edge cases in **tokenization logic** to better handle complex commands
-* Cleaned up YAML parsing to gracefully handle errors and reduce duplication
+####### **Git-Specific Features**
+- Created a brand new **status command** to display:
+  - **Staged**, **modified**, and **untracked** files directly in Alfred
+  - Allowing you to interactively stage and unstage files in Alfred
+- Added **Git tag management**, including:
+  - Viewing tags
+  - Copying diffs from tags
+  - Deleting local and remote tags
+- Introduced new **rebase** and **rebase --onto** commands
+- Replaced the ⌘+c shortcut for copying a branch name and replaced it with a dedicated command
 
-###### Tips &amp; Tricks
-* You can drag and drop the folders in the git repo list
-* When press enter on commands, they will be considered "triggered" in Alfred but will auto complete -- which means Alfred will apply smart sorting to them going forward 
-* You can always press → on the keyboard to see the command that will be run
+####### **Bug Fixes**
+- Fixed issues with:
+  - Checkout and push commands when branch names were very long
+  - Modifiers not properly setting up their commands
+  - The `pop` command in default actions
+- Resolved edge cases in **tokenization logic** to better handle complex commands
+- Cleaned up YAML parsing to gracefully handle errors and reduce duplication
 
 ---
 
 #### v2024.6
-* Now really fixed the issue where you couldn't access bash functions that were in your profile, even though it is sourced (the script needed to run as zsh and not bash)
-* Continuing to lay the ground work for more complicated commands (you can now make an action that shows a list of values (predefined or dynamic)
-* Added a way to show repo in alfred (by passing [view in alfred] as the command for an action
+- Now really fixed the issue where you couldn't access bash functions that were in your profile, even though it is sourced (the script needed to run as zsh and not bash)
+- Continuing to lay the ground work for more complicated commands (you can now make an action that shows a list of values (predefined or dynamic)
+- Added a way to show repo in alfred (by passing [view in alfred] as the command for an action
 
 #### v2024.5
-* Fixed issues where you couldn't create a branch or fetch
-* Fixed an issue where you couldn't access bash functions that were in your profile, even though it is sourced
-* Added true yaml parsing
-* Laying the ground work for more robust and complicated config based actions
-* Updated the default values to have better onboarding
+- Fixed issues where you couldn't create a branch or fetch
+- Fixed an issue where you couldn't access bash functions that were in your profile, even though it is sourced
+- Added true yaml parsing
+- Laying the ground work for more robust and complicated config based actions
+- Updated the default values to have better onboarding
 
 #### v2024.4
-* Add icons for the different commands
-* Update workflow icon
-* Update screenshots
+- Add icons for the different commands
+- Update workflow icon
+- Update screenshots
 
 #### v2024.3
-* Add support for yaml based modifiers (you can now add custom modifiers when checking out a branch!)
-* source the profile before running a command as well
-* Add support for user custom actions based on a yaml file and give some examples
-* Update default values, made the git status do a complex bash command to be more helpful</string>
+- Add support for yaml based modifiers (you can now add custom modifiers when checking out a branch!)
+- source the profile before running a command as well
+- Add support for user custom actions based on a yaml file and give some examples
+- Update default values, made the git status do a complex bash command to be more helpful</string>
 	<key>uidata</key>
 	<dict>
 		<key>0BA9ED6F-B709-49B6-A448-5F5634D7019F</key>
@@ -897,9 +979,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>6AF906CF-57FA-41B4-967E-D06828E92FBA</key>
 		<dict>
 			<key>xpos</key>
-			<real>370</real>
+			<real>560</real>
 			<key>ypos</key>
-			<real>675</real>
+			<real>615</real>
 		</dict>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<dict>
@@ -914,6 +996,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<real>1590</real>
 			<key>ypos</key>
 			<real>575</real>
+		</dict>
+		<key>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</key>
+		<dict>
+			<key>xpos</key>
+			<real>405</real>
+			<key>ypos</key>
+			<real>625</real>
 		</dict>
 		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
 		<dict>
@@ -1003,6 +1092,27 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<key>config</key>
 			<dict>
 				<key>default</key>
+				<string>functions.sh</string>
+				<key>filtermode</key>
+				<integer>2</integer>
+				<key>placeholder</key>
+				<string>functions.sh</string>
+				<key>required</key>
+				<false/>
+			</dict>
+			<key>description</key>
+			<string>Use this to offload logic and make the config simpler. These are implicitly imported before any bash command runs.</string>
+			<key>label</key>
+			<string>bash functions</string>
+			<key>type</key>
+			<string>filepicker</string>
+			<key>variable</key>
+			<string>input_var_functions_path</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
 				<string>actions.yaml</string>
 				<key>filtermode</key>
 				<integer>2</integer>
@@ -1063,8 +1173,10 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>2024.7</string>
+	<string>2025.1</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>

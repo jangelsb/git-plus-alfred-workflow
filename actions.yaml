@@ -14,12 +14,6 @@
     git fetch -p
 
 
-- title: create
-  icon: create.png
-  command: |
-    git checkout -b "[input_snake_case]"
-
-
 - title: cherry-pick
   icon: pick.png
   command: |
@@ -67,7 +61,7 @@
     [view in alfred]
 
 
-- title: find
+- title: search
   icon: search.png
   command: |
     open "[input]"
@@ -77,51 +71,450 @@
 
 
 # --------------------
-# BRANCHES LOGIC
+# STATUS MENU
 # --------------------
-- title: b
-  icon: fork.png
+
+- title: status
+  icon: info.png
+  subtitle_command: |
+   branch=$(git branch --show-current)
+   modified=$(diff_command 'modified' | wc -l | xargs)
+   untracked=$(diff_command 'untracked' | wc -l | xargs)
+   staged=$(diff_command 'staged' | wc -l | xargs)
+  
+   echo "staged: $staged, modified: $modified, untracked: $untracked -- ${branch}"
   subcommands:
     - title: current branch
       values_command: |
-        git branch --show-current
+        git branch --show-current # just the current branch
       should_use_values_as_inline_commands: true
-      subtitle: current
+      should_skip_smart_sort: true
+      subtitle_command: |
+        git status | grep 'branch is' || echo '!! no remote branch linked yet'
       icon: fork.png
       subcommands:
+        - title: fetch
+          icon: down.small.png
+          command: |
+            git fetch -p
+            echo "[reload~1]"
+
         - title: stash & pull
           icon: fork.png
           command: |
-            git stash; git checkout "[parent]"; git pull;
+            git_checkout "[parent]";
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+              command: killall Xcode; git_checkout "[parent]"; xed .
 
         - title: copy branch name
           icon: copy.png
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
+        - title: copy latest commit
+          icon: copy.png
+          subtitle_command: |
+             git rev-parse HEAD | xargs echo -n
+          command: |
+            git rev-parse HEAD | xargs echo -n | pbcopy
 
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+
+
+    - title: commit
+      icon: pencil.png
+      should_skip_smart_sort: true
+      subcommands:
+        - title: message
+          icon: pencil.png
+          command: |
+            git commit -m "[input_new_lines]"
+          mods:
+            - subtitle: and push
+              mod: cmd
+              command: |
+                branch=$(git branch --show-current);
+                git commit -m "[input_new_lines]"
+                git push -u origin $branch
+
+        - title: easy commit
+          icon: up.big.png
+          subtitle_command: |
+            message=$(git log -1 --skip=0 --pretty=%B | xargs)
+            echo "commit using previous message: $message"
+          command: |
+            git commit --reuse-message=HEAD
+          mods:
+            - subtitle: 'and push'
+              mod: cmd
+              command: |
+                git commit --reuse-message=HEAD
+                git push
+
+        - title: easy message
+          icon: pencil.png
+          subtitle_command: |
+            header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+            echo "commit by prepending previous header: $header"
+          command: |
+            header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+            git commit -m "$header"$'\n'"[input_new_lines]"
+          mods:
+            - subtitle: 'and push'
+              mod: cmd
+              command: |
+                header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+                git commit -m "$header"$'\n'"[input_new_lines]"
+                git push
+
+        - title: amend
+          icon: up.big.png
+          subtitle_command: |
+            message=$(git log -1 --skip=0 --pretty=%B | xargs)
+            echo "amend previous commit: $message"
+          command: |
+            git commit --amend -C HEAD
+          mods:
+            - subtitle: 'and force push'
+              mod: cmd
+              command: |
+                git commit --amend -C HEAD
+                git push --force
+
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+
+
+    - title: history
+      should_skip_smart_sort: true
+      subcommands:
+        - title: view
+          should_use_values_as_inline_commands: true
+          should_skip_smart_sort: true
+          should_trim_values: false
+          values_command: |
+            git log -n 50 --oneline --graph
+
+    - title: staged
+      should_skip_smart_sort: true
+      subtitle_command: |
+        staged=$(diff_command 'staged' | wc -l | xargs)
+        echo "$staged file(s)"
+
+      subcommands:
+        - title: 'latest'
+          subtitle: 'process each one, one by one'
+          subcommands:
+            - title: unstage hunk
+              subtitle_command: |
+                _get_first_file "unstage"
+              icon: minus.png
+              should_skip_smart_sort: true
+              command: |
+                process_hunk "unstage"
+
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                    2) echo "[reload~2]";;
+                    3) echo "[reload~3]";;
+                esac
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+
+            - title: view latest hunk
+              values_command: |
+                view_hunk "unstage"
+              should_use_values_as_inline_commands: true
+              should_skip_smart_sort: true
+              should_trim_values: false
+
+        - title: staged files
+          should_skip_smart_sort: true
+          should_use_values_as_inline_commands: true
+          values_command: |
+            diff_command 'staged'
+
+          mods:
+            - subtitle: unstage file
+              mod: cmd
+              command: |
+                git_process_file "unstage" "[title]"
+                
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                esac
+
+          subcommands:
+            - title: list hunks
+              subtitle: "view hunk"
+              values_command: |
+                git diff --cached "[parent]" | grep '^@@'
+              should_use_values_as_inline_commands: true
+              should_skip_smart_sort: true
+              subcommands:
+                - title: unstage hunk
+                  subtitle: ' '
+                  icon: minus.png
+                  should_skip_smart_sort: true
+                  command: |
+                    process_hunk "unstage" "[parent~2]" "[parent]"
+
+                    case $? in
+                        0) echo "[reload]";;
+                        1) echo "[reload~1]";;
+                        2) echo "[reload~2]";;
+                        3) echo "[reload~3]";;
+                    esac
+
+                - title: back
+                  subtitle: 'go back a level (bb)'
+                  icon: back.png
+                  should_skip_smart_sort: true
+                  command: |
+                    echo "[reload~1]"
+
+                - title: view hunk
+                  should_use_values_as_inline_commands: true
+                  should_skip_smart_sort: true
+                  should_trim_values: false
+                  values_command: |
+                    view_hunk "unstage" "[parent~2]" "[parent]"
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+
+
+
+    - title: modified
+      should_skip_smart_sort: true
+      subtitle_command: |
+        modified=$(diff_command 'modified' | wc -l | xargs)
+        echo "$modified file(s)"
+
+      subcommands:
+
+        - title: 'latest'
+          subtitle: 'process each one, one by one'
+          subcommands:
+            - title: stage hunk
+              subtitle_command: |
+                _get_first_file "stage"
+              icon: plus.png
+              should_skip_smart_sort: true
+              command: |
+                process_hunk "stage"
+
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                    2) echo "[reload~2]";;
+                    3) echo "[reload~3]";;
+                esac
+
+            - title: discard hunk
+              subtitle: ' '
+              icon: trash.png
+              should_skip_smart_sort: true
+              command: |
+                process_hunk "discard"
+
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                    2) echo "[reload~2]";;
+                    3) echo "[reload~3]";;
+                esac
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+
+            - title: view latest hunk
+              values_command: |
+                view_hunk "stage"
+              should_use_values_as_inline_commands: true
+              should_skip_smart_sort: true
+              should_trim_values: false
+
+        - title: modified files
+          should_skip_smart_sort: true
+          should_use_values_as_inline_commands: true
+          values_command: |
+            diff_command 'modified' # git status --short
+          mods:
+            - subtitle: stage file
+              mod: cmd
+              command: |
+                git_process_file "stage" "[title]"
+                
+                case $? in
+                    0) echo "[reload]";;
+                    1) echo "[reload~1]";;
+                esac
+
+          subcommands:
+
+            - title: list hunks
+              subtitle: "view hunk"
+              values_command: |
+                git diff "[parent]" | grep '^@@'
+              should_use_values_as_inline_commands: true
+              should_skip_smart_sort: true
+              subcommands:
+                - title: stage hunk
+                  subtitle: ' '
+                  icon: plus.png
+                  should_skip_smart_sort: true
+                  command: |
+                    process_hunk "stage" "[parent~2]" "[parent]"
+
+                    case $? in
+                        0) echo "[reload]";;
+                        1) echo "[reload~1]";;
+                        2) echo "[reload~2]";;
+                        3) echo "[reload~3]";;
+                    esac
+
+                - title: discard hunk
+                  subtitle: ' '
+                  icon: trash.png
+                  should_skip_smart_sort: true
+                  command: |
+                    process_hunk "discard" "[parent~2]" "[parent]"
+
+                    case $? in
+                        0) echo "[reload]";;
+                        1) echo "[reload~1]";;
+                        2) echo "[reload~2]";;
+                        3) echo "[reload~3]";;
+                    esac
+
+                - title: back
+                  subtitle: 'go back a level (bb)'
+                  icon: back.png
+                  should_skip_smart_sort: true
+                  command: |
+                    echo "[reload~1]"
+                  
+
+                - title: view hunk
+                  should_skip_smart_sort: true
+                  should_use_values_as_inline_commands: true
+                  should_trim_values: false
+                  values_command: |
+                    view_hunk "stage" "[parent~2]" "[parent]"
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+
+
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+
+    - title: untracked
+      should_skip_smart_sort: true
+      subtitle_command: |
+        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
+        echo "$untracked file(s)"
+
+      subcommands:
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+
+        - title: untracked files
+          should_skip_smart_sort: true
+          should_use_values_as_inline_commands: true
+          values_command: |
+            git ls-files --others --exclude-standard
+          subtitle: 'stage file'
+          command: |
+            git_process_file "untracked" "[title]"
+            
+            case $? in
+                0) echo "[reload]";;
+                1) echo "[reload~1]";;
+            esac
+
+
+
+
+
+    - title: create branch
+      should_skip_smart_sort: true
+      icon: create.png
+      command: |
+        git checkout -b "[input_snake_case]"
+        
+        echo "[reload~1]"
+# --------------------
+# BRANCHES LOGIC
+# --------------------
     - title: local branches
+      should_skip_smart_sort: true
+      should_use_values_as_inline_commands: true
       values_command: |
         git branch | grep -v '*' # all local branches except the current one
-      should_use_values_as_inline_commands: true
       icon: fork.png
       subcommands:
         - title: checkout
           icon: fork.png
           command: |
-            git stash; git checkout "[parent]"; git pull;
+            git_checkout "[parent]"
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
+              command: killall Xcode; git_checkout "[parent]"; xed .
 
         - title: rebase
           icon: rebase.png
-          command: |            
+          command: |
+            git stash
+            git checkout "[parent]"
+            git pull
+            git checkout -
             git rebase "[parent]"
 
         - title: rebase --onto
@@ -129,10 +522,22 @@
           subtitle: 'needs a start hash'
           subcommands:
             - title: start hash
+              should_use_values_as_inline_commands: true
               command: |
-                git rebase --onto "[parent~3]" "[input]"
+                git stash
+                git checkout "[parent~2]"
+                git pull
+                git checkout -
+                git rebase --onto "[parent~2]" "[input]"
               values_command: |
                 git log --pretty=format:"%H"
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~2]"
 
         - title: delete local branch
           icon: trash.png
@@ -149,11 +554,19 @@
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+    
 
     - title: remote branches
+      should_skip_smart_sort: true
+      should_use_values_as_inline_commands: true
       values_command: |
         git branch -r
-      should_use_values_as_inline_commands: true
       icon: globe.png
       subcommands:
         - title: checkout
@@ -170,132 +583,19 @@
           command: |
             branch="[parent]"
             git push origin --delete ${branch#origin/}
-
-
-        - title: copy branch name
-          icon: copy.png
-          command: |
-            echo "[parent]" | xargs echo -n | pbcopy 
-            
-
-
-# --------------------
-# STATUS LOGIC
-# --------------------
-
-- title: status
-  icon: info.png
-  subtitle_command: |
-    branch=$(git branch --show-current)
-    modified=$(git diff --name-only | wc -l | xargs)
-    untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
-    staged=$(git diff --cached --name-only | wc -l | xargs)
     
-    if [ "$modified" -eq 0 ] && [ "$untracked" -eq 0 ] && [ "$staged" -eq 0 ]
-    then 
-      echo "branch: ${branch}; clean"
-    else 
-      echo "branch: ${branch}; staged: $staged, modified: $modified, untracked: $untracked"
-    fi
-  subcommands:
-    - title: current branch
-      values_command: |
-        git branch --show-current # just the current branch
-      should_use_values_as_inline_commands: true
-      subtitle: current
-      icon: fork.png
-      subcommands:
-        - title: stash & pull
-          icon: fork.png
-          command: |
-            git stash; git checkout "[parent]"; git pull;
-          mods:
-            - subtitle: Launch Xcode after
-              mod: cmd
-              command: killall Xcode; git stash; git checkout "[parent]"; git pull; xed .
 
         - title: copy branch name
           icon: copy.png
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
-
-    - title: commit
-      icon: pencil.png
-      command: |
-       git commit -m "[input]"
-      mods:
-        - subtitle: and push
-          mod: cmd
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
           command: |
-            branch=$(git branch --show-current);
-            git commit -m "[input]"
-            git push -u origin $branch
-
-
-    - title: amend & push
-      icon: up.big.png
-      subtitle: 'Amend previous commit & force push'
-      command: |
-        git commit --amend -C HEAD
-        git push --force
-
-    - title: easy commit & push
-      icon: up.big.png
-      subtitle: 'Commit using the previous commit message & push'
-      command: |
-        git commit --reuse-message=HEAD
-        git push
-
-
-    - title: staged
-      subtitle_command: |
-        staged=$(git diff --cached --name-only | wc -l | xargs)
-        echo "$staged file(s)"
-      command: |
-        staged=$(git diff --cached --name-only | wc -l | xargs)
-        git reset '[input]'
-        if [ "$staged" -eq 1 ]; then
             echo "[reload~1]"
-        else
-            echo "[reload]"
-        fi
-      values_command: |
-        git diff --cached --name-only
-
-
-    - title: modified
-      subtitle_command: |
-        modified=$(git diff --name-only | wc -l | xargs)
-        echo "$modified file(s)"
-      command: |
-        modified=$(git diff --name-only | wc -l | xargs)
-        git add '[input]'
-        if [ "$modified" -eq 1 ]; then
-            echo "[reload~1]"
-        else
-            echo "[reload]"
-        fi
-      values_command: |
-        git diff --name-only # git status --short
-
-
-    - title: untracked
-      subtitle_command: |
-        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
-        echo "$untracked file(s)"
-      command: |
-        untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
-        git add '[input]'
-        if [ "$untracked" -eq 1 ]; then
-            echo "[reload~1]"
-        else
-            echo "[reload]"
-        fi
-      values_command: |
-        git ls-files --others --exclude-standard 
-
-
 # --------------------
 # TAG LOGIC
 # --------------------

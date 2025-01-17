@@ -4,7 +4,7 @@
 
 ## **Overview**
 
-This config file allows you to execute complex Bash/Zsh commands, dynamically reference inputs and contexts, and create hierarchical command structures. It is highly customizable, supports dynamic reloading, and provides seamless integration with Git and other command-line utilities.
+This config file allows you to execute complex Zsh commands, dynamically reference inputs and contexts, and create hierarchical command structures. It is highly customizable, supports dynamic reloading, and provides seamless integration with Git and other command-line utilities.
 
 ---
 
@@ -18,16 +18,18 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | **Field**      | **Type**  | **Description**                                                                 |
 |-----------------|-----------|---------------------------------------------------------------------------------|
 | `title`        | String    | The name of the command as displayed in Alfred.                                |
-| `subtitle`     | String    | (Optional) A short description of the command.                                 |
-| `icon`         | String    | (Optional) A path to an image. For built in options, see [Icons](#icons).      |
+| `subtitle`     | String    | (Optional) A short description of the command.<br><br>Use `' '` for an empty subtitle.                                |
+| `icon`         | String    | (Optional) A path to an image. For built in options, see [Icons](#icons).<br><br>Use `' '` for no image.      |
 | `command`      | String    | (Optional) The shell command to execute. Supports [dynamic placeholders](#dynamic-placeholders).                   |
-| `subtitle_command` | String  | (Optional) Runs this bash command in python and displays the output as the subtitle. This does not get passed down to subcommands or values (as it can get very slow). Supports [dynamic placeholders](#dynamic-placeholders).                   |
+| `subtitle_command` | String  | (Optional) Runs this zsh command in python and displays the output as the subtitle. This does not get passed down to subcommands or values (as it can get very slow). Supports [dynamic placeholders](#dynamic-placeholders).                   |
 | `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.<br><br>If subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
-| `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this bash command. Each new line is a different value. |
+| `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this zsh command. Each new line is a different value. |
 | `should_use_values_as_inline_commands` | Bool | (Optional) Treats each value as its own command, at the current level and not at a sublevel. Only affects this command if there are `values` or `values_command`. |
+| `should_trim_values` | Bool | (Optional) This only applies to `values` & `values_command`. If this is `false`, the values will not trim the whitespace. The default is `true` (see `view hunk` command to see how to use this to display text inline in Alfred) |
 | `quicklookurl` | String | (Optional) This can be a URL to a file or website and when you press shift, Alfred will show a preview. |
 | `mods`         | Array     | (Optional) A list of mod objects, see [Mod fields](#mod-fields).            |
 | `subcommands`  | Array     | (Optional) A list of commands ([this table](#command-fields)).                    |
+| `should_skip_smart_sort` | Bool | (Optional) Tells Alfred to ignore this command from Alfred's smart search. If every command has this as `true` the commands will keep their order, otherwise they will show up below the items that Alfred prioritizes. This property gets passed down to the `values` & `values_command`. It is useful for showing items always in a specific order (see `status` command for an example of using this in a menu) |
 
 ### **Mod fields**
 | **Field**      | **Type**  | **Description**                                                                 |
@@ -40,8 +42,9 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 ### **Dynamic Placeholders**
 | **Placeholder**     | **Description**                                                                                     |
 |----------------------|-----------------------------------------------------------------------------------------------------|
-| `[input]`           | User-provided input at runtime.                                                                     |
+| `[input]`           | User-provided input at runtime. These characters are escaped automatically: backtick, single quote, double quote, and `$`             |
 | `[input_snake_case]`| Same as `[input]`, but converted to `snake_case`.                                                   |
+| `[input_new_lines]`|  Same as `[input]`, but converts `  \  ` to a new line (there is a space before and after the `\`). This is very helpful for doing multiline text in Alfred. |
 | `[parent]`          | Refers to the immediate parent command.                                                             |
 | `[parent~n]`        | References `n` levels back in the parent hierarchy.                                                 |
 | `[title]`           | Title of the command.                                                                                |
@@ -74,9 +77,17 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | <img src="./icons/pencil.png" width="64" alt="pencil.png">                  | `pencil.png`          | Represents editing or writing.  |
 | <img src="./icons/open.png" width="64" alt="open.png">                      | `open.png`            | Represents opening a file or folder. |
 | <img src="./icons/trash.png" width="64" alt="trash.png">                    | `trash.png`           | Represents deletion or removal. |
+| <img src="./icons/up.small.png" width="64" alt="up.small.png">              | `up.small.png`    | Indicates a small upward action. |
 | <img src="./icons/up.big.png" width="64" alt="up.big.png">                  | `up.big.png`          | Indicates a large upward action. |
+| <img src="./icons/left.big.png" width="64" alt="left.big.png">                  | `left.big.png`          | Indicates a large left action. |
+| <img src="./icons/right.big.png" width="64" alt="right.big.png">                  | `right.big.png`          | Indicates a large right action. |
 | <img src="./icons/fork.png" width="64" alt="fork.png">                      | `fork.png`            | Represents branching or forking. |
 | <img src="./icons/copy.png" width="64" alt="copy.png">                      | `copy.png`            | Represents copying or duplication. |
+| <img src="./icons/back.png" width="64" alt="back.png">                      | `back.png`            | Represents going back. |
+| <img src="./icons/back.line.png" width="64" alt="back.line.png">                      | `back.line.png`            | Represents going back to root. |
+| <img src="./icons/check.png" width="64" alt="check.png">                    | `check.png`           | Represents a confirmation. |
+| <img src="./icons/plus.png" width="64" alt="plus.png">                    | `plus.png`           | Represents a additive action. |
+| <img src="./icons/minus.png" width="64" alt="minus.png">                    | `minus.png`           | Represents a subtraction action. |
 
 
 ---
