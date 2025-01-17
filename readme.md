@@ -1,8 +1,12 @@
-# git+ for Alfred
+# git+ for Alfred: a fully customizable git & zsh interface
 
-A highly customizable Git interface for Alfred, allowing you to create personalized commands and menus to streamline your workflow.
+`git+` allows you to create personalized commands and menus to fully streamline ✨your✨ workflow!
+
+---
 
 For detailed documentation on the commands, see [docs.md](docs.md).
+
+For the official Alfred fourm post, [check here](https://www.alfredforum.com/topic/22463-git-for-alfred-a-fully-customizable-git-zsh-interface/).
 
 ---
 
@@ -14,14 +18,36 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 ### Supports multiple repos
 ![Filter Projects](images/filter_projects.png)
 
+### A powerful status menu
+![Filter Projects](images/status_menu.png)
+
 ### Switch branches 
 ![Checkout Branch](images/checkout_branch.png)
 
 ### Create new branches
 ![Create Branch](images/create_branch.png)
 
+### Ability to view, stage, and unstage hunks
+![Create Branch](images/stage_hunk.png)
+
 ### And so much more!
-![Run Commands](images/commands.png)
+
+* push, push -f
+* pull, fetch
+* commit
+* amend
+* stash, pop
+* rebase, rebase --onto
+* cherry-pick
+* history
+* stage and unstage files
+* copy branch name
+* checkout local and remote branch
+* checkout tags
+* copy diff for tags
+* search files in repo
+* open repo in Finder, Terminal, Alfred, etc
+* `+` anything you want to add 🚀 (see [docs.md](docs.md))
 
 
 ---
