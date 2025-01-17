@@ -39,7 +39,7 @@ For detailed documentation on the commands, see [docs.md](docs.md).
 
 ```
 **NOTE**
-* `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the repo's directory.
+* `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 
 

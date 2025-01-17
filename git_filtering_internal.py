@@ -683,14 +683,16 @@ def main():
         #                autocomplete=' ').to_dict()]
     
     else:
+
+        # load location actions before changing directories
+        if alfred_input.location.actions_path:
+            commands.extend(create_commands_from_config(alfred_input.location.actions_path))
+
         change_directory(alfred_input.location)
 
         # initial row of inline values
         for cmd in commands:
             commands.extend(create_inline_commands(cmd))
-
-        if alfred_input.location.actions_path:
-            commands.extend(create_commands_from_config(alfred_input.location.actions_path))
 
         process_commands_recursively(query_input=query_input, locations=locations, commands=commands)
         num_cmds = len(alfred_input.commands)
