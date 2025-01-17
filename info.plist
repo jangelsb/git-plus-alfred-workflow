@@ -787,7 +787,7 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 
 ## 📝 Version History
 
-#### v2024.8
+#### v2025.1
 
 ####### **Tips &amp; Tricks**
 - With `should_skip_smart_sort: true` and `should_trim_values: false` you can do a lot of power tasks in `git+`. Here is a couple of ideas
@@ -806,14 +806,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
   - Stage, unstage, and dischard hunks
   - Use command modifier to stage / unstage entire files
 - Added back buttons for better navigation
-- Introduced icons for "back," "check," and "up.small"
+- Introduced icons for "back," "back.line", "check," "left.big", "minus", "plus", "right.big", "x", "up.small"
 
 ####### **Improvements**
 - All commands are now ran in Zsh 
-- Revamped the `status` menu to be a lot nicer!
-- Renamed commands for better clarity (e.g., `b -&gt; branch`, `s -&gt; status`)
+- Revamped the `status` menu to be a lot nicer! 🚀
+- Renamed commands for better clarity (e.g., `s -&gt; status`)
 - Updated rebase commands to checkout and pull the branch before rebasing
-- Updated commit commands to support (`\n`) messages by using the new `[input_new_lines]`
 
 ####### **Miscellaneous**
 - Updated all inputs to escape: backtick, single quote, double quote, and `$`
@@ -1177,7 +1176,7 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 	<key>variablesdontexport</key>
 	<array/>
 	<key>version</key>
-	<string>2024.8</string>
+	<string>2025.1</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
