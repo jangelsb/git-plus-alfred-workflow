@@ -600,6 +600,16 @@
 # TAG LOGIC
 # --------------------
 
+- title: create tag
+  icon: tag.png
+  command: git tag [input]
+  mods:
+  - subtitle: and push to origin
+    mod: cmd
+    command: |
+      git tag [input]
+      git push origin [input]
+
 - title: tags
   icon: tag.png
   values_command: git tag | sort -r
