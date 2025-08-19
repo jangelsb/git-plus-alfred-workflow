@@ -93,10 +93,11 @@ class ResultItem:
         # josh was here
 
 class Location:
-    def __init__(self, title, directory, actions_path=None):
+    def __init__(self, title, directory, actions_path=None, should_show_default_commands=True):
         self.title = title
         self.directory = directory
         self.actions_path = actions_path
+        self.should_show_default_commands = should_show_default_commands
 
 class Command:
     def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_skip_smart_sort=None, should_trim_values=True):
@@ -443,11 +444,12 @@ def generate_locations_from_yaml(yaml_string):
         title = entry['title']
         path = process_path(entry['path'])
         actions_path = entry.get('config', None)
+        should_show_default_commands = entry.get('show_default_commands', True)
 
         if actions_path:
             actions_path = process_path(actions_path)
 
-        return Location(title=title, directory=path, actions_path=actions_path)
+        return Location(title=title, directory=path, actions_path=actions_path, should_show_default_commands=should_show_default_commands)
 
     try:
         yaml_data = yaml.safe_load(yaml_string)
@@ -653,14 +655,6 @@ def main():
         # Command("status", input_status_command, command_type=CommandType.NO_ACTION),
     ]
 
-    commands.extend(create_commands_from_config(input_actions_path))
-
-    if input_additional_actions_path:
-        commands.extend(create_commands_from_config(input_additional_actions_path))
-
-    if input_additional_actions:
-        commands.extend(create_commands_from_string(input_additional_actions))
-
     output = {"items": []}
 
     # TODO: this doesn't work anymore
@@ -683,6 +677,15 @@ def main():
         #                autocomplete=' ').to_dict()]
     
     else:
+
+        if alfred_input.location.should_show_default_commands:
+            commands.extend(create_commands_from_config(input_actions_path))
+
+            if input_additional_actions_path:
+                commands.extend(create_commands_from_config(input_additional_actions_path))
+
+            if input_additional_actions:
+                commands.extend(create_commands_from_string(input_additional_actions))
 
         # load location actions before changing directories
         if alfred_input.location.actions_path:
