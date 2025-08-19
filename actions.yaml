@@ -564,6 +564,27 @@
     mod: cmd
     command: killall Xcode; git stash; git pull; xed .
 
+- title: stash
+  icon: down.small.png
+  should_skip_smart_sort: true
+  command: |
+    git stash
+
+
+- title: pop
+  icon: up.small.png
+  should_skip_smart_sort: true
+  command: |
+    git pop
+
+
+- title: create branch
+  icon: create.png
+  should_skip_smart_sort: true
+  command: |
+    git checkout -b "[input_snake_case]"
+    
+    echo "[reload~1]"
 
 - title: cherry-pick
   icon: pick.png
