@@ -250,6 +250,29 @@
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>path</key>
+				<string></string>
+				<key>sortBy</key>
+				<integer>0</integer>
+				<key>sortDirection</key>
+				<integer>0</integer>
+				<key>sortFoldersAtTop</key>
+				<false/>
+				<key>sortOverride</key>
+				<false/>
+				<key>stackBrowserView</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.browseinalfred</string>
+			<key>uid</key>
+			<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>alfredfiltersresults</key>
 				<false/>
 				<key>alfredfiltersresultsmatchmode</key>
@@ -329,29 +352,6 @@ sys.stdout.write(path)</string>
 			<string>22AA9BE8-E9EF-4C3F-AAE4-5DCC50E5EEFE</string>
 			<key>version</key>
 			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>path</key>
-				<string></string>
-				<key>sortBy</key>
-				<integer>0</integer>
-				<key>sortDirection</key>
-				<integer>0</integer>
-				<key>sortFoldersAtTop</key>
-				<false/>
-				<key>sortOverride</key>
-				<false/>
-				<key>stackBrowserView</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.browseinalfred</string>
-			<key>uid</key>
-			<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
-			<key>version</key>
-			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -736,6 +736,10 @@ For more info check out the repo: https://github.com/jangelsb/git-plus-alfred-wo
   path: "/path/to/repo2"
   config: /path/to/actions.yaml
 
+- title: scripts
+  path: /path/to/some/folder
+  show_default_commands: false
+  config: /path/to/custom/scripts.yaml
 ```
 **NOTE**
 * `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
@@ -786,6 +790,23 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 ---
 
 ## 📝 Version History
+
+#### v2025.2
+- Removed a lot of the smart sorting to the actions and cleaned up the menu to be more streamline
+  - Now `status` is always at the top and you can see helpful information at a glance 
+  - Anything related to branches is inside of `status`, you can instantly search for a local or remote branch
+  - Fetch commands now always fetch and rerun the workflow
+- Added stash, pop, and create branch
+- Add support for `show_default_commands: false` in the Location yaml - this way you can add just custom a custom config like so
+
+```YAML
+- title: scripts
+  path: /path/to/some/folder
+  show_default_commands: false
+  config: /path/to/custom/scripts.yaml
+```
+
+---
 
 #### v2025.1
 
@@ -917,9 +938,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</key>
 		<dict>
 			<key>xpos</key>
-			<real>660</real>
+			<real>705</real>
 			<key>ypos</key>
-			<real>235</real>
+			<real>155</real>
 		</dict>
 		<key>20EE05A3-8AD6-4A9E-B23F-E3C3874E8593</key>
 		<dict>
@@ -1173,10 +1194,8 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
-	<string>2025.1</string>
+	<string>2025.2</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
