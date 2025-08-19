@@ -1,14 +1,17 @@
 - title: open in Sublime Text (st)
   icon: open.png
+  should_skip_smart_sort: true
   command: |
     st .
 
 - title: open in Sublime Text (sm)
   icon: open.png
+  should_skip_smart_sort: true
   command: |
     sm .
 
 - title: zsh test
+  should_skip_smart_sort: true
   subtitle: zsh only command
   subcommands:
     - title: inline

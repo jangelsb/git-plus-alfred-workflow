@@ -1,81 +1,10 @@
-- title: pull
-  icon: down.big.png
-  command: |
-    git stash; git pull;
-  mods:
-  - subtitle: Launch Xcode after
-    mod: cmd
-    command: killall Xcode; git stash; git pull; xed .
-
-
-- title: fetch
-  icon: down.small.png
-  command: |
-    git fetch -p
-
-
-- title: cherry-pick
-  icon: pick.png
-  command: |
-   git cherry-pick [input]
-
-
-- title: push
-  icon: up.big.png
-  command: |
-    branch=$(git branch --show-current);
-    git push -u origin $branch
-  mods:
-    - subtitle: force push
-      mod: cmd
-      command: |
-        branch=$(git branch --show-current);
-        git push -uf origin $branch
-
-
-# --------------------
-# MISC LOGIC
-# --------------------
-
-- title: open in Terminal
-  icon: open.png
-  command: |
-    open -a Terminal .
-
-
-- title: open in Xcode
-  icon: open.png
-  command: |
-    xed .
-
-
-- title: open in Finder
-  icon: open.png
-  command: |
-    open .
-
-
-- title: View in Alfred
-  icon: open.png
-  command: |
-    [view in alfred]
-
-
-- title: search
-  icon: search.png
-  command: |
-    open "[input]"
-  values_command: |
-    find . -type f
-
-
-
 # --------------------
 # STATUS MENU
 # --------------------
 
 - title: status
   icon: info.png
+  should_skip_smart_sort: true
   subtitle_command: |
    branch=$(git branch --show-current)
    modified=$(diff_command 'modified' | wc -l | xargs)
@@ -93,21 +22,6 @@
         git status | grep 'branch is' || echo '!! no remote branch linked yet'
       icon: fork.png
       subcommands:
-        - title: fetch
-          icon: down.small.png
-          command: |
-            git fetch -p
-            echo "[reload~1]"
-
-        - title: stash & pull
-          icon: fork.png
-          command: |
-            git_checkout "[parent]";
-          mods:
-            - subtitle: Launch Xcode after
-              mod: cmd
-              command: killall Xcode; git_checkout "[parent]"; xed .
-
         - title: copy branch name
           icon: copy.png
           command: |
@@ -127,6 +41,28 @@
           command: |
             echo "[reload~1]"
 
+    - title: fetch
+      icon: down.small.png
+      should_skip_smart_sort: true
+      command: |
+        git fetch -p
+        echo "[reload]"
+
+    - title: stash & pull
+      icon: down.big.png
+      should_skip_smart_sort: true
+      command: |
+        branch=$(git branch --show-current);
+        git_checkout "$branch";
+
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: |
+            branch=$(git branch --show-current);
+            killall Xcode;
+            git_checkout "$branch";
+            xed .
 
     - title: commit
       icon: pencil.png
@@ -483,8 +419,8 @@
 
 
     - title: create branch
-      should_skip_smart_sort: true
       icon: create.png
+      should_skip_smart_sort: true
       command: |
         git checkout -b "[input_snake_case]"
         
@@ -596,12 +532,95 @@
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
+
+- title: fetch
+  icon: down.small.png
+  should_skip_smart_sort: true
+  command: |
+    git fetch -p
+    echo "[reload]"
+
+- title: push
+  icon: up.big.png
+  should_skip_smart_sort: true
+  command: |
+    branch=$(git branch --show-current);
+    git push -u origin $branch
+  mods:
+    - subtitle: force push
+      mod: cmd
+      command: |
+        branch=$(git branch --show-current);
+        git push -uf origin $branch
+
+
+- title: pull
+  icon: down.big.png
+  should_skip_smart_sort: true
+  command: |
+    git stash; git pull;
+  mods:
+  - subtitle: Launch Xcode after
+    mod: cmd
+    command: killall Xcode; git stash; git pull; xed .
+
+
+- title: cherry-pick
+  icon: pick.png
+  should_skip_smart_sort: true
+  command: |
+   git cherry-pick [input]
+
+
+# --------------------
+# MISC LOGIC
+# --------------------
+
+- title: open in Terminal
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    open -a Terminal .
+
+
+- title: open in Xcode
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    xed .
+
+
+- title: open in Finder
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    open .
+
+
+- title: View in Alfred
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    [view in alfred]
+
+
+- title: search
+  icon: search.png
+  should_skip_smart_sort: true
+  command: |
+    open "[input]"
+  values_command: |
+    find . -type f
+
+
+
 # --------------------
 # TAG LOGIC
 # --------------------
 
 - title: create tag
   icon: tag.png
+  should_skip_smart_sort: true
   command: git tag [input]
   mods:
   - subtitle: and push to origin
@@ -612,6 +631,7 @@
 
 - title: tags
   icon: tag.png
+  should_skip_smart_sort: true
   values_command: git tag | sort -r
   subcommands:
     - title: checkout
