@@ -213,7 +213,7 @@ def run_command(command):
 
         result = subprocess.run(["zsh", "-c", command], capture_output=True, text=True, check=True)
         # result = subprocess.run(command, shell=True, capture_output=True, text=True, check=True)
-        return result.stdout
+        return result.stdout.strip()
     except subprocess.CalledProcessError as e:
         return f"Error executing {command}: {e.stderr}"
 
@@ -227,7 +227,7 @@ def subtitle_for_command(command, param=None):
 
     if command.command_type == CommandType.NO_ACTION:
         action = process_action(action=command.action, param=param, title=command.title)
-        return run_command(action).strip()
+        return run_command(action)
 
     if command.subtitle_command:
         # print(f"😎😎😎----------------------------------------------------------------------------")
@@ -235,7 +235,7 @@ def subtitle_for_command(command, param=None):
         # print(f"😎😎😎----------------------------------------------------------------------------")
 
         action = process_action(action=command.subtitle_command, param=param, title=command.title)
-        action = run_command(action).strip()
+        action = run_command(action)
         return action
     
     if command.subtitle:
@@ -304,7 +304,7 @@ def process_action(action, param, title, secondaryAction=None):
         return action
 
     if secondaryAction:
-        value = run_command(secondaryAction).strip()
+        value = run_command(secondaryAction)
         action = action.replace("[input]", escape_param(value))
         action = replace_parent_action(action)
         action = action.replace("[title]", title.strip())
