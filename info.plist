@@ -1194,6 +1194,8 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>2025.2</string>
 	<key>webaddress</key>

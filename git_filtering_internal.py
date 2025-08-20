@@ -270,7 +270,8 @@ def create_result_item_for_location(loc):
         autocomplete=alfred_input.create_path(loc.title),
         icon_path="folder.png",
         type="file:skipcheck",
-        valid=True
+        should_skip_smart_sort=True,
+        valid=False
     )
 
 
@@ -338,7 +339,7 @@ def create_result_item_common(title, cmd, location, param=None):
     modifier_list = create_modifier_list(cmd, location, param)
 
     switcher = {
-        CommandType.NO_ACTION: True,
+        CommandType.NO_ACTION: True, # this is only True so that there is no `...` is shown
         CommandType.INLINE: False,
         CommandType.SINGLE_ACTION: True,
         CommandType.NEEDS_PARAM: bool(param),
@@ -347,14 +348,16 @@ def create_result_item_common(title, cmd, location, param=None):
 
     valid = switcher.get(cmd.command_type, False) and not cmd.subcommands
 
-
     return ResultItem(
         f"{title}{'...' if not valid else ''}",
         uid=title,
+
+        # full command = zsh command to run
+        # full path to navigate to in Alfred (only matters if all commands are valid for smart sort)
         arg=full_command if valid else alfred_input.create_path(title), # TODO: might want to clean this up with the other place `alfred_input.create_path(title)` is called
         subtitle=subtitle,
         location=location,
-        valid=False if cmd.command_type == CommandType.NO_ACTION else True,
+        valid=False if cmd.command_type == CommandType.NO_ACTION else valid,
         autocomplete= alfred_input.create_current_path() if cmd.command_type == CommandType.NO_ACTION else None,
         mods=modifier_list,
         icon_path=cmd.icon_path,
