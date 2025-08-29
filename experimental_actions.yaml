@@ -4,6 +4,12 @@
   command: |
     st .
 
+- title: Run in Terminal
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    run_in_terminal ls -l
+
 - title: open in Sublime Text (sm)
   icon: open.png
   should_skip_smart_sort: true

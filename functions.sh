@@ -6,6 +6,30 @@ git_checkout() {
     git stash; git checkout "$1"; git pull;
 }
 
+
+
+################################################################################
+##############################    helper commands    ##############################
+################################################################################
+
+run_in_terminal() {
+  local wd=$(pwd)        # save working directory
+  local cmd="$*"         # grab all args passed to function
+
+  if [[ -z "$cmd" ]]; then
+    echo "Usage: run_in_terminal <command>"
+    return 1
+  fi
+
+  osascript <<EOF
+tell application "Terminal"
+    activate
+    do script "cd '$wd' && $cmd"
+end tell
+EOF
+}
+
+
 ################################################################################
 ##############################     DIFF LOGIC     ##############################
 ################################################################################
