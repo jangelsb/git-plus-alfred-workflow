@@ -1,6 +1,20 @@
 # --------------------
 # STATUS MENU
 # --------------------
+- title: view hunk details
+  icon: eye.png
+  should_skip_smart_sort: true
+  command: |
+    echo "Default action"
+  textview_action:
+    command: |
+      view_hunk "unstage" "[parent~2]" "[parent]"
+    cmd_action: |
+      echo "cmd pressed"
+    alt_action: |
+      echo "alt pressed"
+    ctrl_action: |
+      echo "ctrl pressed"
 
 - title: status
   icon: info.png

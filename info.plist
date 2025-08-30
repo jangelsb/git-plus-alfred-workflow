@@ -173,6 +173,18 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>3A8E47E0-11E3-410B-A4F2-1D9D1C626D62</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>843CE930-71A9-45CB-9EC7-0F7F32103C0E</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -206,6 +218,18 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>6AF906CF-57FA-41B4-967E-D06828E92FBA</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -247,29 +271,6 @@
 	<string>git+</string>
 	<key>objects</key>
 	<array>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>path</key>
-				<string></string>
-				<key>sortBy</key>
-				<integer>0</integer>
-				<key>sortDirection</key>
-				<integer>0</integer>
-				<key>sortFoldersAtTop</key>
-				<false/>
-				<key>sortOverride</key>
-				<false/>
-				<key>stackBrowserView</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.browseinalfred</string>
-			<key>uid</key>
-			<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
 		<dict>
 			<key>config</key>
 			<dict>
@@ -320,6 +321,29 @@ python3 git_filtering_internal.py "$1"</string>
 			<string>6096A812-AA1D-4D56-BCBD-F0CFB5965568</string>
 			<key>version</key>
 			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>path</key>
+				<string></string>
+				<key>sortBy</key>
+				<integer>0</integer>
+				<key>sortDirection</key>
+				<integer>0</integer>
+				<key>sortFoldersAtTop</key>
+				<false/>
+				<key>sortOverride</key>
+				<false/>
+				<key>stackBrowserView</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.browseinalfred</string>
+			<key>uid</key>
+			<string>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -496,6 +520,20 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 						<string>not a command</string>
 						<key>uid</key>
 						<string>305D3D82-5368-44F1-B4BB-6F707F32771B</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string>{var:tv_command}</string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>1</integer>
+						<key>matchstring</key>
+						<string></string>
+						<key>outputlabel</key>
+						<string>has_textview_action</string>
+						<key>uid</key>
+						<string>843CE930-71A9-45CB-9EC7-0F7F32103C0E</string>
 					</dict>
 				</array>
 				<key>elselabel</key>
@@ -697,6 +735,27 @@ python3 location_arg_parser.py "$1"</string>
 			<string>C679AB43-6F01-45E7-968D-B70DD4FF5218</string>
 			<key>version</key>
 			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string></string>
+				<key>title</key>
+				<string>VARIABLE</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>3A8E47E0-11E3-410B-A4F2-1D9D1C626D62</string>
+			<key>version</key>
+			<integer>1</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -917,9 +976,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<key>note</key>
 			<string>run command</string>
 			<key>xpos</key>
-			<real>435</real>
+			<real>485</real>
 			<key>ypos</key>
-			<real>455</real>
+			<real>420</real>
 		</dict>
 		<key>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</key>
 		<dict>
@@ -972,9 +1031,16 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<key>note</key>
 			<string>navigate to path in alfred</string>
 			<key>xpos</key>
-			<real>635</real>
+			<real>645</real>
 			<key>ypos</key>
 			<real>695</real>
+		</dict>
+		<key>3A8E47E0-11E3-410B-A4F2-1D9D1C626D62</key>
+		<dict>
+			<key>xpos</key>
+			<real>1125</real>
+			<key>ypos</key>
+			<real>740</real>
 		</dict>
 		<key>555BFC35-7D96-47DD-8BE0-73E8B5768E50</key>
 		<dict>
@@ -993,23 +1059,23 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>6096A812-AA1D-4D56-BCBD-F0CFB5965568</key>
 		<dict>
 			<key>xpos</key>
-			<real>70</real>
+			<real>65</real>
 			<key>ypos</key>
-			<real>165</real>
+			<real>150</real>
 		</dict>
 		<key>6AF906CF-57FA-41B4-967E-D06828E92FBA</key>
 		<dict>
 			<key>xpos</key>
-			<real>560</real>
+			<real>640</real>
 			<key>ypos</key>
-			<real>615</real>
+			<real>595</real>
 		</dict>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<dict>
 			<key>xpos</key>
-			<real>80</real>
+			<real>60</real>
 			<key>ypos</key>
-			<real>425</real>
+			<real>385</real>
 		</dict>
 		<key>A9F8153D-1EF2-418D-9E9F-34BC7790CD25</key>
 		<dict>
@@ -1021,9 +1087,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</key>
 		<dict>
 			<key>xpos</key>
-			<real>405</real>
+			<real>410</real>
 			<key>ypos</key>
-			<real>625</real>
+			<real>600</real>
 		</dict>
 		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
 		<dict>

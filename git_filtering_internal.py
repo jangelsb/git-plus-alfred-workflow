@@ -55,7 +55,7 @@ class Text:
         }
 
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None, quicklookurl=None, should_skip_smart_sort=None):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None, quicklookurl=None, should_skip_smart_sort=None, textview_action=None):
         self.uid = uid if uid else title
         self.title = title
         self.arg = arg
@@ -68,6 +68,7 @@ class ResultItem:
         self.type = type
         self.quicklookurl = quicklookurl
         self.should_skip_smart_sort = should_skip_smart_sort
+        self.textview_action = textview_action
 
     def to_dict(self):
         item_dict = {
@@ -88,7 +89,17 @@ class ResultItem:
             item_dict["icon"] = {
                 "path": self.icon_path
             }
-        return {k: v for k, v in item_dict.items() if v is not None}
+
+        variables = {}  # Initialize as an empty dictionary
+
+        # If command is passed, check for textview_action
+        if self.textview_action:
+            variables.update(self.textview_action.to_dict())  # Insert items from textview_action dictionary
+
+        if variables:
+            item_dict["variables"] = variables
+        
+        return {k: v for k, v in item_dict.items() if v is not None}    
 
         # josh was here
 
@@ -99,8 +110,38 @@ class Location:
         self.actions_path = actions_path
         self.should_show_default_commands = should_show_default_commands
 
+class TextViewAction:
+    def __init__(self, command=None, cmd_action=None, alt_action=None, ctrl_action=None):
+        self.command = command
+        self.cmd_action = cmd_action
+        self.alt_action = alt_action
+        self.ctrl_action = ctrl_action
+
+    def to_dict(self):
+        return {
+            'tv_command': self.command,
+            'tv_cmd_action': self.cmd_action,
+            'tv_alt_action': self.alt_action,
+            'tv_ctrl_action': self.ctrl_action
+        }
+
+
+    @classmethod
+    def from_dict(cls, data):
+        if not isinstance(data, dict):
+            return None
+        return cls(
+            command=data.get('command'),
+            cmd_action=data.get('cmd_action'),
+            alt_action=data.get('alt_action'),
+            ctrl_action=data.get('ctrl_action')
+        )
+
+    def __repr__(self):
+        return f"TextViewAction(command={self.command!r}, cmd_action={self.cmd_action!r}, alt_action={self.alt_action!r}, ctrl_action={self.ctrl_action!r})"
+
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_skip_smart_sort=None, should_trim_values=True):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_skip_smart_sort=None, should_trim_values=True, textview_action=None):
         self.title = title
         self.action = action
         self.secondaryAction = secondaryAction
@@ -117,6 +158,7 @@ class Command:
         self.quicklookurl = quicklookurl
         self.should_skip_smart_sort = should_skip_smart_sort
         self.should_trim_values = should_trim_values
+        self.textview_action = textview_action  # Now always a TextViewAction or None
 
     def __repr__(self):
         return f"{self.title}"
@@ -362,7 +404,8 @@ def create_result_item_common(title, cmd, location, param=None):
         mods=modifier_list,
         icon_path=cmd.icon_path,
         quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None,
-        should_skip_smart_sort=cmd.should_skip_smart_sort if cmd.should_skip_smart_sort else None
+        should_skip_smart_sort=cmd.should_skip_smart_sort if cmd.should_skip_smart_sort else None,
+        textview_action=cmd.textview_action
     )
 
 def create_result_item_for_command(cmd, location):
@@ -512,7 +555,9 @@ def create_commands_from_yaml(yaml_data):
         quicklookurl = entry.get('quicklookurl', None)
         should_skip_smart_sort = entry.get('should_skip_smart_sort', None)
         should_trim_values = entry.get('should_trim_values', True)
-
+        # Parse textview_action as a TextViewAction instance
+        textview_action_data = entry.get('textview_action', None)
+        textview_action = TextViewAction.from_dict(textview_action_data) if textview_action_data else None
 
         command_type = CommandType.SINGLE_ACTION
 
@@ -553,7 +598,8 @@ def create_commands_from_yaml(yaml_data):
             should_use_values_as_inline_commands=should_use_values_as_inline_commands,
             quicklookurl=quicklookurl,
             should_skip_smart_sort=should_skip_smart_sort,
-            should_trim_values=should_trim_values
+            should_trim_values=should_trim_values,
+            textview_action=textview_action  # Now a TextViewAction instance or None
         )
 
     return [command_entry_processor(entry) for entry in yaml_data]
