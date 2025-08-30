@@ -119,10 +119,10 @@ class TextViewAction:
 
     def to_dict(self):
         return {
-            'tv_command': self.command,
-            'tv_cmd_action': self.cmd_action,
-            'tv_alt_action': self.alt_action,
-            'tv_ctrl_action': self.ctrl_action
+            'tv_command': self.command.strip(),
+            'tv_cmd_action': self.cmd_action.strip(),
+            'tv_alt_action': self.alt_action.strip(),
+            'tv_ctrl_action': self.ctrl_action.strip()
         }
 
 
@@ -392,7 +392,10 @@ def create_result_item_common(title, cmd, location, param=None):
 
     tv_action = cmd.textview_action
     if tv_action:
-        tv_action.command = process_action(action=tv_action.command, param=param, title=title)
+        tv_action.command = construct_full_command(action=process_action(action=tv_action.command, param=param, title=title), location=location)
+        tv_action.cmd_action  = construct_full_command(action=process_action(action=tv_action.cmd_action, param=param, title=title), location=location)
+        tv_action.alt_action  = construct_full_command(action=process_action(action=tv_action.alt_action, param=param, title=title), location=location)
+        tv_action.ctrl_action  = construct_full_command(action=process_action(action=tv_action.ctrl_action, param=param, title=title), location=location)
 
     return ResultItem(
         f"{title}{'...' if not valid else ''}",
