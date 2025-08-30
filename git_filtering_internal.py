@@ -390,6 +390,10 @@ def create_result_item_common(title, cmd, location, param=None):
 
     valid = switcher.get(cmd.command_type, False) and not cmd.subcommands
 
+    tv_action = cmd.textview_action
+    if tv_action:
+        tv_action.command = process_action(action=tv_action.command, param=param, title=title)
+
     return ResultItem(
         f"{title}{'...' if not valid else ''}",
         uid=title,
@@ -405,7 +409,7 @@ def create_result_item_common(title, cmd, location, param=None):
         icon_path=cmd.icon_path,
         quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None,
         should_skip_smart_sort=cmd.should_skip_smart_sort if cmd.should_skip_smart_sort else None,
-        textview_action=cmd.textview_action
+        textview_action=tv_action
     )
 
 def create_result_item_for_command(cmd, location):
@@ -452,6 +456,9 @@ def create_value_commands(cmd):
             action = action.replace('[input]', item.strip()) # TODO: should this move else where?
             command_type = CommandType.SINGLE_ACTION
 
+        if cmd.textview_action:
+            command_type = CommandType.SINGLE_ACTION
+
         commands.append(Command(
             title=f"{item.strip() if cmd.should_trim_values else item}",
             action=action,
@@ -467,7 +474,8 @@ def create_value_commands(cmd):
             subcommands=cmd.subcommands,
             should_use_values_as_inline_commands=False,
             should_skip_smart_sort=cmd.should_skip_smart_sort,
-            should_trim_values = cmd.should_trim_values
+            should_trim_values = cmd.should_trim_values,
+            textview_action=cmd.textview_action
         ))
     return commands
 
@@ -582,6 +590,9 @@ def create_commands_from_yaml(yaml_data):
             icon = icon if icon else " "
             subtitle = subtitle if subtitle else " "
             command_type = CommandType.NO_ACTION
+
+        if textview_action:
+            command_type = CommandType.SINGLE_ACTION
 
         return Command(
             title=entry['title'],

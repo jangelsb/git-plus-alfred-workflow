@@ -173,7 +173,7 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>3A8E47E0-11E3-410B-A4F2-1D9D1C626D62</string>
+				<string>B7FDA93B-4667-4916-959E-E5A38C50D3D2</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -230,6 +230,19 @@
 				<string></string>
 				<key>sourceoutputuid</key>
 				<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B7FDA93B-4667-4916-959E-E5A38C50D3D2</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D493D841-862A-4D97-A53F-BFE843B58E67</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -434,27 +447,6 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>delimiter</key>
-				<string>;;;</string>
-				<key>discardemptyarguments</key>
-				<false/>
-				<key>outputas</key>
-				<integer>0</integer>
-				<key>trimarguments</key>
-				<false/>
-				<key>variableprefix</key>
-				<string>split</string>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.split</string>
-			<key>uid</key>
-			<string>CC2552BD-9769-4B08-8A3B-C96EAF7E7E85</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>argument</key>
 				<string>{query}</string>
 				<key>passthroughargument</key>
@@ -471,6 +463,27 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
 			<string>5AA4C88E-F48A-4EA7-BCE7-7BE5EDD286A4</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>delimiter</key>
+				<string>;;;</string>
+				<key>discardemptyarguments</key>
+				<false/>
+				<key>outputas</key>
+				<integer>0</integer>
+				<key>trimarguments</key>
+				<false/>
+				<key>variableprefix</key>
+				<string>split</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.split</string>
+			<key>uid</key>
+			<string>CC2552BD-9769-4B08-8A3B-C96EAF7E7E85</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -739,21 +752,61 @@ python3 location_arg_parser.py "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>lastpathcomponent</key>
-				<false/>
-				<key>onlyshowifquerypopulated</key>
-				<true/>
-				<key>removeextension</key>
-				<false/>
-				<key>text</key>
+				<key>behaviour</key>
+				<integer>2</integer>
+				<key>fontmode</key>
+				<integer>0</integer>
+				<key>fontsizing</key>
+				<integer>0</integer>
+				<key>footertext</key>
 				<string></string>
-				<key>title</key>
-				<string>VARIABLE</string>
+				<key>inputfile</key>
+				<string></string>
+				<key>inputtype</key>
+				<integer>0</integer>
+				<key>loadingtext</key>
+				<string></string>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>scriptinput</key>
+				<integer>0</integer>
+				<key>spellchecking</key>
+				<integer>0</integer>
+				<key>stackview</key>
+				<true/>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.output.notification</string>
+			<string>alfred.workflow.userinterface.text</string>
 			<key>uid</key>
-			<string>3A8E47E0-11E3-410B-A4F2-1D9D1C626D62</string>
+			<string>D493D841-862A-4D97-A53F-BFE843B58E67</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string>```
+{var:tv_command}
+```
+```
+{var:tv_cmd_action}
+```
+```
+{var:tv_alt_action}
+```
+```
+{var:tv_ctrl_action}
+```</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>B7FDA93B-4667-4916-959E-E5A38C50D3D2</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1035,13 +1088,6 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<key>ypos</key>
 			<real>695</real>
 		</dict>
-		<key>3A8E47E0-11E3-410B-A4F2-1D9D1C626D62</key>
-		<dict>
-			<key>xpos</key>
-			<real>1125</real>
-			<key>ypos</key>
-			<real>740</real>
-		</dict>
 		<key>555BFC35-7D96-47DD-8BE0-73E8B5768E50</key>
 		<dict>
 			<key>xpos</key>
@@ -1091,6 +1137,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<key>ypos</key>
 			<real>600</real>
 		</dict>
+		<key>B7FDA93B-4667-4916-959E-E5A38C50D3D2</key>
+		<dict>
+			<key>xpos</key>
+			<real>980</real>
+			<key>ypos</key>
+			<real>770</real>
+		</dict>
 		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
 		<dict>
 			<key>note</key>
@@ -1106,6 +1159,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<real>1240</real>
 			<key>ypos</key>
 			<real>310</real>
+		</dict>
+		<key>D493D841-862A-4D97-A53F-BFE843B58E67</key>
+		<dict>
+			<key>xpos</key>
+			<real>1155</real>
+			<key>ypos</key>
+			<real>740</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
