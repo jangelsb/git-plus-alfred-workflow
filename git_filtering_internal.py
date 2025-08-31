@@ -111,34 +111,44 @@ class Location:
         self.should_show_default_commands = should_show_default_commands
 
 class TextViewAction:
-    def __init__(self, command=None, cmd_action=None, alt_action=None, ctrl_action=None):
+    def __init__(self, command=None, mods=None): # TODO: command shouldn't be optional
         self.command = command
-        self.cmd_action = cmd_action
-        self.alt_action = alt_action
-        self.ctrl_action = ctrl_action
+        self.mods = mods or []
 
     def to_dict(self):
-        return {
-            'tv_command': self.command.strip(),
-            'tv_cmd_action': self.cmd_action.strip(),
-            'tv_alt_action': self.alt_action.strip(),
-            'tv_ctrl_action': self.ctrl_action.strip()
+        # Map ModifierKey to suffixes
+        mod_suffixes = {
+            ModifierKey.CMD: "cmd",
+            ModifierKey.ALT: "alt",
+            ModifierKey.CTRL: "ctrl",
+            ModifierKey.FN: "fn",
+            ModifierKey.SHIFT: "shift",
+            ModifierKey.CMD_ALT: "cmd_alt"
         }
-
+        result = {}
+        if self.command:
+            result['tv_command'] = self.command.strip()
+        for mod in self.mods:
+            suffix = mod_suffixes.get(mod.key)
+            if not suffix:
+                continue
+            # Add both action and subtitle for each mod
+            result[f"tv_{suffix}_action"] = mod.arg.strip() if mod.arg else ""
+            result[f"tv_{suffix}_action_subtitle"] = mod.subtitle.strip() if mod.subtitle else ""
+        return result
 
     @classmethod
     def from_dict(cls, data):
         if not isinstance(data, dict):
             return None
-        return cls(
-            command=data.get('command'),
-            cmd_action=data.get('cmd_action'),
-            alt_action=data.get('alt_action'),
-            ctrl_action=data.get('ctrl_action')
-        )
+        command = data.get('command', None)
+        mods = []
+        if 'mods' in data:
+            mods = process_modifiers(data['mods'])
+        return cls(command=command, mods=mods)
 
     def __repr__(self):
-        return f"TextViewAction(command={self.command!r}, cmd_action={self.cmd_action!r}, alt_action={self.alt_action!r}, ctrl_action={self.ctrl_action!r})"
+        return f"TextViewAction(command={self.command!r}, mods={self.mods!r})"
 
 class Command:
     def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_skip_smart_sort=None, should_trim_values=True, textview_action=None):
@@ -158,7 +168,7 @@ class Command:
         self.quicklookurl = quicklookurl
         self.should_skip_smart_sort = should_skip_smart_sort
         self.should_trim_values = should_trim_values
-        self.textview_action = textview_action  # Now always a TextViewAction or None
+        self.textview_action = textview_action
 
     def __repr__(self):
         return f"{self.title}"
@@ -392,10 +402,16 @@ def create_result_item_common(title, cmd, location, param=None):
 
     tv_action = cmd.textview_action
     if tv_action:
-        tv_action.command = construct_full_command(action=process_action(action=tv_action.command, param=param, title=title), location=location)
-        tv_action.cmd_action  = construct_full_command(action=process_action(action=tv_action.cmd_action, param=param, title=title), location=location)
-        tv_action.alt_action  = construct_full_command(action=process_action(action=tv_action.alt_action, param=param, title=title), location=location)
-        tv_action.ctrl_action  = construct_full_command(action=process_action(action=tv_action.ctrl_action, param=param, title=title), location=location)
+        if tv_action.command:
+            tv_action.command = construct_full_command(
+                action=process_action(action=tv_action.command, param=param, title=title),
+                location=location
+            )
+        for mod in tv_action.mods:
+            mod.arg = construct_full_command(
+                action=process_action(action=mod.arg, param=param, title=title),
+                location=location
+            )
 
     return ResultItem(
         f"{title}{'...' if not valid else ''}",
@@ -536,19 +552,19 @@ def create_modifiers_from_string(modifier_string):
         # print(f"An error occurred: {e}")
         return []
 
-def create_commands_from_yaml(yaml_data):
-    def process_modifiers(mods):
-        if not mods:
-            return []
-        return [
-            Modifier(
-                arg=mod['command'],
-                subtitle=mod['subtitle'],
-                valid=True,
-                key=ModifierKey(mod['mod'])
-            ) for mod in mods
-        ]
+def process_modifiers(mods):
+    if not mods:
+        return []
+    return [
+        Modifier(
+            arg=mod['command'],
+            subtitle=mod.get('subtitle', ''),
+            valid=True,
+            key=ModifierKey(mod['mod'])
+        ) for mod in mods
+    ]
 
+def create_commands_from_yaml(yaml_data):
     def command_entry_processor(entry):
         def process_subcommands(subcommands):
             return [command_entry_processor(subcommand) for subcommand in subcommands]
