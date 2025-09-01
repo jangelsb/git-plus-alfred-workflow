@@ -81,14 +81,10 @@ _get_diff_header() {
         header=$(_get_first_hunk "$full_diff" | grep '^@@')
     fi
 
-    count=$(echo "$full_diff" | grep -c '^@@')
+    count=$(_get_hunk_count "$action" "$file")
 
     echo "----------------------------------"
-    if (( count == 1 )); then
-      echo "file: $file ($count hunk)"
-    else
-        echo "file: $file ($count hunks)"
-    fi
+    echo "file: $file ($count)"
     echo "hunk: $header"
     echo "----------------------------------"
 }
@@ -103,11 +99,10 @@ _get_hunk_count() {
     fi
 
     full_diff=$(_get_full_diff "$action" "$file")
-
-    count=$(echo "$full_diff" | grep -c '^@@')
+    local count=$(echo "$full_diff" | grep -c '^@@')
 
     if (( count == 1 )); then
-      echo "$count hunk"
+        echo "$count hunk"
     else
         echo "$count hunks"
     fi
