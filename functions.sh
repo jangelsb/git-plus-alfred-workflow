@@ -243,6 +243,11 @@ process_hunk() {
 
     else
 
+      # viewing all hunks for a file, go back 2 if no more hunks
+      if [[ -n "$file" &&  "$hunk_count" -eq 1 ]]; then
+          return 2
+      fi
+
       # viewing all hunks, only go back 3, if no more hunks
       if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
           return 2
