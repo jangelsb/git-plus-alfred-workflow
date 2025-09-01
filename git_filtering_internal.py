@@ -74,12 +74,14 @@ def run_command(command):
         return f"Error executing {command}: {e.stderr}"
 
 def subtitle_for_command(command, param=None):
-    def process_action_text(value):
+    def process_action_text(value, is_preview=False):
         stripped_action = value.strip()
         lines = stripped_action.splitlines()
+        prefix = "runs in alfred" if is_preview else "runs"
+
         if len(lines) > 1:
-            return f"runs `{lines[0]} ..."
-        return f"runs `{stripped_action}`"
+            return f"{prefix} `{lines[0]} ..."
+        return f"{prefix} `{stripped_action}`"
 
     if command.command_type == CommandType.NO_ACTION:
         action = process_action(action=command.action, param=param, title=command.title)
@@ -111,7 +113,11 @@ def subtitle_for_command(command, param=None):
             return process_action_text(action)
 
     if command.command_type ==  CommandType.SINGLE_ACTION:
-        if not command.subcommands:
+        if command.textview_action:
+            action = process_action(action=command.textview_action.command, param=param, title=command.title, secondaryAction=command.secondaryAction)
+            return process_action_text(action, is_preview=True)
+
+        elif not command.subcommands:
             action = process_action(action=command.action, param=param, title=command.title, secondaryAction=command.secondaryAction)
             return process_action_text(action)
         
@@ -399,16 +405,20 @@ def create_commands_from_yaml(yaml_data):
         elif subcommands:
             icon = icon if icon else "list.png"
 
-        if not action and not subcommands:
+
+        if textview_action:
+            command_type = CommandType.SINGLE_ACTION
+            icon = icon if icon else "view.png"
+
+            if not textview_action.mods:
+                textview_action.mods=mods
+
+        elif not action and not subcommands:
             icon = icon if icon else " "
             subtitle = subtitle if subtitle else " "
             command_type = CommandType.NO_ACTION
 
-        if textview_action:
-            command_type = CommandType.SINGLE_ACTION
 
-            if not textview_action.mods:
-                textview_action.mods=mods
 
         return Command(
             title=entry['title'],

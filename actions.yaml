@@ -133,13 +133,9 @@
 
     - title: history
       should_skip_smart_sort: true
-      subcommands:
-        - title: view
-          should_use_values_as_inline_commands: true
-          should_skip_smart_sort: true
-          should_trim_values: false
-          values_command: |
-            git log -n 50 --oneline --graph
+      textview_action:
+        command: |
+          git log -n 50 --oneline --graph
 
     - title: staged
       should_skip_smart_sort: true
@@ -319,20 +315,6 @@
                 esac
 
           subcommands:
-#            - title: view hunk details
-#              should_skip_smart_sort: true
-#              command: |
-#                echo "Default action"
-#              textview_action:
-#                command: |
-#                  view_hunk "stage" "[parent~2]" "[parent]"
-#                cmd_action: |
-#                  echo "cmd pressed"
-#                alt_action: |
-#                  echo "alt pressed"
-#                ctrl_action: |
-#                  echo "ctrl pressed"
-
             - title: list hunks
               subtitle: "view hunk"
               values_command: |
@@ -366,50 +348,6 @@
               textview_action:
                 command: |
                   view_hunk "stage" "[parent]" "[title]"
-
-#              subcommands:
-#                - title: stage hunk
-#                  subtitle: ' '
-#                  icon: plus.png
-#                  should_skip_smart_sort: true
-#                  command: |
-#                    process_hunk "stage" "[parent~2]" "[parent]"
-#
-#                    case $? in
-#                        0) echo "[reload]";;
-#                        1) echo "[reload~1]";;
-#                        2) echo "[reload~2]";;
-#                        3) echo "[reload~3]";;
-#                    esac
-#
-#                - title: discard hunk
-#                  subtitle: ' '
-#                  icon: trash.png
-#                  should_skip_smart_sort: true
-#                  command: |
-#                    process_hunk "discard" "[parent~2]" "[parent]"
-#
-#                    case $? in
-#                        0) echo "[reload]";;
-#                        1) echo "[reload~1]";;
-#                        2) echo "[reload~2]";;
-#                        3) echo "[reload~3]";;
-#                    esac
-#
-#                - title: back
-#                  subtitle: 'go back a level (bb)'
-#                  icon: back.png
-#                  should_skip_smart_sort: true
-#                  command: |
-#                    echo "[reload~1]"
-#
-#
-#                - title: view hunk
-#                  should_skip_smart_sort: true
-#                  should_use_values_as_inline_commands: true
-#                  should_trim_values: false
-#                  values_command: |
-#                    view_hunk "stage" "[parent~2]" "[parent]"
 
             - title: back
               subtitle: 'go back a level (bb)'

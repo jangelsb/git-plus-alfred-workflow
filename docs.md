@@ -59,35 +59,36 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 
 
 ### **Icons**
-| **Preview**                                                                 | **Icon Path**    | **Description**                 |
-|-----------------------------------------------------------------------------|------------------------|----------------------------------|
-| <img src="./icons/info.png" width="64" alt="info.png">                      | `info.png`            | Represents information or details. |
-| <img src="./icons/down.small.png" width="64" alt="down.small.png">          | `down.small.png`      | Indicates a small downward action. |
-| <img src="./icons/icon.png" width="64" alt="icon.png">                      | `icon.png`            | The default icon for commands.  |
-| <img src="./icons/action.png" width="64" alt="action.png">                  | `action.png`          | Represents an actionable item.  |
-| <img src="./icons/rebase.png" width="64" alt="rebase.png">                  | `rebase.png`          | Used for Git rebase actions.    |
-| <img src="./icons/tag.png" width="64" alt="tag.png">                        | `tag.png`             | Represents Git tags or labels.  |
-| <img src="./icons/down.big.png" width="64" alt="down.big.png">              | `down.big.png`        | Indicates a large downward action. |
-| <img src="./icons/create.png" width="64" alt="create.png">                  | `create.png`          | Represents creation of new items. |
-| <img src="./icons/pick.png" width="64" alt="pick.png">                      | `pick.png`            | Represents selection or picking. |
-| <img src="./icons/list.png" width="64" alt="list.png">                      | `list.png`            | Represents a list or multiple items. |
-| <img src="./icons/search.png" width="64" alt="search.png">                  | `search.png`          | Represents a search or lookup action. |
-| <img src="./icons/folder.png" width="64" alt="folder.png">                  | `folder.png`          | Represents a folder or directory. |
-| <img src="./icons/globe.png" width="64" alt="globe.png">                    | `globe.png`           | Represents internet or global scope. |
-| <img src="./icons/pencil.png" width="64" alt="pencil.png">                  | `pencil.png`          | Represents editing or writing.  |
-| <img src="./icons/open.png" width="64" alt="open.png">                      | `open.png`            | Represents opening a file or folder. |
-| <img src="./icons/trash.png" width="64" alt="trash.png">                    | `trash.png`           | Represents deletion or removal. |
-| <img src="./icons/up.small.png" width="64" alt="up.small.png">              | `up.small.png`    | Indicates a small upward action. |
-| <img src="./icons/up.big.png" width="64" alt="up.big.png">                  | `up.big.png`          | Indicates a large upward action. |
-| <img src="./icons/left.big.png" width="64" alt="left.big.png">                  | `left.big.png`          | Indicates a large left action. |
-| <img src="./icons/right.big.png" width="64" alt="right.big.png">                  | `right.big.png`          | Indicates a large right action. |
-| <img src="./icons/fork.png" width="64" alt="fork.png">                      | `fork.png`            | Represents branching or forking. |
-| <img src="./icons/copy.png" width="64" alt="copy.png">                      | `copy.png`            | Represents copying or duplication. |
-| <img src="./icons/back.png" width="64" alt="back.png">                      | `back.png`            | Represents going back. |
-| <img src="./icons/back.line.png" width="64" alt="back.line.png">                      | `back.line.png`            | Represents going back to root. |
-| <img src="./icons/check.png" width="64" alt="check.png">                    | `check.png`           | Represents a confirmation. |
-| <img src="./icons/plus.png" width="64" alt="plus.png">                    | `plus.png`           | Represents a additive action. |
-| <img src="./icons/minus.png" width="64" alt="minus.png">                    | `minus.png`           | Represents a subtraction action. |
+| **Preview**                                                       | **Icon Path**    | **Description**                                |
+|-------------------------------------------------------------------|------------------|------------------------------------------------|
+| <img src="./icons/info.png" width="64" alt="info.png">            | `info.png`       | Represents information or details.             |
+| <img src="./icons/view.png" width="64" alt="view.png">            | `view.png`       | Represents a viewfinder or using the TextView. |
+| <img src="./icons/down.small.png" width="64" alt="down.small.png"> | `down.small.png` | Indicates a small downward action.             |
+| <img src="./icons/icon.png" width="64" alt="icon.png">            | `icon.png`       | The default icon for commands.                 |
+| <img src="./icons/action.png" width="64" alt="action.png">        | `action.png`     | Represents an actionable item.                 |
+| <img src="./icons/rebase.png" width="64" alt="rebase.png">        | `rebase.png`     | Used for Git rebase actions.                   |
+| <img src="./icons/tag.png" width="64" alt="tag.png">              | `tag.png`        | Represents Git tags or labels.                 |
+| <img src="./icons/down.big.png" width="64" alt="down.big.png">    | `down.big.png`   | Indicates a large downward action.             |
+| <img src="./icons/create.png" width="64" alt="create.png">        | `create.png`     | Represents creation of new items.              |
+| <img src="./icons/pick.png" width="64" alt="pick.png">            | `pick.png`       | Represents selection or picking.               |
+| <img src="./icons/list.png" width="64" alt="list.png">            | `list.png`       | Represents a list or multiple items.           |
+| <img src="./icons/search.png" width="64" alt="search.png">        | `search.png`     | Represents a search or lookup action.          |
+| <img src="./icons/folder.png" width="64" alt="folder.png">        | `folder.png`     | Represents a folder or directory.              |
+| <img src="./icons/globe.png" width="64" alt="globe.png">          | `globe.png`      | Represents internet or global scope.           |
+| <img src="./icons/pencil.png" width="64" alt="pencil.png">        | `pencil.png`     | Represents editing or writing.                 |
+| <img src="./icons/open.png" width="64" alt="open.png">            | `open.png`       | Represents opening a file or folder.           |
+| <img src="./icons/trash.png" width="64" alt="trash.png">          | `trash.png`      | Represents deletion or removal.                |
+| <img src="./icons/up.small.png" width="64" alt="up.small.png">    | `up.small.png`   | Indicates a small upward action.               |
+| <img src="./icons/up.big.png" width="64" alt="up.big.png">        | `up.big.png`     | Indicates a large upward action.               |
+| <img src="./icons/left.big.png" width="64" alt="left.big.png">    | `left.big.png`   | Indicates a large left action.                 |
+| <img src="./icons/right.big.png" width="64" alt="right.big.png">  | `right.big.png`  | Indicates a large right action.                |
+| <img src="./icons/fork.png" width="64" alt="fork.png">            | `fork.png`       | Represents branching or forking.               |
+| <img src="./icons/copy.png" width="64" alt="copy.png">            | `copy.png`       | Represents copying or duplication.             |
+| <img src="./icons/back.png" width="64" alt="back.png">            | `back.png`       | Represents going back.                         |
+| <img src="./icons/back.line.png" width="64" alt="back.line.png">  | `back.line.png`  | Represents going back to root.                 |
+| <img src="./icons/check.png" width="64" alt="check.png">          | `check.png`      | Represents a confirmation.                     |
+| <img src="./icons/plus.png" width="64" alt="plus.png">            | `plus.png`       | Represents a additive action.                  |
+| <img src="./icons/minus.png" width="64" alt="minus.png">          | `minus.png`      | Represents a subtraction action.               |
 
 
 ---
