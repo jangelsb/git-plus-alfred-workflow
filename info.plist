@@ -765,7 +765,7 @@ python3 location_arg_parser.py "$1"</string>
 				<key>inputtype</key>
 				<integer>1</integer>
 				<key>loadingtext</key>
-				<string></string>
+				<string>{var:tv_loading}</string>
 				<key>outputmode</key>
 				<integer>0</integer>
 				<key>scriptinput</key>
@@ -786,22 +786,14 @@ python3 location_arg_parser.py "$1"</string>
 			<key>config</key>
 			<dict>
 				<key>argument</key>
-				<string>```
-{var:tv_command}
-```
-```
-{var:tv_cmd_action}
-```
-```
-{var:tv_alt_action}
-```
-```
-{var:tv_ctrl_action}
-```</string>
+				<string></string>
 				<key>passthroughargument</key>
 				<false/>
 				<key>variables</key>
-				<dict/>
+				<dict>
+					<key>tv_loading</key>
+					<string>running `{query}` ...</string>
+				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>

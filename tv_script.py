@@ -2,6 +2,7 @@ import sys
 import random
 import json
 import os
+import subprocess
 
 from definitions import Modifier, ModifierKey
 
@@ -22,6 +23,33 @@ def get_modifiers_from_env():
                 Modifier(arg=arg, subtitle=subtitle, valid=True, key=key)
             )
     return modifiers
+
+def run_command(command):
+    try:
+        functions_path = os.getenv('input_var_functions_path')
+        profile_path = os.getenv('input_var_profile_path')
+
+        # Resolve to absolute path if needed
+        if functions_path and os.path.sep not in functions_path:
+            functions_path = os.path.join(os.getcwd(), functions_path)
+        if profile_path and os.path.sep not in profile_path:
+            profile_path = os.path.join(os.getcwd(), profile_path)
+
+        # Only source if the file exists
+        source_cmds = []
+        if profile_path and os.path.isfile(profile_path):
+            source_cmds.append(f"source '{profile_path}'")
+        if functions_path and os.path.isfile(functions_path):
+            source_cmds.append(f"source '{functions_path}'")
+
+        full_command = "; ".join(source_cmds + [command])
+
+        # return full_command
+
+        result = subprocess.run(["zsh", "-c", full_command], capture_output=True, text=True, check=True)
+        return result.stdout.strip()
+    except subprocess.CalledProcessError as e:
+        return f"Error executing {command}: {e.stderr}"
 
 def build_footer_from_mods(mods):
     """
@@ -61,7 +89,9 @@ def run(argv):
 
     typed_query = argv[1] if len(argv) > 1 else None
 
-    x = get_env_variable("tv_command")
+    command = get_env_variable("tv_command")
+
+    output = run_command(command) if command else 'None'
 
     mods = get_modifiers_from_env()
 
@@ -76,7 +106,7 @@ def run(argv):
             "option": "carrot",
             "alt": "apple"
         },
-        "response": f"```\n{sentence}\n```",
+        "response": f"```\n{output}\n```",
         "footer": build_footer_from_mods(mods),
         "behaviour": {
             "response": "append",
