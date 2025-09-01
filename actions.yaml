@@ -146,35 +146,24 @@
       subcommands:
         - title: 'latest'
           subtitle: 'process each one, one by one'
-          subcommands:
-            - title: unstage hunk
-              subtitle_command: |
-                _get_first_file "unstage"
-              icon: minus.png
-              should_skip_smart_sort: true
+          textview_action:
+            command: |
+              view_hunk "unstage"
+            subtitle_command: |
+              _get_first_file "unstage"
+
+          mods:
+            - subtitle: unstage hunk
+              mod: cmd
               command: |
                 process_hunk "unstage"
 
                 case $? in
                     0) echo "[reload]";;
-                    1) echo "[reload~1]";;
-                    2) echo "[reload~2]";;
-                    3) echo "[reload~3]";;
+                    1) echo "[reload]";;
+                    2) echo "[reload~1]";;
+                    3) echo "[reload~2]";;
                 esac
-
-            - title: back
-              subtitle: 'go back a level (bb)'
-              icon: back.png
-              should_skip_smart_sort: true
-              command: |
-                echo "[reload~1]"
-
-            - title: view latest hunk
-              values_command: |
-                view_hunk "unstage"
-              should_use_values_as_inline_commands: true
-              should_skip_smart_sort: true
-              should_trim_values: false
 
         - title: staged files
           should_skip_smart_sort: true
@@ -200,34 +189,22 @@
                 git diff --cached "[parent]" | grep '^@@'
               should_use_values_as_inline_commands: true
               should_skip_smart_sort: true
-              subcommands:
-                - title: unstage hunk
-                  subtitle: ' '
-                  icon: minus.png
-                  should_skip_smart_sort: true
+              mods:
+                - subtitle: unstage hunk
+                  mod: cmd
                   command: |
-                    process_hunk "unstage" "[parent~2]" "[parent]"
+                    process_hunk "unstage" "[parent]" "[title]"
 
                     case $? in
                         0) echo "[reload]";;
-                        1) echo "[reload~1]";;
-                        2) echo "[reload~2]";;
-                        3) echo "[reload~3]";;
+                        1) echo "[reload]";;
+                        2) echo "[reload~1]";;
+                        3) echo "[reload~2]";;
                     esac
 
-                - title: back
-                  subtitle: 'go back a level (bb)'
-                  icon: back.png
-                  should_skip_smart_sort: true
-                  command: |
-                    echo "[reload~1]"
-
-                - title: view hunk
-                  should_use_values_as_inline_commands: true
-                  should_skip_smart_sort: true
-                  should_trim_values: false
-                  values_command: |
-                    view_hunk "unstage" "[parent~2]" "[parent]"
+              textview_action:
+                command: |
+                  view_hunk "unstage" "[parent]" "[title]"
 
             - title: back
               subtitle: 'go back a level (bb)'
@@ -242,8 +219,6 @@
           command: |
             echo "[reload~1]"
 
-
-
     - title: modified
       should_skip_smart_sort: true
       subtitle_command: |
@@ -254,49 +229,36 @@
 
         - title: 'latest'
           subtitle: 'process each one, one by one'
-          subcommands:
-            - title: stage hunk
-              subtitle_command: |
-                _get_first_file "stage"
-              icon: plus.png
-              should_skip_smart_sort: true
+          textview_action:
+            command: |
+              view_hunk "stage"
+            subtitle_command: |
+              _get_first_file "stage"
+
+          mods:
+            - subtitle: stage hunk
+              mod: cmd
               command: |
                 process_hunk "stage"
 
                 case $? in
                     0) echo "[reload]";;
-                    1) echo "[reload~1]";;
-                    2) echo "[reload~2]";;
-                    3) echo "[reload~3]";;
+                    1) echo "[reload]";;
+                    2) echo "[reload~1]";;
+                    3) echo "[reload~2]";;
                 esac
 
-            - title: discard hunk
-              subtitle: ' '
-              icon: trash.png
-              should_skip_smart_sort: true
+            - subtitle: discard hunk
+              mod: alt
               command: |
                 process_hunk "discard"
 
                 case $? in
                     0) echo "[reload]";;
-                    1) echo "[reload~1]";;
-                    2) echo "[reload~2]";;
-                    3) echo "[reload~3]";;
+                    1) echo "[reload]";;
+                    2) echo "[reload~1]";;
+                    3) echo "[reload~2]";;
                 esac
-
-            - title: back
-              subtitle: 'go back a level (bb)'
-              icon: back.png
-              should_skip_smart_sort: true
-              command: |
-                echo "[reload~1]"
-
-            - title: view latest hunk
-              values_command: |
-                view_hunk "stage"
-              should_use_values_as_inline_commands: true
-              should_skip_smart_sort: true
-              should_trim_values: false
 
         - title: modified files
           should_skip_smart_sort: true
