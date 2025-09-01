@@ -88,6 +88,7 @@
       subcommands:
         - title: message
           icon: pencil.png
+          should_skip_smart_sort: true
           command: |
             git commit -m [input_new_lines]
           mods:
@@ -98,21 +99,8 @@
                 git commit -m [input_new_lines]
                 git push -u origin $branch
 
-        - title: easy commit
-          icon: up.big.png
-          subtitle_command: |
-            message=$(git log -1 --skip=0 --pretty=%B | xargs)
-            echo "commit using previous message: $message"
-          command: |
-            git commit --reuse-message=HEAD
-          mods:
-            - subtitle: 'and push'
-              mod: cmd
-              command: |
-                git commit --reuse-message=HEAD
-                git push
-
         - title: easy message
+          should_skip_smart_sort: true
           icon: pencil.png
           subtitle_command: |
             header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
@@ -128,8 +116,24 @@
                 git commit -m "$header"$'\n'[input_new_lines]
                 git push
 
+        - title: easy commit
+          should_skip_smart_sort: true
+          icon: create.png
+          subtitle_command: |
+            message=$(git log -1 --skip=0 --pretty=%B | xargs)
+            echo "commit using previous message: $message"
+          command: |
+            git commit --reuse-message=HEAD
+          mods:
+            - subtitle: 'and push'
+              mod: cmd
+              command: |
+                git commit --reuse-message=HEAD
+                git push
+
         - title: amend
-          icon: up.big.png
+          icon: back.line.png
+          should_skip_smart_sort: true
           subtitle_command: |
             message=$(git log -1 --skip=0 --pretty=%B | xargs)
             echo "amend previous commit: $message"
@@ -141,6 +145,19 @@
               command: |
                 git commit --amend -C HEAD
                 git push --force
+
+        - title: push
+          icon: up.big.png
+          should_skip_smart_sort: true
+          command: |
+            branch=$(git branch --show-current);
+            git push -u origin $branch
+          mods:
+            - subtitle: force push
+              mod: cmd
+              command: |
+                branch=$(git branch --show-current);
+                git push -uf origin $branch
 
         - title: back
           subtitle: 'go back a level (bb)'
