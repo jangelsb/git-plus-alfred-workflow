@@ -279,6 +279,18 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
+				<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>D2397263-C42B-4490-B239-1A9855BBD9F4</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
 				<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -291,6 +303,29 @@
 			</dict>
 		</array>
 		<key>9B91D089-671D-4721-B83B-02F438D5E8B7</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>A266F8C5-7A35-4798-A0A1-FC822CCD1DAA</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
@@ -347,6 +382,19 @@
 				<string></string>
 				<key>sourceoutputuid</key>
 				<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B4417C7E-032D-46A3-84D4-46284A241EDB</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>D65C0E83-1763-45CD-B902-B32BC6A2680C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -476,6 +524,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>D65C0E83-1763-45CD-B902-B32BC6A2680C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F92D1386-9903-4537-A872-16A251038CEB</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string>↩ to run command</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>E3C7D05D-82C0-4999-8752-C777B4F16BED</key>
 		<array>
 			<dict>
@@ -504,6 +565,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>B7FDA93B-4667-4916-959E-E5A38C50D3D2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F92D1386-9903-4537-A872-16A251038CEB</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>A266F8C5-7A35-4798-A0A1-FC822CCD1DAA</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -670,23 +744,6 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 			<key>config</key>
 			<dict>
 				<key>argument</key>
-				<string>{var:output}</string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>555BFC35-7D96-47DD-8BE0-73E8B5768E50</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
 				<string>{query}</string>
 				<key>passthroughargument</key>
 				<false/>
@@ -729,6 +786,23 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argument</key>
+				<string>{var:output}</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>555BFC35-7D96-47DD-8BE0-73E8B5768E50</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>conditions</key>
 				<array>
 					<dict>
@@ -744,6 +818,20 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 						<string>browse in alfred</string>
 						<key>uid</key>
 						<string>52D747E7-2FE3-4816-8E1E-AB0A99870D5B</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>\[input_new_lines\]</string>
+						<key>outputlabel</key>
+						<string>has_textview_input</string>
+						<key>uid</key>
+						<string>D2397263-C42B-4490-B239-1A9855BBD9F4</string>
 					</dict>
 					<dict>
 						<key>inputstring</key>
@@ -803,39 +891,6 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>full_command="source $input_var_profile_path; source $input_var_functions_path; $1"
-
-# Execute the command and capture the output and error messages
-output=$(eval "$full_command" 2&gt;&amp;1)
-
-# Check if the output is empty
-if [ -z "$output" ]; then
-  echo "command succeeded"
-else
-  echo "$output"
-fi</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>11</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>conditions</key>
 				<array>
 					<dict>
@@ -878,6 +933,39 @@ fi</string>
 			<string>1919C9A2-D0D0-4725-A06D-E3BFBF9E4212</string>
 			<key>version</key>
 			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>full_command="source $input_var_profile_path; source $input_var_functions_path; $1"
+
+# Execute the command and capture the output and error messages
+output=$(eval "$full_command" 2&gt;&amp;1)
+
+# Check if the output is empty
+if [ -z "$output" ]; then
+  echo "command succeeded"
+else
+  echo "$output"
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
+			<key>version</key>
+			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1181,6 +1269,26 @@ python3 location_arg_parser.py "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>command_to_run</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
@@ -1196,6 +1304,96 @@ python3 location_arg_parser.py "$1"</string>
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
 			<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>68</integer>
+				<key>script</key>
+				<string>import sys
+import os
+import shlex
+
+def escape_param(param):
+    return shlex.quote(param) if param else param
+
+def get_env_variable(var_name, default=None):
+    return os.environ.get(var_name, default)
+
+command_to_run = get_env_variable("command_to_run")
+input_new_lines = escape_param(get_env_variable("input_new_lines"))
+
+
+sys.stdout.write(command_to_run.replace('[input_new_lines]', input_new_lines))</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>9</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>A266F8C5-7A35-4798-A0A1-FC822CCD1DAA</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>behaviour</key>
+				<integer>1</integer>
+				<key>fontmode</key>
+				<integer>0</integer>
+				<key>fontsizing</key>
+				<integer>0</integer>
+				<key>footertext</key>
+				<string>⌘↩ run command · ⎋ go back</string>
+				<key>inputfile</key>
+				<string></string>
+				<key>inputtype</key>
+				<integer>0</integer>
+				<key>loadingtext</key>
+				<string></string>
+				<key>outputmode</key>
+				<integer>0</integer>
+				<key>scriptinput</key>
+				<integer>0</integer>
+				<key>spellchecking</key>
+				<integer>0</integer>
+				<key>stackview</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.userinterface.text</string>
+			<key>uid</key>
+			<string>D65C0E83-1763-45CD-B902-B32BC6A2680C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>input_new_lines</key>
+					<string>{query}</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>F92D1386-9903-4537-A872-16A251038CEB</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1552,9 +1750,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<dict>
 			<key>xpos</key>
-			<real>570</real>
+			<real>520</real>
 			<key>ypos</key>
-			<real>415</real>
+			<real>380</real>
 		</dict>
 		<key>9B91D089-671D-4721-B83B-02F438D5E8B7</key>
 		<dict>
@@ -1562,6 +1760,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<real>430</real>
 			<key>ypos</key>
 			<real>890</real>
+		</dict>
+		<key>A266F8C5-7A35-4798-A0A1-FC822CCD1DAA</key>
+		<dict>
+			<key>xpos</key>
+			<real>1650</real>
+			<key>ypos</key>
+			<real>930</real>
 		</dict>
 		<key>A9F8153D-1EF2-418D-9E9F-34BC7790CD25</key>
 		<dict>
@@ -1576,6 +1781,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<real>925</real>
 			<key>ypos</key>
 			<real>625</real>
+		</dict>
+		<key>B4417C7E-032D-46A3-84D4-46284A241EDB</key>
+		<dict>
+			<key>xpos</key>
+			<real>1230</real>
+			<key>ypos</key>
+			<real>895</real>
 		</dict>
 		<key>B7FDA93B-4667-4916-959E-E5A38C50D3D2</key>
 		<dict>
@@ -1614,6 +1826,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<key>ypos</key>
 			<real>845</real>
 		</dict>
+		<key>D65C0E83-1763-45CD-B902-B32BC6A2680C</key>
+		<dict>
+			<key>xpos</key>
+			<real>1325</real>
+			<key>ypos</key>
+			<real>940</real>
+		</dict>
 		<key>E3C7D05D-82C0-4999-8752-C777B4F16BED</key>
 		<dict>
 			<key>xpos</key>
@@ -1634,6 +1853,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<real>1455</real>
 			<key>ypos</key>
 			<real>685</real>
+		</dict>
+		<key>F92D1386-9903-4537-A872-16A251038CEB</key>
+		<dict>
+			<key>xpos</key>
+			<real>1540</real>
+			<key>ypos</key>
+			<real>975</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
