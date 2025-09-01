@@ -12,7 +12,6 @@ import yaml
 
 from definitions import (
     CommandType,
-    process_modifiers,
     ModifierKey,
     Modifier,
     Text,
@@ -363,7 +362,7 @@ def create_commands_from_yaml(yaml_data):
         def process_subcommands(subcommands):
             return [command_entry_processor(subcommand) for subcommand in subcommands]
 
-        mods = process_modifiers(entry.get('mods', []))
+        mods = Modifier.from_dict_list(entry.get('mods', []))
         values = entry.get('values', None)
         values_command = entry.get('values_command', None)
         action = entry.get('command', '')

@@ -15,18 +15,6 @@ class ModifierKey(Enum):
     SHIFT = "shift"
     CMD_ALT = "cmd+alt"
 
-def process_modifiers(mods):
-    if not mods:
-        return []
-    return [
-        Modifier(
-            arg=mod['command'],
-            subtitle=mod.get('subtitle', ''),
-            valid=True,
-            key=ModifierKey(mod['mod'])
-        ) for mod in mods
-    ]
-
 class Modifier:
     def __init__(self, arg, subtitle='', valid=False, key=None):
         self.arg = arg
@@ -43,6 +31,29 @@ class Modifier:
                 "subtitle": self.subtitle
             }
         }
+    
+    @classmethod
+    def from_dict_list(cls, mods):
+        """
+        Converts a list of dictionaries, each with keys: 'mod', 'command', 'subtitle', etc.,
+        into a list of cls instances.
+
+        Parameters:
+            mods (List[dict]): A list of dictionaries representing modifiers.
+        
+        Returns:
+            List[cls]: A list of Modifier instances.
+        """
+        if not mods:
+            return []
+        return [
+            cls(
+                arg=mod['command'],
+                subtitle=mod.get('subtitle', ''),
+                valid=True,
+                key=ModifierKey(mod['mod'])
+            ) for mod in mods
+        ]
 
 class Text:
     def __init__(self, copy='', largetype=''):
@@ -155,7 +166,7 @@ class TextViewAction:
         command = data.get('command', None)
         mods = []
         if 'mods' in data:
-            mods = process_modifiers(data['mods'])
+            mods = Modifier.from_dict_list(data['mods'])
         return cls(command=command, mods=mods)
 
     def __repr__(self):
