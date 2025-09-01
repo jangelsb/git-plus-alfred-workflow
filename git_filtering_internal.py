@@ -27,6 +27,7 @@ checkout_modifiers_list = []
 alfred_input = TokenizationResult()
 functions_path = None
 
+
 def tokenize(query, locations, commands, level=1):
     command_objects = []
     location = None

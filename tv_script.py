@@ -3,8 +3,25 @@ import random
 import json
 import os
 
+from definitions import Modifier, ModifierKey
+
 def get_env_variable(var_name):
     return os.environ.get(var_name)
+
+def get_modifiers_from_env():
+    """
+    Scans os.environ for tv_*_action and tv_*_action_subtitle variables,
+    and returns a list of Modifier objects.
+    """
+    modifiers = []
+    for key in ModifierKey:
+        arg = os.environ.get(f"tv_{key.value}_action")
+        subtitle = os.environ.get(f"tv_{key.value}_action_subtitle")
+        if arg or subtitle:
+            modifiers.append(
+                Modifier(arg=arg, subtitle=subtitle, valid=True, key=key)
+            )
+    return modifiers
 
 def run(argv):
     sentences = [
@@ -24,7 +41,12 @@ def run(argv):
 
     x = get_env_variable("tv_command")
 
-    sentence = x or typed_query or random.choice(sentences)
+    mods = get_modifiers_from_env()
+
+    mods_json = json.dumps([mod.to_dict() for mod in mods], indent=2)
+
+    # print(mods)
+    sentence = mods_json or typed_query or random.choice(sentences)
 
     result = {
         "variables": {

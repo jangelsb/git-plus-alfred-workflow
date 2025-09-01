@@ -138,20 +138,11 @@ class TextViewAction:
         self.mods = mods or []
 
     def to_dict(self):
-        # Map ModifierKey to suffixes
-        mod_suffixes = {
-            ModifierKey.CMD: "cmd",
-            ModifierKey.ALT: "alt",
-            ModifierKey.CTRL: "ctrl",
-            ModifierKey.FN: "fn",
-            ModifierKey.SHIFT: "shift",
-            ModifierKey.CMD_ALT: "cmd_alt"
-        }
         result = {}
         if self.command:
             result['tv_command'] = self.command.strip()
         for mod in self.mods:
-            suffix = mod_suffixes.get(mod.key)
+            suffix = mod.key.value if mod.key else None
             if not suffix:
                 continue
             # Add both action and subtitle for each mod
