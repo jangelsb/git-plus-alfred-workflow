@@ -243,12 +243,24 @@ process_hunk() {
 
     else
 
-      # viewing all hunks for a file, go back 2 if no more hunks
-      if [[ -n "$file" &&  "$hunk_count" -eq 1 ]]; then
-          return 2
+      # viewing all hunks for a file
+      if [[ -n "$file" ]]; then
+
+          # only go back 3, if no more hunks and no more files
+          if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
+              return 3
+
+          # only go back 2, if no more hunks but more files
+          elif [[ "$hunk_count" -eq 1 ]]; then
+              return 2
+              
+          else
+              return 0
+          fi
+
       fi
 
-      # viewing all hunks, only go back 3, if no more hunks
+      # viewing all hunks, only go back 2, if no more hunks
       if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
           return 2
       else
