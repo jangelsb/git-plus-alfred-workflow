@@ -33,7 +33,7 @@
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>sourceoutputuid</key>
-				<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+				<string>4045D3BA-5224-4298-A405-E5A6A0271F39</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -44,6 +44,18 @@
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>F3B999B1-84C8-4012-80A3-DA8117961072</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -182,6 +194,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>6ED4774B-CDE3-4F5C-BE20-4BE64A3C75B4</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>F2EC4A23-334C-4437-8791-A0C75D68BE8C</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<array>
 			<dict>
@@ -208,16 +233,6 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>B7FDA93B-4667-4916-959E-E5A38C50D3D2</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -225,6 +240,16 @@
 				<string></string>
 				<key>sourceoutputuid</key>
 				<string>843CE930-71A9-45CB-9EC7-0F7F32103C0E</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -466,6 +491,19 @@
 			<dict>
 				<key>destinationuid</key>
 				<string>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>F2EC4A23-334C-4437-8791-A0C75D68BE8C</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B7FDA93B-4667-4916-959E-E5A38C50D3D2</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -808,11 +846,25 @@ fi</string>
 						<key>matchmode</key>
 						<integer>4</integer>
 						<key>matchstring</key>
+						<string>\[tv_reload\]</string>
+						<key>outputlabel</key>
+						<string>should reload tv</string>
+						<key>uid</key>
+						<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+					</dict>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
 						<string>\[reload:.*]</string>
 						<key>outputlabel</key>
 						<string>should reload</string>
 						<key>uid</key>
-						<string>7B78FFC7-7766-474F-8F27-7687D3FEEEA4</string>
+						<string>4045D3BA-5224-4298-A405-E5A6A0271F39</string>
 					</dict>
 				</array>
 				<key>elselabel</key>
@@ -845,6 +897,28 @@ fi</string>
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
 			<string>18F23A81-CB46-4C67-9FE7-9BB4B9AF87C6</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>tv_loading</key>
+					<string>Running command...</string>
+					<key>tv_loading_old</key>
+					<string>running `{query}` ...</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>B7FDA93B-4667-4916-959E-E5A38C50D3D2</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -963,22 +1037,19 @@ fi</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argument</key>
-				<string></string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict>
-					<key>tv_loading</key>
-					<string>Running command...</string>
-					<key>tv_loading_old</key>
-					<string>running `{query}` ...</string>
-				</dict>
+				<key>externaltriggerid</key>
+				<string>tv</string>
+				<key>passinputasargument</key>
+				<true/>
+				<key>passvariables</key>
+				<true/>
+				<key>workflowbundleid</key>
+				<string>self</string>
 			</dict>
 			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
+			<string>alfred.workflow.output.callexternaltrigger</string>
 			<key>uid</key>
-			<string>B7FDA93B-4667-4916-959E-E5A38C50D3D2</string>
+			<string>F3B999B1-84C8-4012-80A3-DA8117961072</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1125,6 +1196,43 @@ python3 location_arg_parser.py "$1"</string>
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
 			<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
+					<key>is_alfred_stacked</key>
+					<string>0</string>
+					<key>should_rerun</key>
+					<string>1</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>F2EC4A23-334C-4437-8791-A0C75D68BE8C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>availableviaurlhandler</key>
+				<false/>
+				<key>triggerid</key>
+				<string>tv</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.external</string>
+			<key>uid</key>
+			<string>6ED4774B-CDE3-4F5C-BE20-4BE64A3C75B4</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1340,9 +1448,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>1919C9A2-D0D0-4725-A06D-E3BFBF9E4212</key>
 		<dict>
 			<key>xpos</key>
-			<real>1210</real>
+			<real>1175</real>
 			<key>ypos</key>
-			<real>500</real>
+			<real>450</real>
 		</dict>
 		<key>1A28BCE0-8BFB-4DE1-B761-4B1098D4A4C7</key>
 		<dict>
@@ -1434,6 +1542,13 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<key>ypos</key>
 			<real>625</real>
 		</dict>
+		<key>6ED4774B-CDE3-4F5C-BE20-4BE64A3C75B4</key>
+		<dict>
+			<key>xpos</key>
+			<real>55</real>
+			<key>ypos</key>
+			<real>1080</real>
+		</dict>
 		<key>88666437-2755-420F-8B11-5A5225C12C47</key>
 		<dict>
 			<key>xpos</key>
@@ -1458,16 +1573,16 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>B028F4F8-476F-4DBA-AFE4-44BEA4E70411</key>
 		<dict>
 			<key>xpos</key>
-			<real>920</real>
+			<real>925</real>
 			<key>ypos</key>
-			<real>630</real>
+			<real>625</real>
 		</dict>
 		<key>B7FDA93B-4667-4916-959E-E5A38C50D3D2</key>
 		<dict>
 			<key>xpos</key>
-			<real>30</real>
+			<real>90</real>
 			<key>ypos</key>
-			<real>695</real>
+			<real>595</real>
 		</dict>
 		<key>C679AB43-6F01-45E7-968D-B70DD4FF5218</key>
 		<dict>
@@ -1488,9 +1603,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>D493D841-862A-4D97-A53F-BFE843B58E67</key>
 		<dict>
 			<key>xpos</key>
-			<real>150</real>
+			<real>185</real>
 			<key>ypos</key>
-			<real>665</real>
+			<real>670</real>
 		</dict>
 		<key>D6230711-6C3F-497D-921B-6824C9D43BC4</key>
 		<dict>
@@ -1505,6 +1620,20 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<real>430</real>
 			<key>ypos</key>
 			<real>755</real>
+		</dict>
+		<key>F2EC4A23-334C-4437-8791-A0C75D68BE8C</key>
+		<dict>
+			<key>xpos</key>
+			<real>230</real>
+			<key>ypos</key>
+			<real>1055</real>
+		</dict>
+		<key>F3B999B1-84C8-4012-80A3-DA8117961072</key>
+		<dict>
+			<key>xpos</key>
+			<real>1455</real>
+			<key>ypos</key>
+			<real>685</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>

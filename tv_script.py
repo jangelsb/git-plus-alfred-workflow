@@ -58,12 +58,11 @@ def run_command(command):
     except subprocess.CalledProcessError as e:
         return f"Error executing {command}: {e.stderr}"
 
-def build_footer_from_mods(mods):
+
+def build_footer_from_mods(mods, is_alfred_stacked=True):
     """
-    Given a list of Modifier objects, returns a footer string like:
-    ↩ Ask question · ⌘↩ New chat · ⌥↩ Copy last · ⌃↩ Copy all · ⇧↩ Interrupt
+    Given a list of Modifier objects, returns a footer string.
     """
-    # Use ModifierKey definition order
     mods_by_key = {mod.key: mod for mod in mods if mod.key}
 
     back_text = "⎋ go back"
@@ -74,17 +73,22 @@ def build_footer_from_mods(mods):
         if mod and mod.subtitle:
             symbol = f"{key.symbol}↩"
             parts.append(f"{symbol} {mod.subtitle}")
-    if not parts:
-        return back_text
-    return " · ".join(parts) + f" · {back_text}"
+
+    footer = " · ".join(parts)
+    if parts and is_alfred_stacked:
+        footer += f" · {back_text}"
+    elif not parts:
+        footer = back_text if is_alfred_stacked else ''
+
+    return footer
 
 def run(argv):
-
 
     # typed_query = argv[1] if len(argv) > 1 else None
 
     command = get_env_variable("tv_command")
     should_rerun = bool(int(get_env_variable("should_rerun", default=1)))
+    is_alfred_stacked = bool(int(get_env_variable("is_alfred_stacked", default=1)))
 
     mods = get_modifiers_from_env()
 
@@ -113,7 +117,7 @@ def run(argv):
             "should_rerun": False,
         },
         "response": output,
-        "footer": build_footer_from_mods(mods),
+        "footer": build_footer_from_mods(mods, is_alfred_stacked=is_alfred_stacked),
         "behaviour": {
             "response": "append",
             "scroll": "end",

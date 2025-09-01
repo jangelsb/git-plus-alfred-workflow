@@ -164,17 +164,22 @@
             subtitle_command: |
               _get_first_file "unstage"
           mods:
-            - subtitle: unstage hunk
+            - subtitle: unstage hunk & go to next
               mod: cmd
               command: |
                 process_hunk "unstage"
 
                 case $? in
-                    0) echo "[reload]";;
+                    0) echo "[tv_reload]";;
                     1) echo "[reload]";;
                     2) echo "[reload~1]";;
                     3) echo "[reload~2]";;
                 esac
+
+            - subtitle: reload status menu
+              mod: ctrl
+              command: |
+                echo "[reload~1]"
 
         - title: staged files
           should_skip_smart_sort: true
@@ -244,29 +249,34 @@
               _get_first_file "stage"
 
           mods:
-            - subtitle: stage hunk
+            - subtitle: stage hunk & go to next
               mod: cmd
               command: |
                 process_hunk "stage"
 
                 case $? in
-                    0) echo "[reload]";;
+                    0) echo "[tv_reload]";;
                     1) echo "[reload]";;
                     2) echo "[reload~1]";;
                     3) echo "[reload~2]";;
                 esac
 
-            - subtitle: discard hunk
+            - subtitle: discard hunk & go to next
               mod: alt
               command: |
                 process_hunk "discard"
 
                 case $? in
-                    0) echo "[reload]";;
+                    0) echo "[tv_reload]";;
                     1) echo "[reload]";;
                     2) echo "[reload~1]";;
                     3) echo "[reload~2]";;
                 esac
+
+            - subtitle: reload status menu
+              mod: ctrl
+              command: |
+                echo "[reload~1]"
 
         - title: modified files
           should_skip_smart_sort: true
