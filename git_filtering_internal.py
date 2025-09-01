@@ -334,24 +334,31 @@ def generate_locations_from_yaml(yaml_string):
                     path_parts[i] = os.environ.get(env_var_name, part)
             return '/'.join(path_parts)
 
-        title = entry['title']
+        locations = []
         path = process_path(entry['path'])
         actions_path = entry.get('config', None)
         should_show_default_commands = entry.get('show_default_commands', True)
 
-        if actions_path:
-            actions_path = process_path(actions_path)
+        if entry.get('is_root', False):
+            for subfolder_name in os.listdir(path):
+                subfolder_path = os.path.join(path, subfolder_name)
+                if os.path.isdir(subfolder_path):
+                    locations.append(Location(title=subfolder_name, directory=subfolder_path, actions_path=actions_path, should_show_default_commands=should_show_default_commands))
+        else:
+            title = entry['title']
+            locations.append(Location(title=title, directory=path, actions_path=actions_path, should_show_default_commands=should_show_default_commands))
 
-        return Location(title=title, directory=path, actions_path=actions_path, should_show_default_commands=should_show_default_commands)
+        return locations
 
     try:
         yaml_data = yaml.safe_load(yaml_string)
-        return [location_entry_processor(entry) for entry in yaml_data]
+        locations = []
+        for entry in yaml_data:
+            locations.extend(location_entry_processor(entry))
+        return locations
     except yaml.YAMLError as e:
-        # print(f"YAML error: {e}")
         return []
     except Exception as e:
-        # print(f"An error occurred: {e}")
         return []
 
 def create_modifiers_from_string(modifier_string):

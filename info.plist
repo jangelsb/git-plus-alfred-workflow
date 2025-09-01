@@ -744,6 +744,23 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 			<key>config</key>
 			<dict>
 				<key>argument</key>
+				<string>{var:output}</string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>555BFC35-7D96-47DD-8BE0-73E8B5768E50</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
 				<string>{query}</string>
 				<key>passthroughargument</key>
 				<false/>
@@ -780,23 +797,6 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 			<string>alfred.workflow.utility.split</string>
 			<key>uid</key>
 			<string>CC2552BD-9769-4B08-8A3B-C96EAF7E7E85</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argument</key>
-				<string>{var:output}</string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>555BFC35-7D96-47DD-8BE0-73E8B5768E50</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -891,6 +891,39 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 		<dict>
 			<key>config</key>
 			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>full_command="source $input_var_profile_path; source $input_var_functions_path; $1"
+
+# Execute the command and capture the output and error messages
+output=$(eval "$full_command" 2&gt;&amp;1)
+
+# Check if the output is empty
+if [ -z "$output" ]; then
+  echo "command succeeded"
+else
+  echo "$output"
+fi</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>11</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
 				<key>conditions</key>
 				<array>
 					<dict>
@@ -933,39 +966,6 @@ sys.stdout.write(f"{cleaned_query};;;{path}")</string>
 			<string>1919C9A2-D0D0-4725-A06D-E3BFBF9E4212</string>
 			<key>version</key>
 			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>102</integer>
-				<key>script</key>
-				<string>full_command="source $input_var_profile_path; source $input_var_functions_path; $1"
-
-# Execute the command and capture the output and error messages
-output=$(eval "$full_command" 2&gt;&amp;1)
-
-# Check if the output is empty
-if [ -z "$output" ]; then
-  echo "command succeeded"
-else
-  echo "$output"
-fi</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>11</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>0BA9ED6F-B709-49B6-A448-5F5634D7019F</string>
-			<key>version</key>
-			<integer>2</integer>
 		</dict>
 		<dict>
 			<key>config</key>
@@ -1388,14 +1388,14 @@ sys.stdout.write(command_to_run.replace('[input_new_lines]', input_new_lines))</
 				<false/>
 				<key>variables</key>
 				<dict>
-					<key>input_new_lines</key>
+					<key>command_to_run</key>
 					<string>{query}</string>
 				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>F92D1386-9903-4537-A872-16A251038CEB</string>
+			<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1408,14 +1408,14 @@ sys.stdout.write(command_to_run.replace('[input_new_lines]', input_new_lines))</
 				<false/>
 				<key>variables</key>
 				<dict>
-					<key>command_to_run</key>
+					<key>input_new_lines</key>
 					<string>{query}</string>
 				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
+			<string>F92D1386-9903-4537-A872-16A251038CEB</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
