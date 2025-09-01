@@ -104,7 +104,7 @@ def run(argv):
             "option": "carrot",
             "alt": "apple"
         },
-        "response": f"```\n{output}\n```",
+        "response": f"### Command\n```\n{command}\n```\n\n### Output\n```\n{output}\n```",
         "footer": build_footer_from_mods(mods),
         "behaviour": {
             "response": "append",
