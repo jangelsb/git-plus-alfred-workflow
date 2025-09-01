@@ -26,7 +26,7 @@
           icon: copy.png
           should_skip_smart_sort: true
           command: |
-            echo "[parent]" | xargs echo -n | pbcopy
+            echo [parent] | xargs echo -n | pbcopy
 
         - title: copy latest commit
           icon: copy.png
@@ -185,7 +185,7 @@
             - subtitle: unstage file
               mod: cmd
               command: |
-                git_process_file "unstage" "[title]"
+                git_process_file "unstage" [title]
                 
                 case $? in
                     0) echo "[reload]";;
@@ -195,14 +195,14 @@
             - title: list hunks
               subtitle: "view hunk"
               values_command: |
-                git diff --cached "[parent]" | grep '^@@'
+                git diff --cached [parent] | grep '^@@'
               should_use_values_as_inline_commands: true
               should_skip_smart_sort: true
               mods:
                 - subtitle: unstage hunk
                   mod: cmd
                   command: |
-                    process_hunk "unstage" "[parent]" "[title]"
+                    process_hunk "unstage" [parent] [title]
 
                     case $? in
                         0) echo "[reload]";;
@@ -212,7 +212,7 @@
                     esac
               textview_action:
                 command: |
-                  view_hunk "unstage" "[parent]" "[title]"
+                  view_hunk "unstage" [parent] [title]
 
             - title: back
               subtitle: 'go back a level (bb)'
@@ -277,7 +277,7 @@
             - subtitle: stage file
               mod: cmd
               command: |
-                git_process_file "stage" "[title]"
+                git_process_file "stage" [title]
                 
                 case $? in
                     0) echo "[reload]";;
@@ -288,14 +288,14 @@
             - title: list hunks
               subtitle: "view hunk"
               values_command: |
-                git diff "[parent]" | grep '^@@'
+                git diff [parent] | grep '^@@'
               should_use_values_as_inline_commands: true
               should_skip_smart_sort: true
               mods:
                 - subtitle: stage hunk
                   mod: cmd
                   command: |
-                    process_hunk "stage" "[parent]" "[title]"
+                    process_hunk "stage" [parent] [title]
 
                     case $? in
                         0) echo "[reload]";;
@@ -307,7 +307,7 @@
                 - subtitle: discard hunk
                   mod: alt
                   command: |
-                    process_hunk "discard" "[parent]" "[title]"
+                    process_hunk "discard" [parent] [title]
 
                     case $? in
                         0) echo "[reload]";;
@@ -317,7 +317,7 @@
                     esac
               textview_action:
                 command: |
-                  view_hunk "stage" "[parent]" "[title]"
+                  view_hunk "stage" [parent] [title]
 
             - title: back
               subtitle: 'go back a level (bb)'
@@ -355,7 +355,7 @@
             git ls-files --others --exclude-standard
           subtitle: 'stage file'
           command: |
-            git_process_file "untracked" "[title]"
+            git_process_file "untracked" [title]
             
             case $? in
                 0) echo "[reload]";;
@@ -499,7 +499,7 @@
             - title: checkout
               icon: fork.png
               command: |
-                git checkout "[parent]"
+                git checkout [parent]
                 echo "[reload~1]"
 
             - title: copy diff since tag
@@ -519,23 +519,23 @@
             - title: push tag
               icon: up.big.png
               command: |
-                git push origin "[parent]"
+                git push origin [parent]
               mods:
                 - subtitle: --force
                   mod: cmd
                   command: |
-                    git push origin "[parent]" --force
+                    git push origin [parent] --force
 
             - title: delete tag
               icon: trash.png
               command: |
-                git tag -d "[parent]"
+                git tag -d [parent]
               mods:
                 - subtitle: and delete remote tag
                   mod: cmd
                   command: |
-                    git tag -d "[parent]"
-                    git push origin --delete "[parent]"
+                    git tag -d [parent]
+                    git push origin --delete [parent]
 
           
 # --------------------
@@ -551,21 +551,21 @@
         - title: checkout
           icon: fork.png
           command: |
-            git_stash_checkout_pull "[parent]"
+            git_stash_checkout_pull [parent]
             echo "[reload~1]"
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
-              command: killall Xcode; git_stash_checkout_pull "[parent]"; xed .
+              command: killall Xcode; git_stash_checkout_pull [parent]; xed .
 
         - title: rebase
           icon: rebase.png
           command: |
             git stash
-            git checkout "[parent]"
+            git checkout [parent]
             git pull
             git checkout -
-            git rebase "[parent]"
+            git rebase [parent]
 
         - title: rebase --onto
           icon: rebase.png
@@ -575,10 +575,10 @@
               should_use_values_as_inline_commands: true
               command: |
                 git stash
-                git checkout "[parent~2]"
+                git checkout [parent~2]
                 git pull
                 git checkout -
-                git rebase --onto "[parent~2]" "[input]"
+                git rebase --onto [parent~2] [input]
               values_command: |
                 git log --pretty=format:"%H"
 
@@ -592,17 +592,17 @@
         - title: delete local branch
           icon: trash.png
           command: |
-            git branch -d "[parent]"
+            git branch -d [parent]
           mods:
             - subtitle: force delete
               mod: cmd
               command: |
-                git branch -D "[parent]"
+                git branch -D [parent]
 
         - title: copy branch name
           icon: copy.png
           command: |
-            echo "[parent]" | xargs echo -n | pbcopy
+            echo [parent] | xargs echo -n | pbcopy
 
         - title: back
           subtitle: 'go back a level (bb)'
@@ -622,24 +622,24 @@
         - title: checkout
           icon: fork.png
           command: |
-            git stash; git checkout -t "[parent]"; git pull;
+            git stash; git checkout -t [parent]; git pull;
             echo "[reload~1]"
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
-              command: killall Xcode; git stash; git checkout -t "[parent]"; git pull; xed .
+              command: killall Xcode; git stash; git checkout -t [parent]; git pull; xed .
 
         - title: delete remote branch
           icon: trash.png
           command: |
-            branch="[parent]"
+            branch=[parent]
             git push origin --delete ${branch#origin/}
     
 
         - title: copy branch name
           icon: copy.png
           command: |
-            echo "[parent]" | xargs echo -n | pbcopy
+            echo [parent] | xargs echo -n | pbcopy
 
         - title: back
           subtitle: 'go back a level (bb)'
@@ -684,6 +684,6 @@
   icon: search.png
   should_skip_smart_sort: true
   command: |
-    open "[input]"
+    open [input]
   values_command: |
     find . -type f
