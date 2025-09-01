@@ -56,22 +56,20 @@ def build_footer_from_mods(mods):
     Given a list of Modifier objects, returns a footer string like:
     ↩ Ask question · ⌘↩ New chat · ⌥↩ Copy last · ⌃↩ Copy all · ⇧↩ Interrupt
     """
-    # Order by ModifierKey definition
-    key_order = [ModifierKey.CMD, ModifierKey.ALT, ModifierKey.CTRL, ModifierKey.SHIFT, ModifierKey.FN, ModifierKey.CMD_ALT]
-    # Build a dict for quick lookup
+    # Use ModifierKey definition order
     mods_by_key = {mod.key: mod for mod in mods if mod.key}
 
+    back_text = "⎋ go back"
+
     parts = []
-    for key in key_order:
+    for key in ModifierKey:
         mod = mods_by_key.get(key)
         if mod and mod.subtitle:
-            # Use symbol + ↩ for all except ENTER, which is just ↩
-            # if key == ModifierKey.ENTER:
-            #     symbol = key.symbol
-            # else:
             symbol = f"{key.symbol}↩"
             parts.append(f"{symbol} {mod.subtitle}")
-    return " · ".join(parts) + " · ⎋ go back"
+    if not parts:
+        return back_text
+    return " · ".join(parts) + f" · {back_text}"
 
 def run(argv):
     sentences = [
