@@ -970,6 +970,8 @@ fi</string>
 				<key>variables</key>
 				<dict>
 					<key>tv_loading</key>
+					<string>Running command...</string>
+					<key>tv_loading_old</key>
 					<string>running `{query}` ...</string>
 				</dict>
 			</dict>

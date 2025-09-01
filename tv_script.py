@@ -6,8 +6,8 @@ import subprocess
 
 from definitions import Modifier, ModifierKey
 
-def get_env_variable(var_name):
-    return os.environ.get(var_name)
+def get_env_variable(var_name, default=None):
+    return os.environ.get(var_name, default)
 
 def get_modifiers_from_env():
     """
@@ -24,29 +24,36 @@ def get_modifiers_from_env():
             )
     return modifiers
 
+def get_full_command(command):
+    functions_path = os.getenv('input_var_functions_path')
+    profile_path = os.getenv('input_var_profile_path')
+
+    # Resolve to absolute path if needed
+    if functions_path and os.path.sep not in functions_path:
+        functions_path = os.path.join(os.getcwd(), functions_path)
+    if profile_path and os.path.sep not in profile_path:
+        profile_path = os.path.join(os.getcwd(), profile_path)
+
+    # Only source if the file exists
+    source_cmds = []
+    if profile_path and os.path.isfile(profile_path):
+        source_cmds.append(f"source '{profile_path}'")
+    if functions_path and os.path.isfile(functions_path):
+        source_cmds.append(f"source '{functions_path}'")
+
+    full_command = ";\n".join(source_cmds + [command])
+
+    # Find the line with "cd " and ends with ";" and add a space before it - so that the output is easier to read
+    lines = full_command.split("\n")
+    for i, line in enumerate(lines):
+        if line.strip().startswith("cd ") and line.strip().endswith(";"):
+            lines[i] = line + "\n"
+
+    return "\n".join(lines)
+
 def run_command(command):
     try:
-        functions_path = os.getenv('input_var_functions_path')
-        profile_path = os.getenv('input_var_profile_path')
-
-        # Resolve to absolute path if needed
-        if functions_path and os.path.sep not in functions_path:
-            functions_path = os.path.join(os.getcwd(), functions_path)
-        if profile_path and os.path.sep not in profile_path:
-            profile_path = os.path.join(os.getcwd(), profile_path)
-
-        # Only source if the file exists
-        source_cmds = []
-        if profile_path and os.path.isfile(profile_path):
-            source_cmds.append(f"source '{profile_path}'")
-        if functions_path and os.path.isfile(functions_path):
-            source_cmds.append(f"source '{functions_path}'")
-
-        full_command = "; ".join(source_cmds + [command])
-
-        # return full_command
-
-        result = subprocess.run(["zsh", "-c", full_command], capture_output=True, text=True, check=True)
+        result = subprocess.run(["zsh", "-c", command], capture_output=True, text=True, check=True)
         return result.stdout.strip()
     except subprocess.CalledProcessError as e:
         return f"Error executing {command}: {e.stderr}"
@@ -72,29 +79,25 @@ def build_footer_from_mods(mods):
     return " · ".join(parts) + f" · {back_text}"
 
 def run(argv):
-    sentences = [
-        "Fruits are the seed-bearing structures in flowering plants.",
-        "Vegetables are parts of plants that are consumed by humans as food.",
-        "The apple is a sweet fruit that grows on an apple tree.",
-        "Carrots are root vegetables that are typically orange in color.",
-        "Bananas are tropical fruits with soft flesh and yellow skins.",
-        "Tomatoes are botanically fruits but often treated as vegetables.",
-        "Kale is a leafy green vegetable rich in nutrients.",
-        "Strawberries are red fruits known for their sweet flavor.",
-        "Peppers can be sweet or spicy and come in various colors.",
-        "Broccoli is a healthy vegetable that's high in vitamins."
-    ]
 
-    typed_query = argv[1] if len(argv) > 1 else None
+
+    # typed_query = argv[1] if len(argv) > 1 else None
 
     command = get_env_variable("tv_command")
-
-    output = run_command(command) if command else 'None'
+    should_rerun = bool(int(get_env_variable("should_rerun", default=1)))
 
     mods = get_modifiers_from_env()
 
     # set to True to show more info to help debug
     is_debug = False
+
+    full_command = get_full_command(command)
+
+    if not should_rerun:
+        output = run_command(full_command) if command else 'None'
+        output = f"```\n{output}\n```"
+    else:
+        output = f"### Running command...\n```\n{full_command}\n```"
 
     mods_sections = ""
     if is_debug and mods:
@@ -102,13 +105,14 @@ def run(argv):
             if mod.subtitle or mod.arg:
                 mods_sections += f"### {mod.subtitle or ''}\n\n```\n{mod.arg or ''}\n```\n\n"
 
+    if mods_sections:
+        output += f"\n\n{mods_sections}"
+
     result = {
         "variables": {
-            "command": "banana",
-            "option": "carrot",
-            "alt": "apple"
+            "should_rerun": False,
         },
-        "response": f"### Command\n```\n{command}\n```\n\n### Output\n```\n{output}\n```\n\n{mods_sections}",
+        "response": output,
         "footer": build_footer_from_mods(mods),
         "behaviour": {
             "response": "append",
@@ -116,7 +120,10 @@ def run(argv):
             "inputfield": "clear"
         }
     }
-    
+
+    if should_rerun:
+        result["rerun"] = 0.1
+
     return json.dumps(result)
 
 if __name__ == "__main__":
