@@ -6,6 +6,7 @@
 import sys
 import json
 import os
+import copy
 import subprocess
 import re
 import yaml
@@ -210,8 +211,11 @@ def create_result_item_common(title, cmd, location, param=None):
 
     valid = switcher.get(cmd.command_type, False) and not cmd.subcommands
 
-    tv_action = cmd.textview_action
-    if tv_action:
+    tv_action = None
+    if cmd.textview_action:
+        # create a deep copy of cmd.textview_action to avoid altering the original object data structure.
+        tv_action = copy.deepcopy(cmd.textview_action)
+
         if tv_action.command:
             tv_action.command = construct_full_command(
                 action=process_action(action=tv_action.command, param=param, title=title),

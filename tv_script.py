@@ -93,16 +93,14 @@ def run(argv):
 
     mods = get_modifiers_from_env()
 
-    mods_json = json.dumps([mod.to_dict() for mod in mods], indent=2)
+    # set to True to show more info to help debug
+    is_debug = False
 
     mods_sections = ""
-    if mods:
+    if is_debug and mods:
         for mod in mods:
             if mod.subtitle or mod.arg:
                 mods_sections += f"### {mod.subtitle or ''}\n\n```\n{mod.arg or ''}\n```\n\n"
-
-    else:
-        mods_table = ""
 
     result = {
         "variables": {
