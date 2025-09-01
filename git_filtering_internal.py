@@ -10,6 +10,7 @@ import copy
 import subprocess
 import re
 import yaml
+import shlex
 
 from definitions import (
     CommandType,
@@ -150,19 +151,22 @@ def create_modifier_list(cmd, location, param=None):
 
 def process_action(action, param, title, secondaryAction=None):
     def escape_param(param):
-        if param:
-            param = param.replace('`', '\\`')  # Escape back tick
-            param = param.replace('"', '\\"')  # Escape double quotes
-            param = param.replace("'", "\\'")  # Escape single quotes
-            param = param.replace('$', '\\$')  # Escape dollar sign
-        return param
+        # if param:
+        #     param = param.replace('`', '\\`')  # Escape back tick
+        #     param = param.replace('"', '\\"')  # Escape double quotes
+        #     param = param.replace("'", "\\'")  # Escape single quotes
+        #     param = param.replace('$', '\\$')  # Escape dollar sign
+        # return param
+
+        # ChatGPT says this handles all the cases above plus more
+        return shlex.quote(param) if param else param
 
     def replace_parent_action(action):
         # Find all occurrences of [parent] or [parent~n]
         matches = re.finditer(r"\[parent(?:~(\d+))?\]", action)
         for match in matches:
             n = int(match.group(1) or 1)  # Default to 1 if n is not provided
-            replacement = alfred_input.parent_command_title(n)
+            replacement = escape_param(alfred_input.parent_command_title(n))
             action = action.replace(match.group(0), replacement)
         return action
 
@@ -173,12 +177,13 @@ def process_action(action, param, title, secondaryAction=None):
         action = action.replace("[title]", title.strip())
     else:
         if isinstance(action, str):
+            # TODO: clean up and verify that all params and actions and titles and parents are escaped
             param = escape_param(param)
             action = action.replace('[input_new_lines]', param.replace(' \ ', '\n')) if param else action
             action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
             action = action.replace('[input]', param) if param else action
             action = replace_parent_action(action)
-            action = action.replace("[title]", param.strip() if param else title.strip())
+            action = action.replace("[title]", param.strip() if param else escape_param(title).strip())
 
     return action
 

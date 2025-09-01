@@ -21,13 +21,16 @@
         git status | grep 'branch is' || echo '!! no remote branch linked yet'
       icon: fork.png
       subcommands:
+
         - title: copy branch name
           icon: copy.png
+          should_skip_smart_sort: true
           command: |
             echo "[parent]" | xargs echo -n | pbcopy
 
         - title: copy latest commit
           icon: copy.png
+          should_skip_smart_sort: true
           subtitle_command: |
              git rev-parse HEAD | xargs echo -n
           command: |
@@ -40,6 +43,30 @@
           command: |
             echo "[reload~1]"
 
+    - title: fetch
+      icon: down.small.png
+      should_skip_smart_sort: true
+      mods:
+        - subtitle: reload status menu
+          mod: cmd
+          command: |
+            echo "[reload]"
+      textview_action:
+        command: |
+          git fetch -p
+
+    - title: pull
+      icon: down.big.png
+      should_skip_smart_sort: true
+      command: |
+        git stash; git pull;
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: |
+            killall Xcode;
+            git stash; git pull;
+            xed .
 
     - title: push
       icon: up.big.png
@@ -54,33 +81,6 @@
             branch=$(git branch --show-current);
             git push -uf origin $branch
 
-
-
-    - title: fetch
-      icon: down.small.png
-      should_skip_smart_sort: true
-      mods:
-        - subtitle: reload status menu
-          mod: cmd
-          command: |
-            echo "[reload]"
-      textview_action:
-        command: |
-          git fetch -p
-
-    - title: stash & pull
-      icon: down.big.png
-      should_skip_smart_sort: true
-      command: |
-        git stash; git pull;
-
-      mods:
-        - subtitle: Launch Xcode after
-          mod: cmd
-          command: |
-            killall Xcode;
-            git stash; git pull;
-            xed .
 
     - title: commit
       icon: pencil.png
@@ -363,6 +363,76 @@
             esac
 
 # --------------------
+# MISC ACTIONS
+# --------------------
+
+    - title: create branch
+      icon: create.png
+      should_skip_smart_sort: true
+      command: |
+        git checkout -b "[input_snake_case]"
+        echo "[reload~1]"
+
+
+    - title: stash
+      icon: down.small.png
+      should_skip_smart_sort: true
+      command: |
+        git stash
+
+
+    - title: pop
+      icon: up.small.png
+      should_skip_smart_sort: true
+      command: |
+        git pop
+
+    - title: commits
+      icon: pick.png
+      should_skip_smart_sort: true
+      should_use_values_as_inline_commands: true
+      values_command: |
+        git log --oneline --all
+
+      subcommands:
+        - title: cherry-pick
+          icon: pick.png
+          should_skip_smart_sort: true
+          command: |
+           git cherry-pick "$(echo [parent] | awk '{print $1}')"
+
+          mods:
+            - subtitle: --no-commit
+              mod: cmd
+              command: |
+                git cherry-pick --no-commit "$(echo [parent] | awk '{print $1}')"
+
+        - title: revert
+          icon: back.line.png
+          should_skip_smart_sort: true
+          command: |
+           git revert "$(echo [parent] | awk '{print $1}')"
+
+          mods:
+            - subtitle: --no-commit
+              mod: cmd
+              command: |
+                git revert --no-commit "$(echo [parent] | awk '{print $1}')"
+
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+
+    - title: history
+      should_skip_smart_sort: true
+      textview_action:
+        command: |
+          git log -n 50 --oneline --graph
+
+# --------------------
 # TAG LOGIC
 # --------------------
 
@@ -413,6 +483,7 @@
               icon: fork.png
               command: |
                 git checkout "[parent]"
+                echo "[reload~1]"
 
             - title: copy diff since tag
               icon: copy.png
@@ -449,25 +520,7 @@
                     git tag -d "[parent]"
                     git push origin --delete "[parent]"
 
-
-# --------------------
-# MISC ACTIONS
-# --------------------
-
-    - title: history
-      should_skip_smart_sort: true
-      textview_action:
-        command: |
-          git log -n 50 --oneline --graph
           
-
-    - title: create branch
-      icon: create.png
-      should_skip_smart_sort: true
-      command: |
-        git checkout -b "[input_snake_case]"
-        
-        echo "[reload~1]"
 # --------------------
 # BRANCHES LOGIC
 # --------------------
@@ -482,6 +535,7 @@
           icon: fork.png
           command: |
             git_stash_checkout_pull "[parent]"
+            echo "[reload~1]"
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
@@ -552,6 +606,7 @@
           icon: fork.png
           command: |
             git stash; git checkout -t "[parent]"; git pull;
+            echo "[reload~1]"
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
@@ -575,36 +630,6 @@
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
-
-
-- title: stash
-  icon: down.small.png
-  should_skip_smart_sort: true
-  command: |
-    git stash
-
-
-- title: pop
-  icon: up.small.png
-  should_skip_smart_sort: true
-  command: |
-    git pop
-
-
-- title: create branch
-  icon: create.png
-  should_skip_smart_sort: true
-  command: |
-    git checkout -b "[input_snake_case]"
-    
-    echo "[reload~1]"
-
-- title: cherry-pick
-  icon: pick.png
-  should_skip_smart_sort: true
-  command: |
-   git cherry-pick [input]
-
 
 # --------------------
 # MISC LOGIC
