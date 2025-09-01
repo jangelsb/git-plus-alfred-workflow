@@ -8,12 +8,37 @@ class CommandType(Enum):
     NEEDS_SELECTION = 6  # Requires a parameter from a list, then runs the command
 
 class ModifierKey(Enum):
-    CMD = "cmd"
-    ALT = "alt"
-    CTRL = "ctrl"
-    FN = "fn"
-    SHIFT = "shift"
-    CMD_ALT = "cmd+alt"
+    """
+    This module defines a ModifierKey enum with custom initialization.
+
+    The `__new__` Method:
+        - Overrides the Enum's construction mechanism.
+        - Accepts `value` and `symbol`, setting `_value_` to `value`.
+        - `symbol` is stored as an attribute, enabling access via `modifier_key.symbol`.
+
+    The `value` Property:
+        - Returns the first element of the tuple, providing text representation.
+        - Allows direct Enum member access via `ModifierKey(value)` by leveraging `Enum`'s native features with `_value_`.
+
+    By customizing `__new__`, we align Enum initialization with our need for two properties: textual representation and symbol, while retaining native value lookup functionality: e.g, `ModifierKey("cmd")`
+    """
+
+    CMD = ("cmd", "⌘")
+    ALT = ("alt", "⌥")
+    CTRL = ("ctrl", "⌃")
+    FN = ("fn", "fn")
+    SHIFT = ("shift", "⇧")
+    CMD_ALT = ("cmd+alt", "⌘⌥")
+
+    def __new__(cls, value, symbol):
+        obj = object.__new__(cls)
+        obj._value_ = value
+        obj.symbol = symbol
+        return obj
+
+    @property
+    def value(self):
+        return self._value_
 
 class Modifier:
     def __init__(self, arg, subtitle='', valid=False, key=None):
