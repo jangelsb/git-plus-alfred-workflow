@@ -71,7 +71,7 @@ def build_footer_from_mods(mods):
             # else:
             symbol = f"{key.symbol}↩"
             parts.append(f"{symbol} {mod.subtitle}")
-    return " · ".join(parts)
+    return " · ".join(parts) + " · ⎋ go back"
 
 def run(argv):
     sentences = [
