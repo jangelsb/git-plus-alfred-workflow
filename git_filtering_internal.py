@@ -179,7 +179,7 @@ def process_action(action, param, title, secondaryAction=None):
         if isinstance(action, str):
             # TODO: clean up and verify that all params and actions and titles and parents are escaped
             param = escape_param(param)
-            action = action.replace('[input_new_lines]', param.replace(' \ ', '\n')) if param else action
+            # action = action.replace('[input_new_lines]', param.replace(' \ ', '\n')) if param else action
             action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
             action = action.replace('[input]', param) if param else action
             action = replace_parent_action(action)
@@ -407,7 +407,8 @@ def create_commands_from_yaml(yaml_data):
             if should_use_values_as_inline_commands == False or subcommands:
                 icon = icon if icon else "list.png"
 
-        elif any(inp in action for inp in ['[input]', '[input_snake_case]', '[input_new_lines]']):
+        # elif any(inp in action for inp in ['[input]', '[input_snake_case]', '[input_new_lines]']):
+        elif any(inp in action for inp in ['[input]', '[input_snake_case]']):
             command_type = CommandType.NEEDS_PARAM
             icon = icon if icon else "pencil.png"
 

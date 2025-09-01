@@ -279,18 +279,6 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>sourceoutputuid</key>
-				<string>D2397263-C42B-4490-B239-1A9855BBD9F4</string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
 				<string>23C1F948-18A5-486D-8658-BFFDFD5D3F47</string>
 				<key>modifiers</key>
 				<integer>0</integer>
@@ -298,6 +286,18 @@
 				<string></string>
 				<key>sourceoutputuid</key>
 				<string>305D3D82-5368-44F1-B4BB-6F707F32771B</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>D2397263-C42B-4490-B239-1A9855BBD9F4</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
@@ -1269,26 +1269,6 @@ python3 location_arg_parser.py "$1"</string>
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>argument</key>
-				<string></string>
-				<key>passthroughargument</key>
-				<false/>
-				<key>variables</key>
-				<dict>
-					<key>command_to_run</key>
-					<string>{query}</string>
-				</dict>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.utility.argument</string>
-			<key>uid</key>
-			<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
-			<key>version</key>
-			<integer>1</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>lastpathcomponent</key>
 				<false/>
 				<key>onlyshowifquerypopulated</key>
@@ -1386,6 +1366,28 @@ sys.stdout.write(command_to_run.replace('[input_new_lines]', input_new_lines))</
 				<false/>
 				<key>variables</key>
 				<dict>
+					<key>is_alfred_stacked</key>
+					<string>0</string>
+					<key>should_rerun</key>
+					<string>1</string>
+				</dict>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.argument</string>
+			<key>uid</key>
+			<string>F2EC4A23-334C-4437-8791-A0C75D68BE8C</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argument</key>
+				<string></string>
+				<key>passthroughargument</key>
+				<false/>
+				<key>variables</key>
+				<dict>
 					<key>input_new_lines</key>
 					<string>{query}</string>
 				</dict>
@@ -1406,16 +1408,14 @@ sys.stdout.write(command_to_run.replace('[input_new_lines]', input_new_lines))</
 				<false/>
 				<key>variables</key>
 				<dict>
-					<key>is_alfred_stacked</key>
-					<string>0</string>
-					<key>should_rerun</key>
-					<string>1</string>
+					<key>command_to_run</key>
+					<string>{query}</string>
 				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>F2EC4A23-334C-4437-8791-A0C75D68BE8C</string>
+			<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1764,9 +1764,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>A266F8C5-7A35-4798-A0A1-FC822CCD1DAA</key>
 		<dict>
 			<key>xpos</key>
-			<real>1650</real>
+			<real>1660</real>
 			<key>ypos</key>
-			<real>930</real>
+			<real>1035</real>
 		</dict>
 		<key>A9F8153D-1EF2-418D-9E9F-34BC7790CD25</key>
 		<dict>
@@ -1785,9 +1785,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>B4417C7E-032D-46A3-84D4-46284A241EDB</key>
 		<dict>
 			<key>xpos</key>
-			<real>1230</real>
+			<real>1260</real>
 			<key>ypos</key>
-			<real>895</real>
+			<real>1065</real>
 		</dict>
 		<key>B7FDA93B-4667-4916-959E-E5A38C50D3D2</key>
 		<dict>
@@ -1828,10 +1828,12 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		</dict>
 		<key>D65C0E83-1763-45CD-B902-B32BC6A2680C</key>
 		<dict>
+			<key>note</key>
+			<string>[input_snake_case]</string>
 			<key>xpos</key>
-			<real>1325</real>
+			<real>1345</real>
 			<key>ypos</key>
-			<real>940</real>
+			<real>1035</real>
 		</dict>
 		<key>E3C7D05D-82C0-4999-8752-C777B4F16BED</key>
 		<dict>
@@ -1857,9 +1859,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>F92D1386-9903-4537-A872-16A251038CEB</key>
 		<dict>
 			<key>xpos</key>
-			<real>1540</real>
+			<real>1560</real>
 			<key>ypos</key>
-			<real>975</real>
+			<real>1065</real>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
