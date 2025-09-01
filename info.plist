@@ -1038,7 +1038,7 @@ fi</string>
 			<key>config</key>
 			<dict>
 				<key>externaltriggerid</key>
-				<string>tv</string>
+				<string>tv_reload</string>
 				<key>passinputasargument</key>
 				<true/>
 				<key>passvariables</key>
@@ -1227,7 +1227,7 @@ python3 location_arg_parser.py "$1"</string>
 				<key>availableviaurlhandler</key>
 				<false/>
 				<key>triggerid</key>
-				<string>tv</string>
+				<string>tv_reload</string>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.trigger.external</string>

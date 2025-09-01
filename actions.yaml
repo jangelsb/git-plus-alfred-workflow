@@ -160,6 +160,9 @@
           subtitle: 'process each one, one by one'
           textview_action:
             command: |
+              _get_first_file_diff_header "unstage"
+              echo
+
               view_hunk "unstage"
             subtitle_command: |
               _get_first_file "unstage"
@@ -244,6 +247,9 @@
           subtitle: 'process each one, one by one'
           textview_action:
             command: |
+              _get_first_file_diff_header "stage"
+              echo
+
               view_hunk "stage"
             subtitle_command: |
               _get_first_file "stage"

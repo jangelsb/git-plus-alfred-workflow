@@ -67,6 +67,20 @@ _get_first_file() {
 }
 
 # Helper function to get the full diff for a given action and file
+_get_first_file_diff_header() {
+    local action="$1"  # "stage", "unstage", or "discard"
+
+    echo "----------------------------------"
+    file_name=$(_get_first_file $action)
+    echo "file: $file_name"
+    
+    full_diff=$(_get_full_diff $action "$file_name")
+    hunk=$(_get_first_hunk "$full_diff" | grep '^@@')
+    echo "hunk: $hunk"
+    echo "----------------------------------"
+}
+
+# Helper function to get the full diff for a given action and file
 _get_full_diff() {
     local action="$1"  # "stage", "unstage", or "discard"
     local file="$2"    # File path
