@@ -387,37 +387,20 @@
       command: |
         git pop
 
+    - title: history
+      should_skip_smart_sort: true
+      textview_action:
+        command: |
+          git log -n 50 --oneline --graph
+
+# --------------------
+# COMMIT LOGIC
+# --------------------
+
     - title: commits
       icon: pick.png
-      should_skip_smart_sort: true
-      should_use_values_as_inline_commands: true
-      values_command: |
-        git log --oneline --all
-
+      should_skip_smart_sort: true        
       subcommands:
-        - title: cherry-pick
-          icon: pick.png
-          should_skip_smart_sort: true
-          command: |
-           git cherry-pick "$(echo [parent] | awk '{print $1}')"
-
-          mods:
-            - subtitle: --no-commit
-              mod: cmd
-              command: |
-                git cherry-pick --no-commit "$(echo [parent] | awk '{print $1}')"
-
-        - title: revert
-          icon: back.line.png
-          should_skip_smart_sort: true
-          command: |
-           git revert "$(echo [parent] | awk '{print $1}')"
-
-          mods:
-            - subtitle: --no-commit
-              mod: cmd
-              command: |
-                git revert --no-commit "$(echo [parent] | awk '{print $1}')"
 
         - title: back
           subtitle: 'go back a level (bb)'
@@ -426,11 +409,45 @@
           command: |
             echo "[reload~1]"
 
-    - title: history
-      should_skip_smart_sort: true
-      textview_action:
-        command: |
-          git log -n 50 --oneline --graph
+        - title: list all commits
+          icon: pick.png
+          should_skip_smart_sort: true
+          should_use_values_as_inline_commands: true
+          values_command: |
+            git log --oneline --all
+
+          subcommands:
+            - title: cherry-pick
+              icon: pick.png
+              should_skip_smart_sort: true
+              command: |
+               git cherry-pick "$(echo [parent] | awk '{print $1}')"
+
+              mods:
+                - subtitle: --no-commit
+                  mod: cmd
+                  command: |
+                    git cherry-pick --no-commit "$(echo [parent] | awk '{print $1}')"
+
+            - title: revert
+              icon: back.line.png
+              should_skip_smart_sort: true
+              command: |
+               git revert "$(echo [parent] | awk '{print $1}')"
+
+              mods:
+                - subtitle: --no-commit
+                  mod: cmd
+                  command: |
+                    git revert --no-commit "$(echo [parent] | awk '{print $1}')"
+
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+
 
 # --------------------
 # TAG LOGIC
