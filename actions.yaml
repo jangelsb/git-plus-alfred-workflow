@@ -543,13 +543,13 @@
         - title: create
           icon: pencil.png
           should_skip_smart_sort: true
-          command: git tag [input]
+          command: git tag [input_snake_case]
           mods:
             - subtitle: and push to origin
               mod: cmd
               command: |
-                git tag [input]
-                git push origin [input]
+                git tag [input_snake_case]
+                git push origin [input_snake_case]
 
         - title: fetch
           icon: down.small.png
