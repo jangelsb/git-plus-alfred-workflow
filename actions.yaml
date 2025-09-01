@@ -180,7 +180,6 @@
 
                 case $? in
                     0) echo "[tv_reload]";;
-                    1) echo "[reload]";;
                     2) echo "[reload~1]";;
                     3) echo "[reload~2]";;
                 esac
@@ -231,7 +230,6 @@
 
                     case $? in
                         0) echo "[tv_reload]";;
-                        1) echo "[reload]";;
                         2) echo "[reload~1]";;
                         3) echo "[reload~2]";;
                     esac
@@ -255,7 +253,6 @@
 
                     case $? in
                         0) echo "[reload]";;
-                        1) echo "[reload]";;
                         2) echo "[reload~1]";;
                         3) echo "[reload~2]";;
                     esac
@@ -297,7 +294,6 @@
 
                 case $? in
                     0) echo "[tv_reload]";;
-                    1) echo "[reload]";;
                     2) echo "[reload~1]";;
                     3) echo "[reload~2]";;
                 esac
@@ -309,7 +305,6 @@
 
                 case $? in
                     0) echo "[tv_reload]";;
-                    1) echo "[reload]";;
                     2) echo "[reload~1]";;
                     3) echo "[reload~2]";;
                 esac
@@ -361,7 +356,6 @@
 
                     case $? in
                         0) echo "[tv_reload]";;
-                        1) echo "[reload]";;
                         2) echo "[reload~1]";;
                         3) echo "[reload~2]";;
                     esac
@@ -373,7 +367,6 @@
 
                     case $? in
                         0) echo "[tv_reload]";;
-                        1) echo "[reload]";;
                         2) echo "[reload~1]";;
                         3) echo "[reload~2]";;
                     esac
@@ -397,7 +390,6 @@
 
                     case $? in
                         0) echo "[reload]";;
-                        1) echo "[reload]";;
                         2) echo "[reload~1]";;
                         3) echo "[reload~2]";;
                     esac
@@ -409,7 +401,6 @@
 
                     case $? in
                         0) echo "[reload]";;
-                        1) echo "[reload]";;
                         2) echo "[reload~1]";;
                         3) echo "[reload~2]";;
                     esac

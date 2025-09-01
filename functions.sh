@@ -231,34 +231,18 @@ process_hunk() {
     hunk_count=$(echo "$full_diff" | grep -c '^@@')
 
     # Determine the reload level
-    if [[ -n "$header" ]]; then
+    # viewing a specific file or a header
+    if [[ -n "$header" || -n "$file" ]]; then
 
       if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
           return 3
       elif [[ "$hunk_count" -eq 1 ]]; then
           return 2
       else
-          return 1
+          return 0
       fi
 
     else
-
-      # viewing all hunks for a file
-      if [[ -n "$file" ]]; then
-
-          # only go back 3, if no more hunks and no more files
-          if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
-              return 3
-
-          # only go back 2, if no more hunks but more files
-          elif [[ "$hunk_count" -eq 1 ]]; then
-              return 2
-              
-          else
-              return 0
-          fi
-
-      fi
 
       # viewing all hunks, only go back 2, if no more hunks
       if [[ "$hunk_count" -eq 1 && "$file_count" -eq 1 ]]; then
