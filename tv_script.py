@@ -95,8 +95,14 @@ def run(argv):
 
     mods_json = json.dumps([mod.to_dict() for mod in mods], indent=2)
 
-    # print(mods)
-    sentence = mods_json or typed_query or random.choice(sentences)
+    mods_sections = ""
+    if mods:
+        for mod in mods:
+            if mod.subtitle or mod.arg:
+                mods_sections += f"### {mod.subtitle or ''}\n\n```\n{mod.arg or ''}\n```\n\n"
+
+    else:
+        mods_table = ""
 
     result = {
         "variables": {
@@ -104,7 +110,7 @@ def run(argv):
             "option": "carrot",
             "alt": "apple"
         },
-        "response": f"### Command\n```\n{command}\n```\n\n### Output\n```\n{output}\n```",
+        "response": f"### Command\n```\n{command}\n```\n\n### Output\n```\n{output}\n```\n\n{mods_sections}",
         "footer": build_footer_from_mods(mods),
         "behaviour": {
             "response": "append",
