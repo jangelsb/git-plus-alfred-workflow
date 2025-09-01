@@ -82,7 +82,17 @@ class ResultItem:
             "quicklookurl": self.quicklookurl
         }
         if self.mods:
-            item_dict["mods"] = {mod.key.value: mod.to_dict()[mod.key.value] for mod in self.mods if mod.key is not None}
+            mods_dict = {}
+            for mod in self.mods:
+                if mod.key is not None:
+                    mod_dict = mod.to_dict()[mod.key.value]
+                    # If textview_action, add variables to each mod
+                    if self.textview_action:
+                        mod_dict = dict(mod_dict)  # Copy to avoid mutating original
+                        mod_dict["variables"] = {"is_mod": mod.key.value}
+                    mods_dict[mod.key.value] = mod_dict
+            item_dict["mods"] = mods_dict
+
         if self.text:
             item_dict["text"] = self.text.to_dict()
         if self.icon_path:
@@ -612,6 +622,9 @@ def create_commands_from_yaml(yaml_data):
 
         if textview_action:
             command_type = CommandType.SINGLE_ACTION
+
+            if not textview_action.mods:
+                textview_action.mods=mods
 
         return Command(
             title=entry['title'],

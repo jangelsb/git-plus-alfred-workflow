@@ -339,33 +339,33 @@
                 git diff "[parent]" | grep '^@@'
               should_use_values_as_inline_commands: true
               should_skip_smart_sort: true
+              mods:
+                - subtitle: stage hunk
+                  mod: cmd
+                  command: |
+                    process_hunk "stage" "[parent]" "[title]"
+
+                    case $? in
+                        0) echo "[reload]";;
+                        1) echo "[reload]";;
+                        2) echo "[reload~1]";;
+                        3) echo "[reload~2]";;
+                    esac
+
+                - subtitle: discard hunk
+                  mod: alt
+                  command: |
+                    process_hunk "discard" "[parent]" "[title]"
+
+                    case $? in
+                        0) echo "[reload]";;
+                        1) echo "[reload]";;
+                        2) echo "[reload~1]";;
+                        3) echo "[reload~2]";;
+                    esac
               textview_action:
                 command: |
                   view_hunk "stage" "[parent]" "[title]"
-                mods:
-                  - subtitle: stage hunk
-                    mod: cmd
-                    command: |
-                      process_hunk "stage" "[parent]" "[title]"
-      
-                      case $? in
-                          0) echo "[reload]";;
-                          1) echo "[reload]";;
-                          2) echo "[reload~1]";;
-                          3) echo "[reload~2]";;
-                      esac
-
-                  - subtitle: discard hunk
-                    mod: alt
-                    command: |
-                      process_hunk "discard" "[parent]" "[title]"
-    
-                      case $? in
-                          0) echo "[reload]";;
-                          1) echo "[reload]";;
-                          2) echo "[reload~1]";;
-                          3) echo "[reload~2]";;
-                      esac
 
 #              subcommands:
 #                - title: stage hunk
