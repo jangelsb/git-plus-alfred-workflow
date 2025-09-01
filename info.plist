@@ -761,9 +761,9 @@ python3 location_arg_parser.py "$1"</string>
 				<key>footertext</key>
 				<string></string>
 				<key>inputfile</key>
-				<string></string>
+				<string>tv_script.sh</string>
 				<key>inputtype</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>loadingtext</key>
 				<string></string>
 				<key>outputmode</key>
