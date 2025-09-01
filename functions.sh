@@ -66,18 +66,51 @@ _get_first_file() {
     fi
 }
 
-# Helper function to get the full diff for a given action and file
-_get_first_file_diff_header() {
+# Helper function to get a nice diff header 
+_get_diff_header() {
     local action="$1"  # "stage", "unstage", or "discard"
+    local file="$2"
+    local header="$3"
+
+    if [[ -z "$file" ]]; then
+        file=$(_get_first_file "$action")
+    fi
+
+    if [[ -z "$header" ]]; then
+        full_diff=$(_get_full_diff "$action" "$file")
+        header=$(_get_first_hunk "$full_diff" | grep '^@@')
+    fi
+
+    count=$(echo "$full_diff" | grep -c '^@@')
 
     echo "----------------------------------"
-    file_name=$(_get_first_file $action)
-    echo "file: $file_name"
-    
-    full_diff=$(_get_full_diff $action "$file_name")
-    hunk=$(_get_first_hunk "$full_diff" | grep '^@@')
-    echo "hunk: $hunk"
+    if (( count == 1 )); then
+      echo "file: $file ($count hunk)"
+    else
+        echo "file: $file ($count hunks)"
+    fi
+    echo "hunk: $header"
     echo "----------------------------------"
+}
+
+# Helper function to get the number of hunks for the action and or file
+_get_hunk_count() {
+    local action="$1"  # "stage", "unstage", or "discard"
+    local file="$2"
+
+    if [[ -z "$file" ]]; then
+        file=$(_get_first_file "$action")
+    fi
+
+    full_diff=$(_get_full_diff "$action" "$file")
+
+    count=$(echo "$full_diff" | grep -c '^@@')
+
+    if (( count == 1 )); then
+      echo "$count hunk"
+    else
+        echo "$count hunks"
+    fi
 }
 
 # Helper function to get the full diff for a given action and file
@@ -142,6 +175,9 @@ view_hunk() {
     else
         hunk=$(_get_first_hunk "$full_diff") || { echo 'hunk failed'; return 1; }
     fi
+
+    _get_diff_header "$action" "$file" "$header"
+    echo
 
     # Remove all lines that start with @@
     echo "$hunk" | sed '/^@@/d'

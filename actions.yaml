@@ -156,13 +156,10 @@
         echo "$staged file(s)"
 
       subcommands:
-        - title: 'latest'
-          subtitle: 'process each one, one by one'
+        - title: 'latest hunk'
+          subtitle: 'process each hunk, one by one'
           textview_action:
             command: |
-              _get_first_file_diff_header "unstage"
-              echo
-
               view_hunk "unstage"
             subtitle_command: |
               _get_first_file "unstage"
@@ -182,13 +179,22 @@
             - subtitle: reload status menu
               mod: ctrl
               command: |
-                echo "[reload~1]"
+                echo "[reload~1]"  
+
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
 
         - title: staged files
           should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: |
             diff_command 'staged'
+          subtitle_command: |
+            _get_hunk_count "unstage" [title]
           mods:
             - subtitle: unstage file
               mod: cmd
@@ -200,6 +206,13 @@
                     1) echo "[reload~1]";;
                 esac
           subcommands:
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"
+
             - title: list hunks
               subtitle: "view hunk"
               values_command: |
@@ -222,18 +235,7 @@
                 command: |
                   view_hunk "unstage" [parent] [title]
 
-            - title: back
-              subtitle: 'go back a level (bb)'
-              icon: back.png
-              should_skip_smart_sort: true
-              command: |
-                echo "[reload~1]"
-        - title: back
-          subtitle: 'go back a level (bb)'
-          icon: back.png
-          should_skip_smart_sort: true
-          command: |
-            echo "[reload~1]"
+
 
     - title: modified
       should_skip_smart_sort: true
@@ -243,13 +245,10 @@
 
       subcommands:
 
-        - title: 'latest'
-          subtitle: 'process each one, one by one'
+        - title: 'latest hunk'
+          subtitle: 'process each hunk, one by one'
           textview_action:
             command: |
-              _get_first_file_diff_header "stage"
-              echo
-
               view_hunk "stage"
             subtitle_command: |
               _get_first_file "stage"
@@ -283,12 +282,21 @@
               mod: ctrl
               command: |
                 echo "[reload~1]"
+        
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
 
         - title: modified files
           should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: |
             diff_command 'modified' # git status --short
+          subtitle_command: |
+            _get_hunk_count "stage" [title]
           mods:
             - subtitle: stage file
               mod: cmd
@@ -301,6 +309,13 @@
                 esac
 
           subcommands:
+            - title: back
+              subtitle: 'go back a level (bb)'
+              icon: back.png
+              should_skip_smart_sort: true
+              command: |
+                echo "[reload~1]"            
+            
             - title: list hunks
               subtitle: "view hunk"
               values_command: |
@@ -335,20 +350,6 @@
                 command: |
                   view_hunk "stage" [parent] [title]
 
-            - title: back
-              subtitle: 'go back a level (bb)'
-              icon: back.png
-              should_skip_smart_sort: true
-              command: |
-                echo "[reload~1]"
-
-
-        - title: back
-          subtitle: 'go back a level (bb)'
-          icon: back.png
-          should_skip_smart_sort: true
-          command: |
-            echo "[reload~1]"
 
     - title: untracked
       should_skip_smart_sort: true
@@ -415,6 +416,7 @@
 
     - title: commits
       icon: pick.png
+      subtitle: and hashes
       should_skip_smart_sort: true        
       subcommands:
 
@@ -473,6 +475,13 @@
       icon: tag.png
       should_skip_smart_sort: true
       subcommands:
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          should_skip_smart_sort: true
+          command: |
+            echo "[reload~1]"
+        
         - title: create
           icon: pencil.png
           should_skip_smart_sort: true
