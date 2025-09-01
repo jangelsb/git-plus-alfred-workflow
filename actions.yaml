@@ -40,6 +40,22 @@
           command: |
             echo "[reload~1]"
 
+
+    - title: push
+      icon: up.big.png
+      should_skip_smart_sort: true
+      command: |
+        branch=$(git branch --show-current);
+        git push -u origin $branch
+      mods:
+        - subtitle: force push
+          mod: cmd
+          command: |
+            branch=$(git branch --show-current);
+            git push -uf origin $branch
+
+
+
     - title: fetch
       icon: down.small.png
       should_skip_smart_sort: true
@@ -65,7 +81,6 @@
             killall Xcode;
             git stash; git pull;
             xed .
-
 
     - title: commit
       icon: pencil.png
@@ -133,7 +148,6 @@
           should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
-
 
     - title: staged
       should_skip_smart_sort: true
@@ -348,11 +362,97 @@
                 1) echo "[reload~1]";;
             esac
 
+# --------------------
+# TAG LOGIC
+# --------------------
+
+    - title: tags
+      icon: tag.png
+      should_skip_smart_sort: true
+      subcommands:
+        - title: create
+          icon: pencil.png
+          should_skip_smart_sort: true
+          command: git tag [input]
+          mods:
+            - subtitle: and push to origin
+              mod: cmd
+              command: |
+                git tag [input]
+                git push origin [input]
+
+        - title: fetch
+          icon: down.small.png
+          should_skip_smart_sort: true
+          command: |
+            git fetch origin --tags
+          mods:
+            - subtitle: --force
+              mod: cmd
+              command: |
+                git fetch origin --tags --force
+
+        - title: push all
+          icon: up.big.png
+          should_skip_smart_sort: true
+          command: |
+            git push origin --tags
+          mods:
+            - subtitle: --force
+              mod: cmd
+              command: |
+                git push origin --tags --force
+
+        - title: show tags
+          icon: tag.png
+          should_skip_smart_sort: true
+          should_use_values_as_inline_commands: true
+          values_command: git tag | sort -r
+          subcommands:
+            - title: checkout
+              icon: fork.png
+              command: |
+                git checkout "[parent]"
+
+            - title: copy diff since tag
+              icon: copy.png
+              command: |
+                git log --reverse --pretty=format:"%B" "[parent]..HEAD" | pbcopy
+              mods:
+                - subtitle: copy for ChatGPT summary
+                  mod: cmd
+                  command: |
+                    {
+                      echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
+                      echo ''
+                      git log --reverse --pretty=format:"%B" "[parent]..HEAD"
+                    } | pbcopy
+
+            - title: push tag
+              icon: up.big.png
+              command: |
+                git push origin "[parent]"
+              mods:
+                - subtitle: --force
+                  mod: cmd
+                  command: |
+                    git push origin "[parent]" --force
+
+            - title: delete tag
+              icon: trash.png
+              command: |
+                git tag -d "[parent]"
+              mods:
+                - subtitle: and delete remote tag
+                  mod: cmd
+                  command: |
+                    git tag -d "[parent]"
+                    git push origin --delete "[parent]"
 
 
-
-
-
+# --------------------
+# MISC ACTIONS
+# --------------------
 
     - title: history
       should_skip_smart_sort: true
@@ -477,20 +577,6 @@
             echo "[reload~1]"
 
 
-- title: push
-  icon: up.big.png
-  should_skip_smart_sort: true
-  command: |
-    branch=$(git branch --show-current);
-    git push -u origin $branch
-  mods:
-    - subtitle: force push
-      mod: cmd
-      command: |
-        branch=$(git branch --show-current);
-        git push -uf origin $branch
-
-
 - title: stash
   icon: down.small.png
   should_skip_smart_sort: true
@@ -518,60 +604,6 @@
   should_skip_smart_sort: true
   command: |
    git cherry-pick [input]
-
-
-
-
-
-# --------------------
-# TAG LOGIC
-# --------------------
-
-- title: create tag
-  icon: tag.png
-  should_skip_smart_sort: true
-  command: git tag [input]
-  mods:
-  - subtitle: and push to origin
-    mod: cmd
-    command: |
-      git tag [input]
-      git push origin [input]
-
-- title: tags
-  icon: tag.png
-  should_skip_smart_sort: true
-  values_command: git tag | sort -r
-  subcommands:
-    - title: checkout
-      icon: fork.png
-      command: |
-        git checkout "[parent]"
-
-    - title: copy diff since tag
-      icon: copy.png
-      command: |
-        git log --reverse --pretty=format:"%B" "[parent]..HEAD" | pbcopy
-      mods:
-        - subtitle: copy for ChatGPT summary
-          mod: cmd
-          command: |
-            {
-              echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
-              echo ''
-              git log --reverse --pretty=format:"%B" "[parent]..HEAD"
-            } | pbcopy
-
-    - title: delete tag
-      icon: trash.png
-      command: |
-        git tag -d "[parent]"
-      mods:
-        - subtitle: and delete remote tag
-          mod: cmd
-          command: |
-            git tag -d "[parent]"
-            git push origin --delete "[parent]"
 
 
 # --------------------
