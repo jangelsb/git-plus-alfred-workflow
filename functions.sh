@@ -2,8 +2,8 @@
 ##############################    git commands    ##############################
 ################################################################################
 
-git_checkout() {
-    git stash; git checkout "$1"; git pull;
+git_stash_checkout_pull() {
+    git stash; [[ -n "$1" ]] && git checkout "$1"; git pull;
 }
 
 

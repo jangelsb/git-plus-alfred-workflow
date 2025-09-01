@@ -56,17 +56,16 @@
       icon: down.big.png
       should_skip_smart_sort: true
       command: |
-        branch=$(git branch --show-current);
-        git_checkout "$branch";
+        git stash; git pull;
 
       mods:
         - subtitle: Launch Xcode after
           mod: cmd
           command: |
-            branch=$(git branch --show-current);
             killall Xcode;
-            git_checkout "$branch";
+            git stash; git pull;
             xed .
+
 
     - title: commit
       icon: pencil.png
@@ -135,12 +134,6 @@
           command: |
             echo "[reload~1]"
 
-
-    - title: history
-      should_skip_smart_sort: true
-      textview_action:
-        command: |
-          git log -n 50 --oneline --graph
 
     - title: staged
       should_skip_smart_sort: true
@@ -359,6 +352,15 @@
 
 
 
+
+
+    - title: history
+      should_skip_smart_sort: true
+      textview_action:
+        command: |
+          git log -n 50 --oneline --graph
+          
+
     - title: create branch
       icon: create.png
       should_skip_smart_sort: true
@@ -379,11 +381,11 @@
         - title: checkout
           icon: fork.png
           command: |
-            git_checkout "[parent]"
+            git_stash_checkout_pull "[parent]"
           mods:
             - subtitle: Launch Xcode after
               mod: cmd
-              command: killall Xcode; git_checkout "[parent]"; xed .
+              command: killall Xcode; git_stash_checkout_pull "[parent]"; xed .
 
         - title: rebase
           icon: rebase.png
@@ -474,12 +476,6 @@
           command: |
             echo "[reload~1]"
 
-- title: fetch
-  icon: down.small.png
-  should_skip_smart_sort: true
-  command: |
-    git fetch -p
-    echo "[reload]"
 
 - title: push
   icon: up.big.png
@@ -494,16 +490,6 @@
         branch=$(git branch --show-current);
         git push -uf origin $branch
 
-
-- title: pull
-  icon: down.big.png
-  should_skip_smart_sort: true
-  command: |
-    git stash; git pull;
-  mods:
-  - subtitle: Launch Xcode after
-    mod: cmd
-    command: killall Xcode; git stash; git pull; xed .
 
 - title: stash
   icon: down.small.png
@@ -534,45 +520,6 @@
    git cherry-pick [input]
 
 
-# --------------------
-# MISC LOGIC
-# --------------------
-
-- title: open in Terminal
-  icon: open.png
-  should_skip_smart_sort: true
-  command: |
-    open -a Terminal .
-
-
-- title: open in Xcode
-  icon: open.png
-  should_skip_smart_sort: true
-  command: |
-    xed .
-
-
-- title: open in Finder
-  icon: open.png
-  should_skip_smart_sort: true
-  command: |
-    open .
-
-
-- title: View in Alfred
-  icon: open.png
-  should_skip_smart_sort: true
-  command: |
-    [view in alfred]
-
-
-- title: search
-  icon: search.png
-  should_skip_smart_sort: true
-  command: |
-    open "[input]"
-  values_command: |
-    find . -type f
 
 
 
@@ -625,3 +572,44 @@
           command: |
             git tag -d "[parent]"
             git push origin --delete "[parent]"
+
+
+# --------------------
+# MISC LOGIC
+# --------------------
+
+- title: open in Terminal
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    open -a Terminal .
+
+
+- title: open in Xcode
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    xed .
+
+
+- title: open in Finder
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    open .
+
+
+- title: View in Alfred
+  icon: open.png
+  should_skip_smart_sort: true
+  command: |
+    [view in alfred]
+
+
+- title: search
+  icon: search.png
+  should_skip_smart_sort: true
+  command: |
+    open "[input]"
+  values_command: |
+    find . -type f
