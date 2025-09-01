@@ -2,7 +2,7 @@
 
 WORKFLOW_FOLDER="$gitplus_path"
 
-FILES_TO_PUSH=("git_filtering_internal.py" "actions.yaml" "location_arg_parser.py" "functions.sh" "tv_script.sh" "tv_script.py")
+FILES_TO_PUSH=("git_filtering_internal.py" "actions.yaml" "location_arg_parser.py" "functions.sh" "tv_script.sh" "tv_script.py" "definitions.py")
 
 # copy these files to the WORKFLOW_FOLDER
 for FILE in "${FILES_TO_PUSH[@]}"; do
