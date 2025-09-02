@@ -1505,6 +1505,24 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 ---
 
 ## 📝 Version History
+#### v2025.3
+Huge update!! 🔥
+- Adds support for the TextView - so you can view and run commands in Alfred 
+  - Commands that use the new TextView
+    - Stage / unstage hunks
+    - fetch
+    - history
+    - Brand new command: `rebase_multiple_branches_onto` (preview output in Alfred)
+- Updates [input_new_lines] to use the TextView to truly input text on multiple lines
+- Removed smart sort by default and sped up the entire app by not refreshing the app at each level
+- Added lots more git commands
+- Cleaned up the git menu by putting all the commands under `status` (now the root is freed up for custom commands and menus)
+- Added support for `is_root: true` in the Location yaml (this will add each folder under it as a location) - (fixes issues/3 on github)
+- Changed default keyword from `git` to `z`
+- Lots of clean up and some bug fixes
+
+---
+
 
 #### v2025.2
 - Removed a lot of the smart sorting to the actions and cleaned up the menu to be more streamline
@@ -2016,10 +2034,8 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
-	<key>variablesdontexport</key>
-	<array/>
 	<key>version</key>
-	<string>2025.2</string>
+	<string>2025.3</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.github.io</string>
 </dict>
