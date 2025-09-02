@@ -22,6 +22,7 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | `icon`         | String    | (Optional) A path to an image. For built in options, see [Icons](#icons).<br><br>Use `' '` for no image.      |
 | `command`      | String    | (Optional) The shell command to execute. Supports [dynamic placeholders](#dynamic-placeholders).                   |
 | `subtitle_command` | String  | (Optional) Runs this zsh command in python and displays the output as the subtitle. This does not get passed down to subcommands or values (as it can get very slow). Supports [dynamic placeholders](#dynamic-placeholders).                   |
+| `textview_action` | Object  | (Optional) Runs the provided zsh command in the TextView (passing along the current commands `mods`. See [TextView Action](#textview-action)               |
 | `values`       | Array     | (Optional) A list of items for the user to select from. When an item is selected, the command will be executed, with `[input]` in the command replaced by the selected value.<br><br>If subcommands are present, the `command` will be ignored and the selected value can be referenced using `[parent]`.|
 | `values_command` | String  | (Optional) Treated the same as `values` but the values are generated from this zsh command. Each new line is a different value. |
 | `should_use_values_as_inline_commands` | Bool | (Optional) Treats each value as its own command, at the current level and not at a sublevel. Only affects this command if there are `values` or `values_command`. |
@@ -29,7 +30,7 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | `quicklookurl` | String | (Optional) This can be a URL to a file or website and when you press shift, Alfred will show a preview. |
 | `mods`         | Array     | (Optional) A list of mod objects, see [Mod fields](#mod-fields).            |
 | `subcommands`  | Array     | (Optional) A list of commands ([this table](#command-fields)).                    |
-| `should_skip_smart_sort` | Bool | (Optional) Tells Alfred to ignore this command from Alfred's smart search. If every command has this as `true` the commands will keep their order, otherwise they will show up below the items that Alfred prioritizes. This property gets passed down to the `values` & `values_command`. It is useful for showing items always in a specific order (see `status` command for an example of using this in a menu) |
+| `should_use_smart_sort` | Bool | (Optional) Tells Alfred to enable Alfred's smart search for this command. The default is false. This is useful in certain cases (see `search` command for an example of using this). This property gets passed down to the `values` & `values_command`. |
 
 ### **Mod fields**
 | **Field**      | **Type**  | **Description**                                                                 |
@@ -38,13 +39,19 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | `mod`           | String    | The key to press for a mode. Values: `cmd`, `alt`, `ctrl`, `fn`, `shift`, `cmd+alt`. |
 | `command`       | String    | The shell command to execute. Supports dynamic placeholders.                   |
 
+### **TextView Action**
+| **Field**      | **Type**  | **Description**                                                                 |
+|-----------------|-----------|---------------------------------------------------------------------------------|
+| `command`       | String    | The zsh command to execute. Supports [dynamic placeholders](#dynamic-placeholders) (see `history` or `fetch` command) |
+| `mods`          | String    | (Optional) If none are set, the parent command's mods will be inherited.       |
+
 
 ### **Dynamic Placeholders**
 | **Placeholder**     | **Description**                                                                                     |
 |----------------------|-----------------------------------------------------------------------------------------------------|
-| `[input]`           | User-provided input at runtime. These characters are escaped automatically: backtick, single quote, double quote, and `$`             |
+| `[input]`           | User-provided input at runtime. These characters are escaped automatically.
 | `[input_snake_case]`| Same as `[input]`, but converted to `snake_case`.                                                   |
-| `[input_new_lines]`|  Same as `[input]`, but converts `  \  ` to a new line (there is a space before and after the `\`). This is very helpful for doing multiline text in Alfred. |
+| `[input_new_lines]`|  Same as `[input]`, except will open the TextView to allow you to full enter multiline text. |
 | `[parent]`          | Refers to the immediate parent command.                                                             |
 | `[parent~n]`        | References `n` levels back in the parent hierarchy.                                                 |
 | `[title]`           | Title of the command.                                                                                |
@@ -56,6 +63,7 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | `[view in alfred]`  | If this is the `command`, the workflow with view the repo in Alfred.                                |
 | `[reload]`          | Reloads the workflow at the current context after the command runs. Must be echoed to take effect.                         |
 | `[reload~n]`        | Reloads the workflow `n` levels back in the hierarchy after the command runs. Must be echoed to take effect.               |
+| `[tv_reload]`       | Reloads the workflow in the TextView (see `process all hunks` command) |
 
 
 ### **Icons**
