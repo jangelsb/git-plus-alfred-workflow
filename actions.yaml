@@ -425,7 +425,7 @@
     - title: create branch
       icon: create.png
       command: |
-        git checkout -b "[input_snake_case]"
+        git checkout -b [input_snake_case]
         echo "[reload~1]"
 
 
