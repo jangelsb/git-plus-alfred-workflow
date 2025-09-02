@@ -72,7 +72,6 @@ For the official Alfred fourm post, [check here](https://www.alfredforum.com/top
   path: /path/to/some/folder
   show_default_commands: false
   config: /path/to/custom/scripts.yaml
-
 ```
 **NOTE**
 * `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.

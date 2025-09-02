@@ -590,7 +590,7 @@
 	<key>createdby</key>
 	<string>Josh Angelsberg</string>
 	<key>description</key>
-	<string>A customizable git interface for Alfred</string>
+	<string>A fully customizable git &amp; zsh interface for Alfred</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
@@ -1458,7 +1458,6 @@ For more info check out the repo: https://github.com/jangelsb/git-plus-alfred-wo
   path: /path/to/some/folder
   show_default_commands: false
   config: /path/to/custom/scripts.yaml
-
 ```
 **NOTE**
 * `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
@@ -2042,9 +2041,11 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 			<string>input_additional_actions</string>
 		</dict>
 	</array>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
 	<string>2025.3</string>
 	<key>webaddress</key>
-	<string>https://jangelsb.github.io</string>
+	<string>https://jangelsb.dev</string>
 </dict>
 </plist>
