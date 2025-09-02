@@ -92,7 +92,7 @@ class Text:
         }
 
 class ResultItem:
-    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, alfred_input=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None, quicklookurl=None, should_skip_smart_sort=None, textview_action=None):
+    def __init__(self, title, arg, subtitle='', autocomplete=None, location=None, alfred_input=None, valid=False, mods=None, text=None, uid=None, icon_path=None, type=None, quicklookurl=None, should_use_smart_sort=False, textview_action=None):
         self.uid = uid if uid else title
         self.title = title
         self.arg = arg
@@ -104,12 +104,12 @@ class ResultItem:
         self.icon_path = icon_path
         self.type = type
         self.quicklookurl = quicklookurl
-        self.should_skip_smart_sort = should_skip_smart_sort
+        self.should_use_smart_sort = should_use_smart_sort
         self.textview_action = textview_action
 
     def to_dict(self):
         item_dict = {
-            "uid": self.uid if self.should_skip_smart_sort is None or self.should_skip_smart_sort is False else None,
+            "uid": self.uid if self.should_use_smart_sort else None,
             "title": self.title,
             "arg": self.arg,
             "subtitle": self.subtitle,
@@ -189,7 +189,7 @@ class TextViewAction:
         return f"TextViewAction(command={self.command!r}, mods={self.mods!r})"
 
 class Command:
-    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_skip_smart_sort=None, should_trim_values=True, textview_action=None):
+    def __init__(self, title, action, secondaryAction=None, subtitle=None, command_type=CommandType.SINGLE_ACTION, icon_path=None, mods=None, values=None, values_command=None, subcommands=None, values_icon=None, subtitle_command=None, should_use_values_as_inline_commands=False, quicklookurl=None, should_use_smart_sort=False, should_trim_values=True, textview_action=None):
         self.title = title
         self.action = action
         self.secondaryAction = secondaryAction
@@ -204,7 +204,7 @@ class Command:
         self.subtitle_command = subtitle_command
         self.subcommands = subcommands if subcommands else []
         self.quicklookurl = quicklookurl
-        self.should_skip_smart_sort = should_skip_smart_sort
+        self.should_use_smart_sort = should_use_smart_sort
         self.should_trim_values = should_trim_values
         self.textview_action = textview_action
 

@@ -1366,16 +1366,14 @@ sys.stdout.write(command_to_run.replace('[input_new_lines]', input_new_lines))</
 				<false/>
 				<key>variables</key>
 				<dict>
-					<key>is_alfred_stacked</key>
-					<string>0</string>
-					<key>should_rerun</key>
-					<string>1</string>
+					<key>command_to_run</key>
+					<string>{query}</string>
 				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>F2EC4A23-334C-4437-8791-A0C75D68BE8C</string>
+			<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1388,14 +1386,16 @@ sys.stdout.write(command_to_run.replace('[input_new_lines]', input_new_lines))</
 				<false/>
 				<key>variables</key>
 				<dict>
-					<key>command_to_run</key>
-					<string>{query}</string>
+					<key>is_alfred_stacked</key>
+					<string>0</string>
+					<key>should_rerun</key>
+					<string>1</string>
 				</dict>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.utility.argument</string>
 			<key>uid</key>
-			<string>B4417C7E-032D-46A3-84D4-46284A241EDB</string>
+			<string>F2EC4A23-334C-4437-8791-A0C75D68BE8C</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -1785,9 +1785,9 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 		<key>B4417C7E-032D-46A3-84D4-46284A241EDB</key>
 		<dict>
 			<key>xpos</key>
-			<real>1260</real>
+			<real>1210</real>
 			<key>ypos</key>
-			<real>1065</real>
+			<real>1055</real>
 		</dict>
 		<key>B7FDA93B-4667-4916-959E-E5A38C50D3D2</key>
 		<dict>
@@ -1831,7 +1831,7 @@ For more information, see [docs.md](https://github.com/jangelsb/git-plus-alfred-
 			<key>note</key>
 			<string>[input_snake_case]</string>
 			<key>xpos</key>
-			<real>1345</real>
+			<real>1315</real>
 			<key>ypos</key>
 			<real>1035</real>
 		</dict>

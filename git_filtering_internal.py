@@ -134,7 +134,6 @@ def create_result_item_for_location(loc):
         autocomplete=alfred_input.create_path(loc.title),
         icon_path="folder.png",
         type="file:skipcheck",
-        should_skip_smart_sort=True,
         valid=False
     )
 
@@ -247,7 +246,7 @@ def create_result_item_common(title, cmd, location, param=None):
         mods=modifier_list,
         icon_path=cmd.icon_path,
         quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None,
-        should_skip_smart_sort=cmd.should_skip_smart_sort if cmd.should_skip_smart_sort else None,
+        should_use_smart_sort=cmd.should_use_smart_sort,
         textview_action=tv_action
     )
 
@@ -312,7 +311,7 @@ def create_value_commands(cmd):
             subtitle_command=cmd.subtitle_command, # TODO: UPDATE - need this in some cases like current branch None, # cmd.subtitle_command, # TODO: is this always the case? We don't want this to run for all result items - it can be very slow
             subcommands=cmd.subcommands,
             should_use_values_as_inline_commands=False,
-            should_skip_smart_sort=cmd.should_skip_smart_sort,
+            should_use_smart_sort=cmd.should_use_smart_sort,
             should_trim_values = cmd.should_trim_values,
             textview_action=cmd.textview_action
         ))
@@ -396,7 +395,7 @@ def create_commands_from_yaml(yaml_data):
         should_use_values_as_inline_commands = entry.get('should_use_values_as_inline_commands', False)
         icon = entry.get('icon', None)
         quicklookurl = entry.get('quicklookurl', None)
-        should_skip_smart_sort = entry.get('should_skip_smart_sort', None)
+        should_use_smart_sort = entry.get('should_use_smart_sort', False)
         should_trim_values = entry.get('should_trim_values', True)
         # Parse textview_action as a TextViewAction instance
         textview_action_data = entry.get('textview_action', None)
@@ -451,7 +450,7 @@ def create_commands_from_yaml(yaml_data):
             subtitle_command=subtitle_command,
             should_use_values_as_inline_commands=should_use_values_as_inline_commands,
             quicklookurl=quicklookurl,
-            should_skip_smart_sort=should_skip_smart_sort,
+            should_use_smart_sort=should_use_smart_sort,
             should_trim_values=should_trim_values,
             textview_action=textview_action  # Now a TextViewAction instance or None
         )

@@ -3,7 +3,6 @@
 # --------------------
 - title: status
   icon: info.png
-  should_skip_smart_sort: true
   subtitle_command: |
    branch=$(git branch --show-current)
    modified=$(diff_command 'modified' | wc -l | xargs)
@@ -16,7 +15,6 @@
       values_command: |
         git branch --show-current # just the current branch
       should_use_values_as_inline_commands: true
-      should_skip_smart_sort: true
       subtitle_command: |
         git status | grep 'branch is' || echo '!! no remote branch linked yet'
       icon: fork.png
@@ -24,13 +22,11 @@
 
         - title: copy branch name
           icon: copy.png
-          should_skip_smart_sort: true
           command: |
             echo [parent] | xargs echo -n | pbcopy
 
         - title: copy latest commit
           icon: copy.png
-          should_skip_smart_sort: true
           subtitle_command: |
              git rev-parse HEAD | xargs echo -n
           command: |
@@ -39,13 +35,11 @@
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
 
     - title: fetch
       icon: down.small.png
-      should_skip_smart_sort: true
       mods:
         - subtitle: reload status menu
           mod: cmd
@@ -57,7 +51,6 @@
 
     - title: pull
       icon: down.big.png
-      should_skip_smart_sort: true
       command: |
         git stash; git pull;
       mods:
@@ -70,7 +63,6 @@
 
     - title: push
       icon: up.big.png
-      should_skip_smart_sort: true
       command: |
         branch=$(git branch --show-current);
         git push -u origin $branch
@@ -84,11 +76,9 @@
 
     - title: commit
       icon: pencil.png
-      should_skip_smart_sort: true
       subcommands:
         - title: message
           icon: pencil.png
-          should_skip_smart_sort: true
           command: |
             git commit -m [input_new_lines]
           mods:
@@ -100,7 +90,6 @@
                 git push -u origin $branch
 
         - title: easy message
-          should_skip_smart_sort: true
           icon: pencil.png
           subtitle_command: |
             header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
@@ -117,7 +106,6 @@
                 git push
 
         - title: easy commit
-          should_skip_smart_sort: true
           icon: create.png
           subtitle_command: |
             message=$(git log -1 --skip=0 --pretty=%B | xargs)
@@ -133,7 +121,6 @@
 
         - title: amend
           icon: back.line.png
-          should_skip_smart_sort: true
           subtitle_command: |
             message=$(git log -1 --skip=0 --pretty=%B | xargs)
             echo "amend previous commit: $message"
@@ -148,7 +135,6 @@
 
         - title: push
           icon: up.big.png
-          should_skip_smart_sort: true
           command: |
             branch=$(git branch --show-current);
             git push -u origin $branch
@@ -162,12 +148,10 @@
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
 
     - title: staged
-      should_skip_smart_sort: true
       subtitle_command: |
         staged=$(diff_command 'staged' | wc -l | xargs)
         echo "$staged file(s)"
@@ -176,14 +160,12 @@
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
 
         - title: 'process all hunks'
           subtitle: 'one by one'
           icon: open.png
-          should_skip_smart_sort: true
           textview_action:
             command: |
               view_hunk "unstage"
@@ -207,7 +189,6 @@
                 echo "[reload~1]"  
 
         - title: staged files
-          should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: |
             diff_command 'staged'
@@ -227,14 +208,12 @@
             - title: back
               subtitle: 'go back a level (bb)'
               icon: back.png
-              should_skip_smart_sort: true
               command: |
                 echo "[reload~1]"
 
             - title: 'process each hunk'
               subtitle: 'one by one'
               icon: open.png
-              should_skip_smart_sort: true
               textview_action:
                 command: |
                   view_hunk "unstage" [parent]
@@ -261,7 +240,6 @@
               values_command: |
                 git diff --cached [parent] | grep '^@@'
               should_use_values_as_inline_commands: true
-              should_skip_smart_sort: true
               mods:
                 - subtitle: unstage hunk
                   mod: cmd
@@ -280,7 +258,6 @@
 
 
     - title: modified
-      should_skip_smart_sort: true
       subtitle_command: |
         modified=$(diff_command 'modified' | wc -l | xargs)
         echo "$modified file(s)"
@@ -289,14 +266,12 @@
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
 
         - title: 'process all hunks'
           subtitle: 'one by one'
           icon: open.png
-          should_skip_smart_sort: true
           textview_action:
             command: |
               view_hunk "stage"
@@ -332,7 +307,6 @@
                 echo "[reload~1]"
         
         - title: modified files
-          should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: |
             diff_command 'modified' # git status --short
@@ -353,14 +327,12 @@
             - title: back
               subtitle: 'go back a level (bb)'
               icon: back.png
-              should_skip_smart_sort: true
               command: |
                 echo "[reload~1]"            
             
             - title: 'process each hunk'
               subtitle: 'one by one'
               icon: open.png
-              should_skip_smart_sort: true
               textview_action:
                 command: |
                   view_hunk "stage" [parent]
@@ -398,7 +370,6 @@
               values_command: |
                 git diff [parent] | grep '^@@'
               should_use_values_as_inline_commands: true
-              should_skip_smart_sort: true
               mods:
                 - subtitle: stage hunk
                   mod: cmd
@@ -427,7 +398,6 @@
 
 
     - title: untracked
-      should_skip_smart_sort: true
       subtitle_command: |
         untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
         echo "$untracked file(s)"
@@ -436,12 +406,10 @@
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
 
         - title: untracked files
-          should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: |
             git ls-files --others --exclude-standard
@@ -460,7 +428,6 @@
 
     - title: create branch
       icon: create.png
-      should_skip_smart_sort: true
       command: |
         git checkout -b "[input_snake_case]"
         echo "[reload~1]"
@@ -468,19 +435,16 @@
 
     - title: stash
       icon: down.small.png
-      should_skip_smart_sort: true
       command: |
         git stash
 
 
     - title: pop
       icon: up.small.png
-      should_skip_smart_sort: true
       command: |
         git pop
 
     - title: history
-      should_skip_smart_sort: true
       textview_action:
         command: |
           git log -n 50 --oneline --graph
@@ -491,20 +455,17 @@
 
     - title: commits
       icon: pick.png
-      subtitle: and hashes
-      should_skip_smart_sort: true        
+      subtitle: and hashes        
       subcommands:
 
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
 
         - title: list all commits
           icon: pick.png
-          should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: |
             git log --oneline --all
@@ -512,7 +473,6 @@
           subcommands:
             - title: cherry-pick
               icon: pick.png
-              should_skip_smart_sort: true
               command: |
                git cherry-pick "$(echo [parent] | awk '{print $1}')"
 
@@ -524,7 +484,6 @@
 
             - title: revert
               icon: back.line.png
-              should_skip_smart_sort: true
               command: |
                git revert "$(echo [parent] | awk '{print $1}')"
 
@@ -537,7 +496,6 @@
             - title: back
               subtitle: 'go back a level (bb)'
               icon: back.png
-              should_skip_smart_sort: true
               command: |
                 echo "[reload~1]"
 
@@ -548,18 +506,15 @@
 
     - title: tags
       icon: tag.png
-      should_skip_smart_sort: true
       subcommands:
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
         
         - title: create
           icon: pencil.png
-          should_skip_smart_sort: true
           command: git tag [input_snake_case]
           mods:
             - subtitle: and push to origin
@@ -570,7 +525,6 @@
 
         - title: fetch
           icon: down.small.png
-          should_skip_smart_sort: true
           command: |
             git fetch origin --tags
           mods:
@@ -581,7 +535,6 @@
 
         - title: push all
           icon: up.big.png
-          should_skip_smart_sort: true
           command: |
             git push origin --tags
           mods:
@@ -592,7 +545,6 @@
 
         - title: show tags
           icon: tag.png
-          should_skip_smart_sort: true
           should_use_values_as_inline_commands: true
           values_command: git tag | sort -r
           subcommands:
@@ -642,7 +594,6 @@
 # BRANCHES LOGIC
 # --------------------
     - title: local branches
-      should_skip_smart_sort: true
       should_use_values_as_inline_commands: true
       values_command: |
         git branch | grep -v '*' # all local branches except the current one
@@ -685,7 +636,6 @@
             - title: back
               subtitle: 'go back a level (bb)'
               icon: back.png
-              should_skip_smart_sort: true
               command: |
                 echo "[reload~2]"
 
@@ -707,13 +657,11 @@
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
     
 
     - title: remote branches
-      should_skip_smart_sort: true
       should_use_values_as_inline_commands: true
       values_command: |
         git branch -r
@@ -744,7 +692,6 @@
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
-          should_skip_smart_sort: true
           command: |
             echo "[reload~1]"
 
@@ -754,36 +701,32 @@
 
 - title: open in Terminal
   icon: open.png
-  should_skip_smart_sort: true
   command: |
     open -a Terminal .
 
 
 - title: open in Xcode
   icon: open.png
-  should_skip_smart_sort: true
   command: |
     xed .
 
 
 - title: open in Finder
   icon: open.png
-  should_skip_smart_sort: true
   command: |
     open .
 
 
 - title: View in Alfred
   icon: open.png
-  should_skip_smart_sort: true
   command: |
     [view in alfred]
 
 
 - title: search
   icon: search.png
-  should_skip_smart_sort: true
   command: |
     open [input]
   values_command: |
     find . -type f
+  should_use_smart_sort: True

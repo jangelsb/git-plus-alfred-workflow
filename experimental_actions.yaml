@@ -1,23 +1,19 @@
 - title: open in Sublime Text (st)
   icon: open.png
-  should_skip_smart_sort: true
   command: |
     st .
 
 - title: Run in Terminal
   icon: open.png
-  should_skip_smart_sort: true
   command: |
     run_in_terminal ls -l
 
 - title: open in Sublime Text (sm)
   icon: open.png
-  should_skip_smart_sort: true
   command: |
     sm .
 
 - title: zsh test
-  should_skip_smart_sort: true
   subtitle: zsh only command
   subcommands:
     - title: inline
@@ -175,14 +171,12 @@
        fi
       subcommands:
         - title: modified
-          should_skip_smart_sort: true
           subtitle_command: |
             modified=$(git diff --name-only | wc -l | xargs)
             echo "$modified file(s)"
 
           subcommands:
             - title: modified files
-              should_skip_smart_sort: true
               should_use_values_as_inline_commands: true
               values_command: |
                 git diff --name-only # git status --short
@@ -203,7 +197,6 @@
                 - title: stage hunk
                   subtitle: ' '
                   icon: check.png
-                  should_skip_smart_sort: true
                   command: |
                     process_hunk "stage" "[parent]"
     
@@ -217,7 +210,6 @@
                 - title: discard hunk
                   subtitle: ' '
                   icon: trash.png
-                  should_skip_smart_sort: true
                   command: |
                     process_hunk "discard" "[parent]"
     
@@ -231,7 +223,6 @@
                 - title: back
                   subtitle: 'go back a level (bb)'
                   icon: back.png
-                  should_skip_smart_sort: true
                   command: |
                     echo "[reload~1]"
 
@@ -241,14 +232,12 @@
                   values_command: |
                     view_hunk "stage" "[parent]"
                   should_use_values_as_inline_commands: true
-                  should_skip_smart_sort: true
                   should_trim_values: false
 
 
             - title: back
               subtitle: 'go back a level (bb)'
               icon: back.png
-              should_skip_smart_sort: true
               command: |
                 echo "[reload~1]"
     
