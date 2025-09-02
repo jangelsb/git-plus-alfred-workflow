@@ -29,6 +29,97 @@ end tell
 EOF
 }
 
+################################################################################
+#########################     REBASE ONTO LOGIC     ############################
+################################################################################
+
+function rebase_multiple_branches_onto {
+  local target_branch="$1"
+
+  # removes the first positional parameter ($1) and shifts all remaining parameters one position to the left
+  shift
+
+  local branch_history=()
+  local debug_mode=false
+
+  for arg in "$@"; do
+    case $arg in
+      --debug)
+        debug_mode=true
+        shift
+        ;;
+    esac
+  done
+
+  local branch=$(git branch --show-current)
+
+  while [[ "$branch" != "$target_branch" ]]; do
+    local create_commit=$(git reflog show --pretty='%H %gs' "$branch" | grep 'branch: Created from' | tail -n 1 | awk '{print $1}')
+
+    # echo "branch: $branch"
+
+    if [[ -z "$create_commit" ]]; then
+      echo "Won't work: Branch creation commit not found."
+      return 1
+    fi
+
+    # echo "create_commit: $create_commit"
+
+
+    # ignore the current branch (starts with '*')
+    local parent_branch=$(git branch --contains "$create_commit" | grep -v "$branch" | grep -v '^\*' | tail -n 1 | awk '{print $1}')
+
+
+    if [[ -z "$parent_branch" ]]; then
+      echo "Won't work: Parent branch not found."
+      return 1
+    fi
+
+    # echo "parent_branch: $parent_branch"
+
+
+    branch_history+=("$branch:$parent_branch:$create_commit")
+    branch=$parent_branch
+
+  done
+
+  echo
+
+  if $debug_mode; then
+    echo "Here is the git commands that will run - if there is no missing data - the rebase should work ✅"
+    echo 
+
+    echo git stash
+
+    for idx in {${#branch_history[@]}..1}; do
+      entry="${branch_history[idx]}"
+
+      IFS=':' read -r branch_name parent_branch commit_hash <<< "$entry"
+
+      if [[ -n "$branch_name" && -n "$parent_branch" && -n "$commit_hash" ]]; then
+        echo git checkout "$branch_name"
+        echo git rebase --onto "$parent_branch" "$commit_hash"
+      fi
+    done
+
+  elif [[ "$branch" == "$target_branch" ]]; then
+    git stash
+
+    for idx in {${#branch_history[@]}..1}; do
+      entry="${branch_history[idx]}"
+
+      IFS=':' read -r branch_name parent_branch commit_hash <<< "$entry"
+
+      if [[ -n "$branch_name" && -n "$parent_branch" && -n "$commit_hash" ]]; then
+        git checkout "$branch_name"
+        git rebase --onto "$parent_branch" "$commit_hash"
+      fi
+    done
+  else
+    echo "Won't work: target branch '$target_branch' not reached."
+  fi
+}
+
 
 ################################################################################
 ##############################     DIFF LOGIC     ##############################

@@ -635,6 +635,19 @@
               command: |
                 echo "[reload~2]"
 
+        - title: rebase --onto (all branches)
+          icon: rebase.png
+          subtitle: 'runs in alfred first to verify it is possible: will rebase current branch and all parent branches'
+          textview_action:
+            command: |
+              rebase_multiple_branches_onto [parent] --debug
+            mods:
+              - subtitle: do rebase (all branches)
+                mod: cmd
+                command: |
+                  rebase_multiple_branches_onto [parent]
+
+    
         - title: delete local branch
           icon: trash.png
           command: |
