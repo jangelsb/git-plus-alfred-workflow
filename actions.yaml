@@ -169,8 +169,6 @@
           textview_action:
             command: |
               view_hunk "unstage"
-            subtitle_command: |
-              _get_first_file "unstage"
           mods:
             - subtitle: unstage hunk & go to next
               mod: cmd
@@ -275,8 +273,6 @@
           textview_action:
             command: |
               view_hunk "stage"
-            subtitle_command: |
-              _get_first_file "stage"
 
           mods:
             - subtitle: stage hunk & go to next
