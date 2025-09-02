@@ -74,10 +74,11 @@ For the official Alfred fourm post, [check here](https://www.alfredforum.com/top
   config: /path/to/custom/scripts.yaml
 ```
 **NOTE**
-* `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
-* `is_root: true` is an optional flag that will add all the subfolders as locations
-* `show_default_commands: false` is an optional flag that will not include any of the default (git) commands for that location
+* Optional flags
+  * `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
+  * `is_root: true` is an optional flag that will add all the subfolders as locations
+  * `show_default_commands: false` is an optional flag that will not include any of the default (git) commands for that location
 
 
 ### Step 2 (optional)
