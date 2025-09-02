@@ -2,6 +2,8 @@
 
 `git+` allows you to create personalized commands and menus to fully streamline ✨your✨ workflow!
 
+See the demo: https://youtu.be/jd8lfsTBDQE
+
 ---
 
 For detailed documentation on the commands, see [docs.md](docs.md).
@@ -63,10 +65,20 @@ For the official Alfred fourm post, [check here](https://www.alfredforum.com/top
   path: "/path/to/repo2"
   config: /path/to/actions.yaml
 
+- path: /Users/name/Developer/ios
+  is_root: true # will add all the folders in this directory
+
+- title: scripts
+  path: /path/to/some/folder
+  show_default_commands: false
+  config: /path/to/custom/scripts.yaml
+
 ```
 **NOTE**
 * `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
+* `is_root: true` is an optional flag that will add all the folders in this directory`
+* `show_default_commands: false` is an optional flag that will not include any of the default (git) commands
 
 
 ### Step 2 (optional)
