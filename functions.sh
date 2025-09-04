@@ -2,8 +2,30 @@
 ##############################    git commands    ##############################
 ################################################################################
 
+# git_stash_checkout_pull() {
+#     git stash; [[ -n "$1" ]] && git checkout "$1"; git pull;
+# }
+
+# git_stash_checkout_pull() {
+#     git stash
+#     if [[ -n "$1" ]]; then
+#         if [[ $(git ls-remote --heads origin "$1") ]]; then
+#             git checkout -t "$1"
+#         else
+#             git checkout "$1"
+#         fi
+#     fi
+#     git pull
+# }
+
 git_stash_checkout_pull() {
-    git stash; [[ -n "$1" ]] && git checkout "$1"; git pull;
+    git stash
+    if [[ -n "$1" ]] && [[ "$1" != "--track-remote" ]]; then
+        git checkout "$1"
+    elif [[ "$1" == "--track-remote" && -n "$2" ]]; then
+        git checkout -t "$2"
+    fi
+    git pull
 }
 
 

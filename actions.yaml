@@ -38,42 +38,6 @@
           command: |
             echo "[reload~1]"
 
-    - title: fetch
-      icon: down.small.png
-      mods:
-        - subtitle: reload status menu
-          mod: cmd
-          command: |
-            echo "[reload]"
-      textview_action:
-        command: |
-          git fetch -p
-
-    - title: pull
-      icon: down.big.png
-      command: |
-        git stash; git pull;
-      mods:
-        - subtitle: Launch Xcode after
-          mod: cmd
-          command: |
-            killall Xcode;
-            git stash; git pull;
-            xed .
-
-    - title: push
-      icon: up.big.png
-      command: |
-        branch=$(git branch --show-current);
-        git push -u origin $branch
-      mods:
-        - subtitle: force push
-          mod: cmd
-          command: |
-            branch=$(git branch --show-current);
-            git push -uf origin $branch
-
-
     - title: commit
       icon: pencil.png
       subcommands:
@@ -253,8 +217,6 @@
                 command: |
                   view_hunk "unstage" [parent] [title]
 
-
-
     - title: modified
       subtitle_command: |
         modified=$(diff_command 'modified' | wc -l | xargs)
@@ -392,7 +354,6 @@
                 command: |
                   view_hunk "stage" [parent] [title]
 
-
     - title: untracked
       subtitle_command: |
         untracked=$(git ls-files --others --exclude-standard | wc -l | xargs)
@@ -418,36 +379,9 @@
                 1) echo "[reload~1]";;
             esac
 
-# --------------------
-# MISC ACTIONS
-# --------------------
-
-    - title: create branch
-      icon: create.png
-      command: |
-        git checkout -b [input_snake_case]
-        echo "[reload~1]"
-
-
-    - title: stash
-      icon: down.small.png
-      command: |
-        git stash
-
-
-    - title: pop
-      icon: up.small.png
-      command: |
-        git pop
-
-    - title: history
-      textview_action:
-        command: |
-          git log -n 50 --oneline --graph
-
-# --------------------
-# COMMIT LOGIC
-# --------------------
+    # --------------------
+    # COMMIT LOGIC
+    # --------------------
 
     - title: commits
       icon: pick.png
@@ -495,100 +429,10 @@
               command: |
                 echo "[reload~1]"
 
-
-# --------------------
-# TAG LOGIC
-# --------------------
-
-    - title: tags
-      icon: tag.png
-      subcommands:
-        - title: back
-          subtitle: 'go back a level (bb)'
-          icon: back.png
-          command: |
-            echo "[reload~1]"
-        
-        - title: create
-          icon: pencil.png
-          command: git tag [input_snake_case]
-          mods:
-            - subtitle: and push to origin
-              mod: cmd
-              command: |
-                git tag [input_snake_case]
-                git push origin [input_snake_case]
-
-        - title: fetch
-          icon: down.small.png
-          command: |
-            git fetch origin --tags
-          mods:
-            - subtitle: --force
-              mod: cmd
-              command: |
-                git fetch origin --tags --force
-
-        - title: push all
-          icon: up.big.png
-          command: |
-            git push origin --tags
-          mods:
-            - subtitle: --force
-              mod: cmd
-              command: |
-                git push origin --tags --force
-
-        - title: show tags
-          icon: tag.png
-          should_use_values_as_inline_commands: true
-          values_command: git tag | sort -r
-          subcommands:
-            - title: checkout
-              icon: fork.png
-              command: |
-                git checkout [parent]
-                echo "[reload~1]"
-
-            - title: copy diff since tag
-              icon: copy.png
-              command: |
-                git log --reverse --pretty=format:"%B" "[parent]..HEAD" | pbcopy
-              mods:
-                - subtitle: copy for ChatGPT summary
-                  mod: cmd
-                  command: |
-                    {
-                      echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
-                      echo ''
-                      git log --reverse --pretty=format:"%B" "[parent]..HEAD"
-                    } | pbcopy
-
-            - title: push tag
-              icon: up.big.png
-              command: |
-                git push origin [parent]
-              mods:
-                - subtitle: --force
-                  mod: cmd
-                  command: |
-                    git push origin [parent] --force
-
-            - title: delete tag
-              icon: trash.png
-              command: |
-                git tag -d [parent]
-              mods:
-                - subtitle: and delete remote tag
-                  mod: cmd
-                  command: |
-                    git tag -d [parent]
-                    git push origin --delete [parent]
-
-          
-# --------------------
-# BRANCHES LOGIC
-# --------------------
+    
+    # --------------------
+    # BRANCHES LOGIC
+    # --------------------
     - title: local branches
       should_use_values_as_inline_commands: true
       values_command: |
@@ -705,7 +549,220 @@
             echo "[reload~1]"
 
 # --------------------
-# MISC LOGIC
+# GIT LOGIC
+# --------------------
+
+- title: fetch
+  icon: down.small.png
+  mods:
+    - subtitle: reload status menu
+      mod: cmd
+      command: |
+        echo "[reload]"
+  textview_action:
+    command: |
+      git fetch -p
+
+- title: pull
+  icon: down.big.png
+  command: |
+    git stash; git pull;
+  mods:
+    - subtitle: Launch Xcode after
+      mod: cmd
+      command: |
+        killall Xcode;
+        git stash; git pull;
+        xed .
+
+- title: push
+  icon: up.big.png
+  command: |
+    branch=$(git branch --show-current);
+    git push -u origin $branch
+  mods:
+    - subtitle: force push
+      mod: cmd
+      command: |
+        branch=$(git branch --show-current);
+        git push -uf origin $branch
+
+
+- title: checkout
+  subtitle: 'Branch or Tag'
+  subcommands:
+
+    - title: local branches
+      icon: fork.png
+      should_use_smart_sort: true
+      should_use_values_as_inline_commands: true
+      values_command: |
+        git branch | grep -v '*' # all local branches except the current one
+      command: |
+        git_stash_checkout_pull [title]
+        echo "[reload~1]"
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: killall Xcode; git_stash_checkout_pull [title]; xed .
+
+    - title: remote branches
+      icon: globe.png
+      should_use_smart_sort: true
+      should_use_values_as_inline_commands: true
+      values_command: |
+        git branch -r
+      command: |
+        git_stash_checkout_pull --track-remote [title]
+        echo "[reload~1]"
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: killall Xcode; git_stash_checkout_pull --track-remote [title] xed .
+
+    - title: tags
+      icon: tag.png
+      should_use_smart_sort: true
+      should_use_values_as_inline_commands: true
+      values_command: |
+        git tag | sort -r
+      command: |
+        git_stash_checkout_pull [title]
+        echo "[reload~1]"
+      mods:
+        - subtitle: Launch Xcode after
+          mod: cmd
+          command: killall Xcode; git_stash_checkout_pull [title]; xed .
+
+- title: create
+  subtitle: 'branch or tag'
+  subcommands:
+    - title: branch
+      icon: create.png
+      command: |
+        git checkout -b [input_snake_case]
+        echo "[reload~2]"
+
+    - title: tag
+      icon: pencil.png
+      command: |
+        git tag [input_snake_case]
+      mods:
+        - subtitle: and push to origin
+          mod: cmd
+          command: |
+            git tag [input_snake_case]
+            git push origin [input_snake_case]
+
+# --------------------
+# TAG LOGIC
+# --------------------
+
+- title: tags
+  icon: tag.png
+  subcommands:
+    - title: back
+      subtitle: 'go back a level (bb)'
+      icon: back.png
+      command: |
+        echo "[reload~1]"
+    
+    - title: create
+      icon: pencil.png
+      command: git tag [input_snake_case]
+      mods:
+        - subtitle: and push to origin
+          mod: cmd
+          command: |
+            git tag [input_snake_case]
+            git push origin [input_snake_case]
+
+    - title: fetch
+      icon: down.small.png
+      command: |
+        git fetch origin --tags
+      mods:
+        - subtitle: --force
+          mod: cmd
+          command: |
+            git fetch origin --tags --force
+
+    - title: push all
+      icon: up.big.png
+      command: |
+        git push origin --tags
+      mods:
+        - subtitle: --force
+          mod: cmd
+          command: |
+            git push origin --tags --force
+
+    - title: show tags
+      icon: tag.png
+      should_use_values_as_inline_commands: true
+      values_command: git tag | sort -r
+      subcommands:
+        - title: checkout
+          icon: fork.png
+          command: |
+            git checkout [parent]
+            echo "[reload~1]"
+
+        - title: copy diff since tag
+          icon: copy.png
+          command: |
+            git log --reverse --pretty=format:"%B" "[parent]..HEAD" | pbcopy
+          mods:
+            - subtitle: copy for ChatGPT summary
+              mod: cmd
+              command: |
+                {
+                  echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
+                  echo ''
+                  git log --reverse --pretty=format:"%B" "[parent]..HEAD"
+                } | pbcopy
+
+        - title: push tag
+          icon: up.big.png
+          command: |
+            git push origin [parent]
+          mods:
+            - subtitle: --force
+              mod: cmd
+              command: |
+                git push origin [parent] --force
+
+        - title: delete tag
+          icon: trash.png
+          command: |
+            git tag -d [parent]
+          mods:
+            - subtitle: and delete remote tag
+              mod: cmd
+              command: |
+                git tag -d [parent]
+                git push origin --delete [parent]
+
+
+- title: stash
+  icon: down.small.png
+  command: |
+    git stash
+
+
+- title: pop
+  icon: up.small.png
+  command: |
+    git pop
+
+
+- title: history
+  textview_action:
+    command: |
+      git log -n 50 --oneline --graph
+
+# --------------------
+# OPEN IN LOGIC
 # --------------------
 
 - title: open in Terminal
@@ -731,6 +788,10 @@
   command: |
     [view in alfred]
 
+
+# --------------------
+# MISC LOGIC
+# --------------------
 
 - title: search
   icon: search.png
