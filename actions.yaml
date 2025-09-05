@@ -325,7 +325,7 @@
       mod: cmd
       command: |
         killall Xcode;
-        git_stash_checkout_pull
+        git_stash_checkout_pull;
         xed .
 
 - title: push
@@ -433,7 +433,7 @@
       mods:
         - subtitle: Launch Xcode after
           mod: cmd
-          command: killall Xcode; git_stash_checkout_pull --track-remote [title] xed .
+          command: killall Xcode; git_stash_checkout_pull --track-remote [title]; xed .
 
     - title: tags
       icon: tag.png
