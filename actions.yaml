@@ -1,6 +1,3 @@
-# --------------------
-# STATUS MENU
-# --------------------
 - title: status
   icon: info.png
   subtitle_command: |
@@ -302,9 +299,7 @@
                 1) echo "[reload~1]";;
             esac
 
-# --------------------
-# GIT LOGIC
-# --------------------
+# ------------------------
 
 - title: fetch
   icon: down.small.png
@@ -347,6 +342,65 @@
       command: |
         branch=$(git branch --show-current);
         git push -uf origin $branch
+
+- title: commit
+  icon: pencil.png
+  subcommands:
+    - title: message
+      icon: pencil.png
+      command: |
+        git commit -m [input_new_lines]
+      mods:
+        - subtitle: and push
+          mod: cmd
+          command: |
+            branch=$(git branch --show-current);
+            git commit -m [input_new_lines]
+            git push -u origin $branch
+
+    - title: easy message
+      icon: pencil.png
+      subtitle_command: |
+        header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+        echo "commit by prepending previous header: $header"
+      command: |
+        header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+        git commit -m "$header"$'\n'[input_new_lines]
+      mods:
+        - subtitle: 'and push'
+          mod: cmd
+          command: |
+            header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
+            git commit -m "$header"$'\n'[input_new_lines]
+            git push
+
+    - title: easy commit
+      icon: create.png
+      subtitle_command: |
+        message=$(git log -1 --skip=0 --pretty=%B | xargs)
+        echo "commit using previous message: $message"
+      command: |
+        git commit --reuse-message=HEAD
+      mods:
+        - subtitle: 'and push'
+          mod: cmd
+          command: |
+            git commit --reuse-message=HEAD
+            git push
+
+    - title: amend
+      icon: back.line.png
+      subtitle_command: |
+        message=$(git log -1 --skip=0 --pretty=%B | xargs)
+        echo "amend previous commit: $message"
+      command: |
+        git commit --amend -C HEAD
+      mods:
+        - subtitle: 'and force push'
+          mod: cmd
+          command: |
+            git commit --amend -C HEAD
+            git push --force
 
 - title: checkout
   icon: fork.png
@@ -425,64 +479,48 @@
             git tag [input_snake_case]
             git push origin [input_snake_case]
 
-- title: commit
-  icon: pencil.png
+- title: rebase
+  icon: rebase.png
   subcommands:
-    - title: message
-      icon: pencil.png
-      command: |
-        git commit -m [input_new_lines]
-      mods:
-        - subtitle: and push
-          mod: cmd
-          command: |
-            branch=$(git branch --show-current);
-            git commit -m [input_new_lines]
-            git push -u origin $branch
 
-    - title: easy message
-      icon: pencil.png
-      subtitle_command: |
-        header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
-        echo "commit by prepending previous header: $header"
-      command: |
-        header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
-        git commit -m "$header"$'\n'[input_new_lines]
-      mods:
-        - subtitle: 'and push'
-          mod: cmd
+    - title: local branches
+      icon: fork.png
+      should_use_smart_sort: true
+      should_use_values_as_inline_commands: true
+      values_command: |
+        git branch | grep -v '*' # all local branches except the current one
+      subcommands:
+        - title: basic
+          icon: rebase.png
           command: |
-            header=$(git log -1 --skip=0 --pretty=%B | head -n 1 | xargs)
-            git commit -m "$header"$'\n'[input_new_lines]
-            git push
+            git_stash_checkout_pull [parent]
+            git checkout -
+            git rebase [parent]
 
-    - title: easy commit
-      icon: create.png
-      subtitle_command: |
-        message=$(git log -1 --skip=0 --pretty=%B | xargs)
-        echo "commit using previous message: $message"
-      command: |
-        git commit --reuse-message=HEAD
-      mods:
-        - subtitle: 'and push'
-          mod: cmd
-          command: |
-            git commit --reuse-message=HEAD
-            git push
+        - title: --onto
+          icon: rebase.png
+          subtitle: 'needs a start hash'
+          subcommands:
+            - title: start hash
+              should_use_values_as_inline_commands: true
+              command: |
+                git_stash_checkout_pull [parent~2]
+                git checkout -
+                git rebase --onto [parent~2] [input]
+              values_command: |
+                git log --pretty=format:"%H"
 
-    - title: amend
-      icon: back.line.png
-      subtitle_command: |
-        message=$(git log -1 --skip=0 --pretty=%B | xargs)
-        echo "amend previous commit: $message"
-      command: |
-        git commit --amend -C HEAD
-      mods:
-        - subtitle: 'and force push'
-          mod: cmd
-          command: |
-            git commit --amend -C HEAD
-            git push --force
+        - title: rebase --onto (all branches)
+          icon: view.png
+          subtile: 'runs in alfred first to verify it is possible: will rebase current branch and all parent branches'
+          textview_action:
+            command: |
+              rebase_multiple_branches_onto [parent] --debug
+            mods:
+              - subtitle: do rebase (all branches)
+                mod: cmd
+                command: |
+                  rebase_multiple_branches_onto [parent]
 
 - title: delete
   icon: trash.png
@@ -527,49 +565,6 @@
             git tag -d [title]
             git push origin --delete [title]
 
-- title: rebase
-  icon: rebase.png
-  subcommands:
-
-    - title: local branches
-      icon: fork.png
-      should_use_smart_sort: true
-      should_use_values_as_inline_commands: true
-      values_command: |
-        git branch | grep -v '*' # all local branches except the current one
-      subcommands:
-        - title: basic
-          icon: rebase.png
-          command: |
-            git_stash_checkout_pull [parent]
-            git checkout -
-            git rebase [parent]
-
-        - title: --onto
-          icon: rebase.png
-          subtitle: 'needs a start hash'
-          subcommands:
-            - title: start hash
-              should_use_values_as_inline_commands: true
-              command: |
-                git_stash_checkout_pull [parent~2]
-                git checkout -
-                git rebase --onto [parent~2] [input]
-              values_command: |
-                git log --pretty=format:"%H"
-
-        - title: rebase --onto (all branches)
-          icon: view.png
-          subtile: 'runs in alfred first to verify it is possible: will rebase current branch and all parent branches'
-          textview_action:
-            command: |
-              rebase_multiple_branches_onto [parent] --debug
-            mods:
-              - subtitle: do rebase (all branches)
-                mod: cmd
-                command: |
-                  rebase_multiple_branches_onto [parent]
-
 
 # Hashes
 
@@ -587,7 +582,7 @@
         git cherry-pick --no-commit "$(echo [title] | awk '{print $1}')"
 
 - title: revert
-  icon: back.line.png
+  icon: hash.slash.png
   values_command: |
     git log --oneline --all -n 100
   command: |
@@ -628,29 +623,8 @@
       command: |
         echo "[reload~1]"
 
-- title: copy.diff.since
-  icon: copy.png
-  subtitle: 'branch or tag'
-  subcommands:
 
-    - title: local branches
-      icon: fork.png
-      should_use_smart_sort: true
-      should_use_values_as_inline_commands: true
-      values_command: |
-        git branch | grep -v '*' # all local branches except the current one
-      command: |
-        git log --reverse --pretty=format:"%B" "[title]..HEAD" | pbcopy
-
-    - title: tags
-      icon: tag.png
-      should_use_smart_sort: true
-      should_use_values_as_inline_commands: true
-      values_command: |
-        git tag | sort -r
-      command: |
-        git log --reverse --pretty=format:"%B" "[title]..HEAD" | pbcopy
-
+# Misc
 
 - title: all.tags
   icon: tag.png
@@ -721,23 +695,43 @@
                 git tag -d [parent]
                 git push origin --delete [parent]
 
-
 - title: stash
   icon: down.small.png
   command: |
     git stash
-
 
 - title: pop
   icon: up.small.png
   command: |
     git pop
 
-
 - title: history
   textview_action:
     command: |
       git log -n 50 --oneline --graph
+
+- title: copy.diff.since
+  icon: copy.png
+  subtitle: 'branch or tag'
+  subcommands:
+
+    - title: local branches
+      icon: fork.png
+      should_use_smart_sort: true
+      should_use_values_as_inline_commands: true
+      values_command: |
+        git branch | grep -v '*' # all local branches except the current one
+      command: |
+        git log --reverse --pretty=format:"%B" "[title]..HEAD" | pbcopy
+
+    - title: tags
+      icon: tag.png
+      should_use_smart_sort: true
+      should_use_values_as_inline_commands: true
+      values_command: |
+        git tag | sort -r
+      command: |
+        git log --reverse --pretty=format:"%B" "[title]..HEAD" | pbcopy
 
 # --------------------
 # OPEN IN LOGIC
@@ -748,24 +742,20 @@
   command: |
     open -a Terminal .
 
-
-- title: open in Xcode
-  icon: open.png
-  command: |
-    xed .
-
-
 - title: open in Finder
   icon: open.png
   command: |
     open .
 
-
-- title: View in Alfred
+- title: view in Alfred
   icon: open.png
   command: |
     [view in alfred]
 
+- title: open in Xcode
+  icon: open.png
+  command: |
+    xed .
 
 # --------------------
 # MISC LOGIC

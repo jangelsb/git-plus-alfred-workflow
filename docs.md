@@ -79,6 +79,7 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 | <img src="./icons/down.big.png" width="64" alt="down.big.png">    | `down.big.png`   | Indicates a large downward action.             |
 | <img src="./icons/create.png" width="64" alt="create.png">        | `create.png`     | Represents creation of new items.              |
 | <img src="./icons/hash.png" width="64" alt="hash.png">            | `hash.png`       | Represents a single item or hash.               |
+| <img src="./icons/hash.slash.png" width="64" alt="hash.slash.png">| `hash.slash.png` | Represents a canceling of an item or a revert.               |
 | <img src="./icons/pick.png" width="64" alt="pick.png">            | `pick.png`       | Represents selection or picking.               |
 | <img src="./icons/list.png" width="64" alt="list.png">            | `list.png`       | Represents a list or multiple items.           |
 | <img src="./icons/search.png" width="64" alt="search.png">        | `search.png`     | Represents a search or lookup action.          |
