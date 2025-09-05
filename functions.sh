@@ -18,6 +18,7 @@
 #     git pull
 # }
 
+# git stash; git checkout; git pull
 git_stash_checkout_pull() {
     git stash
     if [[ -n "$1" ]] && [[ "$1" != "--track-remote" ]]; then
