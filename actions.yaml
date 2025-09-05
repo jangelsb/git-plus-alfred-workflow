@@ -322,6 +322,7 @@
 
 - title: pull
   icon: down.big.png
+  subtitle: 'runs `git stash; git pull`'
   command: |
     git_stash_checkout_pull
   mods:
@@ -334,6 +335,9 @@
 
 - title: push
   icon: up.big.png
+  subtitle_command: |
+    branch=$(git branch --show-current);
+    echo "runs \`git push -u origin $branch\`"
   command: |
     branch=$(git branch --show-current);
     git push -u origin $branch
@@ -346,7 +350,7 @@
 
 - title: checkout
   icon: fork.png
-  subtitle: 'branch or tag'
+  subtitle: 'branch, tag or commit'
   subcommands:
 
     - title: local branches
@@ -357,7 +361,7 @@
         git branch | grep -v '*' # all local branches except the current one
       command: |
         git_stash_checkout_pull [title]
-        echo "[reload~1]"
+        echo "[reload~2]"
       mods:
         - subtitle: Launch Xcode after
           mod: cmd
@@ -371,7 +375,7 @@
         git branch -r
       command: |
         git_stash_checkout_pull --track-remote [title]
-        echo "[reload~1]"
+        echo "[reload~2]"
       mods:
         - subtitle: Launch Xcode after
           mod: cmd
@@ -385,11 +389,20 @@
         git tag | sort -r
       command: |
         git_stash_checkout_pull [title]
-        echo "[reload~1]"
+        echo "[reload~2]"
       mods:
         - subtitle: Launch Xcode after
           mod: cmd
           command: killall Xcode; git_stash_checkout_pull [title]; xed .
+
+    - title: hash
+      icon: hash.png
+      should_use_smart_sort: true
+      should_use_values_as_inline_commands: true
+      values_command: |
+        git log --oneline --all -n 100
+      command: |
+        git checkout "$(echo [title] | awk '{print $1}')"
 
 - title: create
   icon: create.png
@@ -558,13 +571,12 @@
                   rebase_multiple_branches_onto [parent]
 
 
-
 # Hashes
 
 - title: cherry.pick
   icon: pick.png
   values_command: |
-    git log --oneline --all
+    git log --oneline --all -n 100
   command: |
    git cherry-pick "$(echo [title] | awk '{print $1}')"
 
@@ -577,7 +589,7 @@
 - title: revert
   icon: back.line.png
   values_command: |
-    git log --oneline --all
+    git log --oneline --all -n 100
   command: |
    git revert "$(echo [title] | awk '{print $1}')"
 
@@ -590,7 +602,7 @@
 - title: reset.to
   icon: back.line.png
   values_command: |
-    git log --oneline --all
+    git log --oneline --all -n 100
   subcommands:
     - title: soft
       subtitle: 'Keep index and working directory, differences will show as staged'
@@ -640,174 +652,10 @@
         git log --reverse --pretty=format:"%B" "[title]..HEAD" | pbcopy
 
 
-# - title: copy
-#   icon: copy.png
-#   subtitle: 'branch or tag'
-#   subcommands:
-
-#     - title: local branches
-#       icon: fork.png
-#       should_use_smart_sort: true
-#       should_use_values_as_inline_commands: true
-#       values_command: |
-#         git branch | grep -v '*' # all local branches except the current one
-#       command: |
-#         echo [title] | xargs echo -n | pbcopy
-
-#     - title: remote branches
-#       icon: globe.png
-#       should_use_smart_sort: true
-#       should_use_values_as_inline_commands: true
-#       values_command: |
-#         git branch -r
-#       command: |
-#         echo [title] | xargs echo -n | pbcopy
-
-#     - title: tags
-#       icon: tag.png
-#       should_use_smart_sort: true
-#       should_use_values_as_inline_commands: true
-#       values_command: |
-#         git tag | sort -r
-#       command: |
-#         echo [title] | xargs echo -n | pbcopy
-
-
-# - title: branches
-#   subcommands:
-#     # --------------------
-#     # BRANCHES LOGIC
-#     # --------------------
-#     - title: local branches
-#       should_use_values_as_inline_commands: true
-#       values_command: |
-#         git branch | grep -v '*' # all local branches except the current one
-#       icon: fork.png
-#       subcommands:
-#         - title: checkout
-#           icon: fork.png
-#           command: |
-#             git_stash_checkout_pull [parent]
-#             echo "[reload~1]"
-#           mods:
-#             - subtitle: Launch Xcode after
-#               mod: cmd
-#               command: killall Xcode; git_stash_checkout_pull [parent]; xed .
-
-#         - title: rebase
-#           icon: rebase.png
-#           command: |
-#             git stash
-#             git checkout [parent]
-#             git pull
-#             git checkout -
-#             git rebase [parent]
-
-#         - title: rebase --onto
-#           icon: rebase.png
-#           subtitle: 'needs a start hash'
-#           subcommands:
-#             - title: start hash
-#               should_use_values_as_inline_commands: true
-#               command: |
-#                 git stash
-#                 git checkout [parent~2]
-#                 git pull
-#                 git checkout -
-#                 git rebase --onto [parent~2] [input]
-#               values_command: |
-#                 git log --pretty=format:"%H"
-
-#             - title: back
-#               subtitle: 'go back a level (bb)'
-#               icon: back.png
-#               command: |
-#                 echo "[reload~2]"
-
-#         - title: rebase --onto (all branches)
-#           icon: rebase.png
-#           subtitle: 'runs in alfred first to verify it is possible: will rebase current branch and all parent branches'
-#           textview_action:
-#             command: |
-#               rebase_multiple_branches_onto [parent] --debug
-#             mods:
-#               - subtitle: do rebase (all branches)
-#                 mod: cmd
-#                 command: |
-#                   rebase_multiple_branches_onto [parent]
-
-    
-#         - title: delete local branch
-#           icon: trash.png
-#           command: |
-#             git branch -d [parent]
-#           mods:
-#             - subtitle: force delete
-#               mod: cmd
-#               command: |
-#                 git branch -D [parent]
-
-#         - title: copy branch name
-#           icon: copy.png
-#           command: |
-#             echo [parent] | xargs echo -n | pbcopy
-
-#         - title: back
-#           subtitle: 'go back a level (bb)'
-#           icon: back.png
-#           command: |
-#             echo "[reload~1]"
-    
-
-#     - title: remote branches
-#       should_use_values_as_inline_commands: true
-#       values_command: |
-#         git branch -r
-#       icon: globe.png
-#       subcommands:
-#         - title: checkout
-#           icon: fork.png
-#           command: |
-#             git stash; git checkout -t [parent]; git pull;
-#             echo "[reload~1]"
-#           mods:
-#             - subtitle: Launch Xcode after
-#               mod: cmd
-#               command: killall Xcode; git stash; git checkout -t [parent]; git pull; xed .
-
-#         - title: delete remote branch
-#           icon: trash.png
-#           command: |
-#             branch=[parent]
-#             git push origin --delete ${branch#origin/}
-    
-
-#         - title: copy branch name
-#           icon: copy.png
-#           command: |
-#             echo [parent] | xargs echo -n | pbcopy
-
-#         - title: back
-#           subtitle: 'go back a level (bb)'
-#           icon: back.png
-#           command: |
-#             echo "[reload~1]"
-
-
-- title: tags
+- title: all.tags
   icon: tag.png
   subcommands:    
-    - title: create
-      icon: pencil.png
-      command: git tag [input_snake_case]
-      mods:
-        - subtitle: and push to origin
-          mod: cmd
-          command: |
-            git tag [input_snake_case]
-            git push origin [input_snake_case]
-
-    - title: fetch
+    - title: fetch all
       icon: down.small.png
       command: |
         git fetch origin --tags
