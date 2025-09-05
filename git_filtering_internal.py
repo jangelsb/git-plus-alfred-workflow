@@ -341,7 +341,7 @@ def generate_locations_from_yaml(yaml_string):
         if entry.get('is_root', False):
             for subfolder_name in os.listdir(path):
                 subfolder_path = os.path.join(path, subfolder_name)
-                if os.path.isdir(subfolder_path):
+                if os.path.isdir(subfolder_path) and os.path.isdir(os.path.join(subfolder_path, '.git')):
                     locations.append(Location(title=subfolder_name, directory=subfolder_path, actions_path=actions_path, should_show_default_commands=should_show_default_commands))
         else:
             title = entry['title']
