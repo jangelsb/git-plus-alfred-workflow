@@ -557,6 +557,10 @@
                 command: |
                   rebase_multiple_branches_onto [parent]
 
+
+
+# Hashes
+
 - title: cherry.pick
   icon: pick.png
   values_command: |
@@ -583,7 +587,7 @@
       command: |
         git revert --no-commit "$(echo [title] | awk '{print $1}')"
 
-- title: reset
+- title: reset.to
   icon: back.line.png
   values_command: |
     git log --oneline --all
@@ -612,7 +616,7 @@
       command: |
         echo "[reload~1]"
 
-- title: copy
+- title: copy.diff.since
   icon: copy.png
   subtitle: 'branch or tag'
   subcommands:
@@ -624,16 +628,7 @@
       values_command: |
         git branch | grep -v '*' # all local branches except the current one
       command: |
-        echo [title] | xargs echo -n | pbcopy
-
-    - title: remote branches
-      icon: globe.png
-      should_use_smart_sort: true
-      should_use_values_as_inline_commands: true
-      values_command: |
-        git branch -r
-      command: |
-        echo [title] | xargs echo -n | pbcopy
+        git log --reverse --pretty=format:"%B" "[title]..HEAD" | pbcopy
 
     - title: tags
       icon: tag.png
@@ -642,7 +637,40 @@
       values_command: |
         git tag | sort -r
       command: |
-        echo [title] | xargs echo -n | pbcopy
+        git log --reverse --pretty=format:"%B" "[title]..HEAD" | pbcopy
+
+
+# - title: copy
+#   icon: copy.png
+#   subtitle: 'branch or tag'
+#   subcommands:
+
+#     - title: local branches
+#       icon: fork.png
+#       should_use_smart_sort: true
+#       should_use_values_as_inline_commands: true
+#       values_command: |
+#         git branch | grep -v '*' # all local branches except the current one
+#       command: |
+#         echo [title] | xargs echo -n | pbcopy
+
+#     - title: remote branches
+#       icon: globe.png
+#       should_use_smart_sort: true
+#       should_use_values_as_inline_commands: true
+#       values_command: |
+#         git branch -r
+#       command: |
+#         echo [title] | xargs echo -n | pbcopy
+
+#     - title: tags
+#       icon: tag.png
+#       should_use_smart_sort: true
+#       should_use_values_as_inline_commands: true
+#       values_command: |
+#         git tag | sort -r
+#       command: |
+#         echo [title] | xargs echo -n | pbcopy
 
 
 # - title: branches
