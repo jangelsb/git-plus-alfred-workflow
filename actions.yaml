@@ -582,7 +582,7 @@
         git cherry-pick --no-commit "$(echo [title] | awk '{print $1}')"
 
 - title: revert
-  icon: hash.slash.png
+  icon: revert.png
   values_command: |
     git log --oneline --all -n 100
   command: |

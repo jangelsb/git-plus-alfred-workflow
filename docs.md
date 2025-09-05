@@ -71,15 +71,15 @@ For a list of the default, hand crafted commands, see [actions.yaml](actions.yam
 |-------------------------------------------------------------------|------------------|------------------------------------------------|
 | <img src="./icons/info.png" width="64" alt="info.png">            | `info.png`       | Represents information or details.             |
 | <img src="./icons/view.png" width="64" alt="view.png">            | `view.png`       | Represents a viewfinder or using the TextView. |
-| <img src="./icons/down.small.png" width="64" alt="down.small.png"> | `down.small.png` | Indicates a small downward action.             |
+| <img src="./icons/down.small.png" width="64" alt="down.small.png"> | `down.small.png` | Indicates a small downward action.            |
 | <img src="./icons/icon.png" width="64" alt="icon.png">            | `icon.png`       | The default icon for commands.                 |
 | <img src="./icons/action.png" width="64" alt="action.png">        | `action.png`     | Represents an actionable item.                 |
 | <img src="./icons/rebase.png" width="64" alt="rebase.png">        | `rebase.png`     | Used for Git rebase actions.                   |
 | <img src="./icons/tag.png" width="64" alt="tag.png">              | `tag.png`        | Represents Git tags or labels.                 |
 | <img src="./icons/down.big.png" width="64" alt="down.big.png">    | `down.big.png`   | Indicates a large downward action.             |
 | <img src="./icons/create.png" width="64" alt="create.png">        | `create.png`     | Represents creation of new items.              |
-| <img src="./icons/hash.png" width="64" alt="hash.png">            | `hash.png`       | Represents a single item or hash.               |
-| <img src="./icons/hash.slash.png" width="64" alt="hash.slash.png">| `hash.slash.png` | Represents a canceling of an item or a revert.               |
+| <img src="./icons/hash.png" width="64" alt="hash.png">            | `hash.png`       | Represents a single item or hash.              |
+| <img src="./icons/revert.png" width="64" alt="revert.png">        | `revert.png`     | Represents going back or a revert of an item.  |
 | <img src="./icons/pick.png" width="64" alt="pick.png">            | `pick.png`       | Represents selection or picking.               |
 | <img src="./icons/list.png" width="64" alt="list.png">            | `list.png`       | Represents a list or multiple items.           |
 | <img src="./icons/search.png" width="64" alt="search.png">        | `search.png`     | Represents a search or lookup action.          |
