@@ -29,6 +29,11 @@
           command: |
             git rev-parse HEAD | xargs echo -n | pbcopy
 
+        - title: reset to origin
+          icon: revert.png
+          command: |
+            git fetch origin; git reset --hard origin/[parent]
+
         - title: back
           subtitle: 'go back a level (bb)'
           icon: back.png
@@ -304,7 +309,7 @@
 - title: fetch
   icon: down.small.png
   subtitle_command: |
-    git status | grep 'branch is' || echo '!! no remote branch linked yet'
+    git status | sed -n '2p' | grep 'branch' || echo '!! no remote branch linked yet'
   # mods:
   #   - subtitle: reload status menu
   #     mod: cmd
