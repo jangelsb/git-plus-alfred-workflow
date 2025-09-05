@@ -2043,7 +2043,7 @@ NOTE: if you set a “bash profile”, you can use enviroment variables in your 
 		</dict>
 	</array>
 	<key>version</key>
-	<string>2025.3</string>
+	<string>2025.4.a</string>
 	<key>webaddress</key>
 	<string>https://jangelsb.dev</string>
 </dict>
