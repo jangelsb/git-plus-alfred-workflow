@@ -140,3 +140,8 @@ For more information, see the full documentation: [docs.md](https://github.com/j
 2. Configure the paths in the workflow settings
 3. Enjoy & God bless 
 
+---
+
+## 📝 Version History
+
+For full change log see: https://github.com/jangelsb/git-plus-alfred-workflow/releases
