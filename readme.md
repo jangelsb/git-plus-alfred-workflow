@@ -21,14 +21,14 @@ For the official Alfred fourm post, [check here](https://www.alfredforum.com/top
 ### Supports multiple repos
 ![Filter Projects](images/filter_projects.png)
 
-### A powerful status menu
-![Filter Projects](images/status_menu.png)
-
-### Switch branches 
+### Checkout branches, tags, commits 
 ![Checkout Branch](images/checkout_branch.png)
 
 ### Create new branches
 ![Create Branch](images/create_branch.png)
+
+### A powerful status menu
+![Filter Projects](images/status_menu.png)
 
 ### Ability to view, stage, and unstage hunks
 ![Create Branch](images/stage_hunk.png)
