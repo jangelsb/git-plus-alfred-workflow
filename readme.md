@@ -15,7 +15,7 @@ For the official Alfred fourm post, [check here](https://www.alfredforum.com/top
 
 ## 🚀 Features
 
-### Fully customizable
+### Fully functional & customizable
 ![Custom Commands](images/custom_commands.png)
 
 ### Supports multiple repos
@@ -41,22 +41,27 @@ For the official Alfred fourm post, [check here](https://www.alfredforum.com/top
 * amend
 * stash, pop
 * rebase, rebase --onto
+* reset
+* revert
 * cherry-pick
 * history
-* stage and unstage files
+* stage and unstage hunks & files
 * copy branch name
 * checkout local and remote branch
 * checkout tags
-* copy diff for tags
+* copy diff for tags & branches
 * search files in repo
 * open repo in Finder, Terminal, Alfred, etc
 * `+` anything you want to add 🚀 (see [docs.md](docs.md))
 
 
-### Fun Tips
+### Tips & Tricks
 
+* You can drag and drop the folders in the git repo list
+* You can always press → on the keyboard to see the command that will be run
 * `⌘+c` to copy the title of whatever is highlighted - useful for copying branch names!
-* press `→` to view the command that will run.
+* the `textview_action` is extremely power - it allows you to run commands and view the output in Alfred and then run followup actions 
+    * checkout `history` and `staged` / `modified` actions for examples
 
 
 ---
