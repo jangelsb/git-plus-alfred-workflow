@@ -323,7 +323,7 @@ def create_inline_commands(cmd):
     return []
 
 def generate_locations_from_yaml(yaml_string):
-    def location_entry_processor(entry):
+    def location_entry_processor(entry, existing_locations):
         def process_path(path):
             # Split the path into parts and process parts starting with '$'
             path_parts = path.split('/')
@@ -333,27 +333,42 @@ def generate_locations_from_yaml(yaml_string):
                     path_parts[i] = os.environ.get(env_var_name, part)
             return '/'.join(path_parts)
 
-        locations = []
         path = process_path(entry['path'])
         actions_path = entry.get('config', None)
         should_show_default_commands = entry.get('show_default_commands', True)
 
         if entry.get('is_root', False):
+            # Iterate through subfolders to find git repositories for root entries
             for subfolder_name in os.listdir(path):
                 subfolder_path = os.path.join(path, subfolder_name)
+                # Check if the subfolder contains a .git directory
                 if os.path.isdir(subfolder_path) and os.path.isdir(os.path.join(subfolder_path, '.git')):
-                    locations.append(Location(title=subfolder_name, directory=subfolder_path, actions_path=actions_path, should_show_default_commands=should_show_default_commands))
+                    # Avoid appending duplicates, check if directory is already listed
+                    if not any(loc.directory == subfolder_path for loc in existing_locations):
+                        existing_locations.append(Location(
+                            title=subfolder_name, directory=subfolder_path,
+                            actions_path=actions_path,
+                            should_show_default_commands=should_show_default_commands
+                        ))
         else:
+            # For non-root, remove any existing entry with the same directory
             title = entry['title']
-            locations.append(Location(title=title, directory=path, actions_path=actions_path, should_show_default_commands=should_show_default_commands))
+            existing_locations = [loc for loc in existing_locations if loc.directory != path]
+            # Append the new/updated entry to the list
+            existing_locations.append(Location(
+                title=title, directory=path,
+                actions_path=actions_path,
+                should_show_default_commands=should_show_default_commands
+            ))
 
-        return locations
+        return existing_locations
 
     try:
         yaml_data = yaml.safe_load(yaml_string)
         locations = []
         for entry in yaml_data:
-            locations.extend(location_entry_processor(entry))
+            # Process each YAML entry, updating the locations list
+            locations = location_entry_processor(entry, locations)
         return locations
     except yaml.YAMLError as e:
         return []
