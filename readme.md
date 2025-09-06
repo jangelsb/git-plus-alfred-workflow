@@ -2,7 +2,8 @@
 
 `git+` allows you to create personalized commands and menus to fully streamline ✨your✨ workflow!
 
-See the demo: https://youtu.be/jd8lfsTBDQE
+
+![Demo](images/demo.gif)
 
 ---
 
