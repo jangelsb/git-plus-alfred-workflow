@@ -310,12 +310,6 @@
   icon: down.small.png
   subtitle_command: |
     git status | sed -n '2p' | grep 'branch' || echo '!! no remote branch linked yet'
-  # mods:
-  #   - subtitle: reload status menu
-  #     mod: cmd
-  #     command: |
-  #       echo "[reload]"
-  # textview_action:
   command: |
     git fetch -p
     echo "[reload]"
@@ -521,7 +515,6 @@
               command: |
                 git tag [input_snake_case] "$(echo [parent~2] | awk '{print $1}')"
                 git push origin [input_snake_case]
-
 
 - title: rebase
   icon: rebase.png
