@@ -345,8 +345,10 @@ def generate_locations_from_yaml(yaml_string):
                 if os.path.isdir(subfolder_path) and os.path.isdir(os.path.join(subfolder_path, '.git')):
                     # Avoid appending duplicates, check if directory is already listed
                     if not any(loc.directory == subfolder_path for loc in existing_locations):
+                        adjusted_title = subfolder_name.replace(' ', '.').replace('-', '.')
                         existing_locations.append(Location(
-                            title=subfolder_name, directory=subfolder_path,
+                            title=adjusted_title,
+                            directory=subfolder_path,
                             actions_path=actions_path,
                             should_show_default_commands=should_show_default_commands
                         ))
@@ -356,7 +358,8 @@ def generate_locations_from_yaml(yaml_string):
             existing_locations = [loc for loc in existing_locations if loc.directory != path]
             # Append the new/updated entry to the list
             existing_locations.append(Location(
-                title=title, directory=path,
+                title=title,
+                directory=path,
                 actions_path=actions_path,
                 should_show_default_commands=should_show_default_commands
             ))
