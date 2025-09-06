@@ -53,6 +53,12 @@ For the official Alfred fourm post, [check here](https://www.alfredforum.com/top
 * `+` anything you want to add 🚀 (see [docs.md](docs.md))
 
 
+### Fun Tips
+
+* `⌘+c` to copy the title of whatever is highlighted - useful for copying branch names!
+* press `→` to view the command that will run.
+
+
 ---
 
 ## 📖 Installation
@@ -77,9 +83,12 @@ For the official Alfred fourm post, [check here](https://www.alfredforum.com/top
 **NOTE**
 * If you set a “bash profile”, you can use enviroment variables for your paths, e.g, `$REPO_PATH`
 * Optional flags
-  * `config` is an optional path to an actions.yaml that is only for that repo. The working directory for that path is the workflow's directory.
-  * `is_root: true` is an optional flag that will add all the subfolders as locations
+  * `config` is an optional path to an actions.yaml that is only for that repo.
+      * The working directory for that path is the workflow's directory.
+  * `is_root: true` is an optional flag that will add all git subfolders (1 layer deep)
+      * Folders with the same directory as a manually specified location will be skipped.
   * `show_default_commands: false` is an optional flag that will not include any of the default (git) commands for that location
+      * Useful for having a collection of global commands in one spot
 
 
 ### Step 2 (optional)
