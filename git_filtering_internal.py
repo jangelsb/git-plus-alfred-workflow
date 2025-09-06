@@ -148,41 +148,41 @@ def create_modifier_list(cmd, location, param=None):
         ) for modifier in cmd.mods
     ]
 
+def zsh_escape(param):
+    # if param:
+    #     param = param.replace('`', '\\`')  # Escape back tick
+    #     param = param.replace('"', '\\"')  # Escape double quotes
+    #     param = param.replace("'", "\\'")  # Escape single quotes
+    #     param = param.replace('$', '\\$')  # Escape dollar sign
+    # return param
+
+    # ChatGPT says this handles all the cases above plus more
+    return shlex.quote(param) if param else param
+
 def process_action(action, param, title, secondaryAction=None):
-    def escape_param(param):
-        # if param:
-        #     param = param.replace('`', '\\`')  # Escape back tick
-        #     param = param.replace('"', '\\"')  # Escape double quotes
-        #     param = param.replace("'", "\\'")  # Escape single quotes
-        #     param = param.replace('$', '\\$')  # Escape dollar sign
-        # return param
-
-        # ChatGPT says this handles all the cases above plus more
-        return shlex.quote(param) if param else param
-
     def replace_parent_action(action):
         # Find all occurrences of [parent] or [parent~n]
         matches = re.finditer(r"\[parent(?:~(\d+))?\]", action)
         for match in matches:
             n = int(match.group(1) or 1)  # Default to 1 if n is not provided
-            replacement = escape_param(alfred_input.parent_command_title(n))
+            replacement = zsh_escape(alfred_input.parent_command_title(n))
             action = action.replace(match.group(0), replacement)
         return action
 
     if secondaryAction:
         value = run_command(secondaryAction)
-        action = action.replace("[input]", escape_param(value))
+        action = action.replace("[input]", zsh_escape(value))
         action = replace_parent_action(action)
         action = action.replace("[title]", title.strip())
     else:
         if isinstance(action, str):
             # TODO: clean up and verify that all params and actions and titles and parents are escaped
-            param = escape_param(param)
+            param = zsh_escape(param)
             # action = action.replace('[input_new_lines]', param.replace(' \ ', '\n')) if param else action
             action = action.replace('[input_snake_case]', param.replace(' ', '_')) if param else action
             action = action.replace('[input]', param) if param else action
             action = replace_parent_action(action)
-            action = action.replace("[title]", param.strip() if param else escape_param(title).strip())
+            action = action.replace("[title]", param.strip() if param else zsh_escape(title).strip())
 
     return action
 
@@ -197,7 +197,7 @@ def construct_full_command(action, location):
         return action
 
     action = replace_reload_action(action)
-    return f"cd {location.directory};\n{action}"
+    return f"cd {zsh_escape(location.directory)};\n{action}"
 
 def create_result_item_common(title, cmd, location, param=None):
     action = process_action(action=cmd.action, param=param, title=title, secondaryAction=cmd.secondaryAction)
