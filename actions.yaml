@@ -472,6 +472,13 @@
       command: |
         git checkout -b [input_snake_case]
         echo "[reload~2]"
+      mods:
+        - subtitle: and push to origin
+          mod: cmd
+          command: |
+            git checkout -b [input_snake_case]
+            git push origin [input_snake_case]
+            echo "[reload~2]"
 
     - title: tag
       icon: pencil.png
@@ -484,21 +491,36 @@
             git tag [input_snake_case]
             git push origin [input_snake_case]
 
-# TODO: this doesn't work
-    # - title: tag.from.commit
-    #   values_command: |
-    #     git log --oneline --all -n 100
-    #   command: |
-    #     git tag [input_snake_case] "$(echo [title] | awk '{print $1}')"
 
-    #   mods:
-    #     - subtitle: and push to origin
-    #       mod: cmd
-    #       command: |
-    #         git tag [input_snake_case] "$(echo [title] | awk '{print $1}')"
-    #         git push origin [input_snake_case]
+    - title: from.commit
+      icon: hash.png
+      subtitle: create a branch or tag from a specific commit
+      values_command: |
+        git log --oneline --all -n 100
+      subcommands:
+        - title: branch
+          icon: create.png
+          command: |
+            git checkout -b [input_snake_case] "$(echo [parent~2] | awk '{print $1}')"
+            echo "[reload~2]"
+          mods:
+            - subtitle: and push to origin
+              mod: cmd
+              command: |
+                git checkout -b [input_snake_case] "$(echo [parent~2] | awk '{print $1}')"
+                git push origin [input_snake_case]
+                echo "[reload~2]"
 
-# TODO: add branch.from.commit
+        - title: tag
+          icon: pencil.png
+          command: |
+            git tag [input_snake_case] "$(echo [parent~2] | awk '{print $1}')"
+          mods:
+            - subtitle: and push to origin
+              mod: cmd
+              command: |
+                git tag [input_snake_case] "$(echo [parent~2] | awk '{print $1}')"
+                git push origin [input_snake_case]
 
 
 - title: rebase
@@ -619,7 +641,7 @@
 - title: reset.to
   icon: back.line.png
   values_command: |
-    git log --oneline --all -n 100
+    git log --oneline --first-parent -n 100
   subcommands:
     - title: soft
       subtitle: 'Keep index and working directory, differences will show as staged'
