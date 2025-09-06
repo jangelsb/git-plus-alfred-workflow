@@ -671,10 +671,10 @@
 # Misc
 
 - title: all.tags
-  subtitle: 'fetch or push all tags'
+  subtitle: 'fetch or push tags'
   icon: tag.png
   subcommands:    
-    - title: fetch
+    - title: fetch all
       icon: down.small.png
       command: |
         git fetch origin --tags
@@ -684,7 +684,7 @@
           command: |
             git fetch origin --tags --force
 
-    - title: push
+    - title: push all
       icon: up.big.png
       command: |
         git push origin --tags
@@ -694,51 +694,31 @@
           command: |
             git push origin --tags --force
 
-    # - title: show tags
-    #   icon: tag.png
-    #   should_use_values_as_inline_commands: true
-    #   values_command: git tag | sort -r
-    #   subcommands:
-    #     - title: checkout
-    #       icon: fork.png
-    #       command: |
-    #         git checkout [parent]
-    #         echo "[reload~1]"
+    - title: show tags
+      icon: tag.png
+      should_use_values_as_inline_commands: true
+      values_command: git tag | sort -r
+      subcommands:
+        - title: push tag
+          icon: up.big.png
+          command: |
+            git push origin [parent]
+          mods:
+            - subtitle: --force
+              mod: cmd
+              command: |
+                git push origin [parent] --force
 
-    #     - title: copy diff since tag
-    #       icon: copy.png
-    #       command: |
-    #         git log --reverse --pretty=format:"%B" "[parent]..HEAD" | pbcopy
-    #       mods:
-    #         - subtitle: copy for ChatGPT summary
-    #           mod: cmd
-    #           command: |
-    #             {
-    #               echo "this is a change log from git, for my branch `$branch` for my project. Summarize these commit message and make a change log for a pull request."
-    #               echo ''
-    #               git log --reverse --pretty=format:"%B" "[parent]..HEAD"
-    #             } | pbcopy
-
-    #     - title: push tag
-    #       icon: up.big.png
-    #       command: |
-    #         git push origin [parent]
-    #       mods:
-    #         - subtitle: --force
-    #           mod: cmd
-    #           command: |
-    #             git push origin [parent] --force
-
-    #     - title: delete tag
-    #       icon: trash.png
-    #       command: |
-    #         git tag -d [parent]
-    #       mods:
-    #         - subtitle: and delete remote tag
-    #           mod: cmd
-    #           command: |
-    #             git tag -d [parent]
-    #             git push origin --delete [parent]
+        - title: delete tag
+          icon: trash.png
+          command: |
+            git tag -d [parent]
+          mods:
+            - subtitle: and delete remote tag
+              mod: cmd
+              command: |
+                git tag -d [parent]
+                git push origin --delete [parent]
 
 - title: stash
   icon: down.small.png
