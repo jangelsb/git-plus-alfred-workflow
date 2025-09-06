@@ -244,6 +244,7 @@ def create_result_item_common(title, cmd, location, param=None):
         valid=False if cmd.command_type == CommandType.NO_ACTION else valid,
         autocomplete= alfred_input.create_current_path() if cmd.command_type == CommandType.NO_ACTION else None,
         mods=modifier_list,
+        text=Text(copy=title.strip()),
         icon_path=cmd.icon_path,
         quicklookurl=cmd.quicklookurl.replace("[title]", title.strip()) if cmd.quicklookurl else None,
         should_use_smart_sort=cmd.should_use_smart_sort,
