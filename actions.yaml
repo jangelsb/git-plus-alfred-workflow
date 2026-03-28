@@ -752,6 +752,126 @@
         git log --reverse --pretty=format:"%B" "[title]..HEAD" | pbcopy
 
 # --------------------
+# WORKTREES
+# --------------------
+
+- title: worktrees
+  icon: folder.png
+  subtitle: 'create, update, or delete worktrees'
+  subtitle_command: |
+    count=$(git worktree list | tail -n +2 | wc -l | xargs)
+    echo "$count worktree(s)"
+  subcommands:
+
+    - title: list
+      should_use_values_as_inline_commands: true
+      icon: list.png
+      values_command: |
+        git worktree list | tail -n +2 | awk '{branch=$3; gsub(/[\[\]]/, "", branch); print branch}'
+      # subtitle_command: |
+      #   git worktree list | grep "\[[title]\]" | awk '{print $1}'
+      subcommands:
+
+        - title: back
+          subtitle: 'go back a level (bb)'
+          icon: back.png
+          command: |
+            echo "[reload~1]"
+
+        - title: update
+          icon: down.big.png
+          subtitle: 'fetch --prune + reset --hard to origin branch'
+          command: |
+            wt_path=$(git worktree list | grep "\[[parent]\]" | awk '{print $1}')
+            git -C "$wt_path" fetch origin --prune
+            git -C "$wt_path" reset --hard "origin/[parent]"
+            echo "[reload~1]"
+
+        - title: open in Terminal
+          icon: open.png
+          command: |
+            wt_path=$(git worktree list | grep "\[[parent]\]" | awk '{print $1}')
+            open -a Terminal "$wt_path"
+
+        - title: open in Finder
+          icon: open.png
+          command: |
+            wt_path=$(git worktree list | grep "\[[parent]\]" | awk '{print $1}')
+            open "$wt_path"
+
+        - title: open in VS Code
+          icon: open.png
+          command: |
+            wt_path=$(git worktree list | grep "\[[parent]\]" | awk '{print $1}')
+            code "$wt_path"
+
+        - title: open in Xcode
+          icon: open.png
+          command: |
+            wt_path=$(git worktree list | grep "\[[parent]\]" | awk '{print $1}')
+            xed "$wt_path"
+
+        - title: copy path
+          icon: copy.png
+          command: |
+            git worktree list | grep "\[[parent]\]" | awk '{print $1}' | xargs echo -n | pbcopy
+
+        - title: delete
+          icon: trash.png
+          command: |
+            wt_path=$(git worktree list | grep "\[[parent]\]" | awk '{print $1}')
+            git worktree remove "$wt_path"
+            echo "[reload~1]"
+          mods:
+            - subtitle: force delete
+              mod: cmd
+              command: |
+                wt_path=$(git worktree list | grep "\[[parent]\]" | awk '{print $1}')
+                git worktree remove --force "$wt_path"
+                echo "[reload~1]"
+
+
+    - title: create
+      icon: create.png
+      subtitle: 'from local or remote branch'
+      subcommands:
+
+        - title: local branches
+          icon: fork.png
+          should_use_smart_sort: true
+          should_use_values_as_inline_commands: true
+          values_command: |
+            git branch | grep -v '*'
+          command: |
+            branch=[title]
+            branch_dir=$(echo "$branch" | xargs | sed 's|/|-|g')
+            repo_root=$(git rev-parse --show-toplevel)
+            repo_parent=$(dirname "$repo_root")
+            repo_name=$(basename "$repo_root")
+            worktree_path="${repo_parent}/${repo_name}-${branch_dir}"
+            git worktree add "$worktree_path" "$branch"
+            echo "[reload~1]"
+
+        - title: remote branches
+          icon: globe.png
+          should_use_smart_sort: true
+          should_use_values_as_inline_commands: true
+          values_command: |
+            git branch -r | grep -v 'HEAD'
+          command: |
+            remote_branch=[title]
+            local_branch=$(echo "$remote_branch" | xargs | sed 's|^origin/||')
+            branch_dir=$(echo "$local_branch" | sed 's|/|-|g')
+            repo_root=$(git rev-parse --show-toplevel)
+            repo_parent=$(dirname "$repo_root")
+            repo_name=$(basename "$repo_root")
+            worktree_path="${repo_parent}/${repo_name}-${branch_dir}"
+            git fetch origin --prune
+            git worktree add --track -b "$local_branch" "$worktree_path" "$(echo $remote_branch | xargs)" 2>/dev/null || \
+              git worktree add "$worktree_path" "$local_branch"
+            echo "[reload~1]"
+
+# --------------------
 # OPEN IN LOGIC
 # --------------------
 
